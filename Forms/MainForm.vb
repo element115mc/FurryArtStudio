@@ -1,0 +1,936 @@
+﻿Imports System.Drawing.Imaging
+Imports System.Drawing.Printing
+Imports System.IO
+Imports System.Runtime.InteropServices
+Imports System.Text
+Imports Krypton.Toolkit
+
+Public Class MainForm
+    Private _libraryManager As LibraryManager '当前稿件库管理器实例
+    Private _currentPrintImages As List(Of String) = Nothing '当前要打印的图片文件路径
+    Private _currentPrintIndex As Integer = 0 '当前要打印的图片序号
+    Private _artworkCount As Integer = 0 '当前实例稿件总数
+#Region "窗体事件处理"
+
+#Region "生命周期事件"
+
+    ''' <summary>
+    ''' 程序启动时调用
+    ''' </summary>
+    Private Sub MainForm_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        StatusLabel.Text = "正在初始化..."
+        _libraryManager = LibraryManager.Instance '启动稿件库管理器实例
+        MenuInit() '初始化菜单
+        ResizeControl() '调整组件尺寸
+        SystemThemeChange() '设置主题
+        SysMenuInit() '设置系统菜单
+        Dim titleFont As New Font(LblTitle.Font, FontStyle.Bold)
+        LblTitle.Font = titleFont
+#If DEBUG Then
+        MnuDevTools.Visible = True '显示并启用开发者工具选项
+        MnuDevTools.Enabled = True
+#Else
+        MnuDevTools.Enabled = False
+#End If
+        StatusLabel.Text = "就绪"
+    End Sub
+
+    ''' <summary>
+    ''' 关闭时释放资源
+    ''' </summary>
+    Private Sub MainForm_Closing(sender As Object, e As ComponentModel.CancelEventArgs) Handles Me.Closing
+        LibraryManager.CloseAllLibrary() '关闭时释放资源
+    End Sub
+
+    ''' <summary>
+    ''' 窗体消息处理
+    ''' </summary>
+    ''' <param name="m">Windows消息</param>
+    Protected Overrides Sub WndProc(ByRef m As Message) '窗体消息处理函数
+        If m.Msg = WM_SYSCOMMAND Then '窗体响应菜单
+            Dim hMenu = GetSystemMenu(Handle, False)
+            Select Case m.WParam.ToInt32'对应菜单标号
+                Case 1 '窗口置顶
+                    If TopMost = False Then
+                        TopMost = True
+                        CheckMenuItem(hMenu, 1, MF_CHECKED) '窗口置顶
+                    Else
+                        TopMost = False
+                        CheckMenuItem(hMenu, 1, MF_UNCHECKED) '取消置顶
+                    End If
+            End Select
+        End If
+        If m.Msg = WM_DWMCOLORIZATIONCOLORCHANGED Then SystemThemeChange() '更新程序主题
+        MyBase.WndProc(m) '循环监听消息
+    End Sub
+
+#End Region
+
+#Region "尺寸调整事件"
+
+    ''' <summary>
+    ''' 窗口大小改变时触发, 用来调整元素位置
+    ''' </summary>
+    Private Sub MainForm_Resize(sender As Object, e As EventArgs) Handles Me.Resize
+        ArtworkListSplitContainer.Width = Width - 18
+        ArtworkListSplitContainer.Height = Height - 80
+        ResizeControl()
+    End Sub
+
+    ''' <summary>
+    ''' 分割线调整时触发
+    ''' </summary>
+    Private Sub ArtworkListSplitContainer_SplitterMoved(sender As Object, e As SplitterEventArgs) Handles ArtworkListSplitContainer.SplitterMoved
+        ResizeControl()
+    End Sub
+
+    ''' <summary>
+    ''' 调整组件的大小
+    ''' </summary>
+    Private Sub ResizeControl()
+        Dim p2Width = ArtworkListSplitContainer.Panel2.Width - 10
+        Dim p2Height = ArtworkListSplitContainer.Panel2.Height - 100
+        SearchTextBox.Width = ArtworkListSplitContainer.Panel1.Width - 5
+        ImageGalleryMain.Width = ArtworkListSplitContainer.Panel1.Width - 5
+        If FormBorderStyle = FormBorderStyle.Sizable Then
+            ImageGalleryMain.Height = ArtworkListSplitContainer.Panel1.Height - 55
+        End If
+        PicboxThumb.Width = p2Width
+        PicboxThumb.Height = p2Width
+        LblTitle.Width = p2Width
+        LblTitle.Top = p2Width + 10
+        LblAuthor.Width = p2Width
+        LblAuthor.Top = p2Width + 30
+        LblCharacters.Width = p2Width
+        LblCharacters.Top = p2Width + 50
+        LblTags.Width = p2Width
+        LblTags.Top = p2Width + 70
+        LblNotes.Width = p2Width
+        LblNotes.Top = p2Width + 90
+
+        BtnView.Top = LblNotes.Top + 130
+        BtnView.Width = (p2Width - 10) / 2
+        BtnEdit.Top = LblNotes.Top + 130
+        BtnEdit.Width = (p2Width - 10) / 2
+        BtnEdit.Left = BtnView.Left + BtnView.Width + 10
+    End Sub
+
+#End Region
+
+#Region "辅助方法"
+
+    ''' <summary>
+    ''' 系统主题发生变化时调用以更新
+    ''' </summary>
+    Private Sub SystemThemeChange()
+        Dim regKey = Microsoft.Win32.Registry.CurrentUser.OpenSubKey("SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize", True)
+        Dim dKey = regKey.GetValue("AppsUseLightTheme", "0") '判断是否为深色主题
+        Dim isDarkMode As Boolean = (dKey = 0)
+        '颜色常量
+        Dim bgColor As Color = Color.FromArgb(32, 33, 36)
+        Dim frColor As Color = Color.FromArgb(218, 220, 224)
+        '获取控件集合
+        Dim controlList As List(Of Control) = GetAllControls(Me)
+        '判断颜色
+        If isDarkMode Then
+            ImageGalleryMain.DisplayMode = GalleryDisplayMode.Dark
+            KryptonMgrMain.GlobalPaletteMode = PaletteMode.MaterialDark '修改菜单栏颜色
+        Else
+            bgColor = Color.FromArgb(255, 255, 255)
+            frColor = Color.FromArgb(0, 0, 0)
+            ImageGalleryMain.DisplayMode = GalleryDisplayMode.Normal
+            KryptonMgrMain.GlobalPaletteMode = PaletteMode.MaterialLight '修改菜单栏颜色
+        End If
+        For Each control In controlList
+            control.ForeColor = frColor
+            control.BackColor = bgColor
+        Next
+        'WinAPI
+        DwmSetWindowAttribute(Handle, DwmWindowAttribute.UseImmersiveDarkMode, isDarkMode, Marshal.SizeOf(Of Integer))
+        SetPreferredAppMode(PreferredAppMode.AllowDark)
+        FlushMenuThemes()
+    End Sub
+
+    ''' <summary>
+    ''' 初始化菜单项
+    ''' </summary>
+    Private Sub MenuInit()
+        Text = "Furry Art Studio"
+        MnuLibOpenFolder.Enabled = False
+        MnuLibCopy.Enabled = False
+        MnuLibCopyPath.Enabled = False
+        MnuLibClone.Enabled = False
+        MnuLibExport.Enabled = False
+        MnuLibClose.Enabled = False
+        MnuLibRename.Enabled = False
+        MnuLibDelete.Enabled = False
+        MnuLibProperties.Enabled = False
+        MnuMsNew.Enabled = False
+        MnuMsImport.Enabled = False
+        MnuMsView.Enabled = False
+        MnuMsEdit.Enabled = False
+        MnuMsDelete.Enabled = False
+        MnuMsExport.Enabled = False
+        MnuMsPrint.Enabled = False
+        MnuMsOpenFolder.Enabled = False
+        MnuMsCopy.Enabled = False
+        MnuMsCopyPath.Enabled = False
+        MnuAdvancedSearch.Enabled = False
+        MnuSelectAll.Enabled = False
+        MnuSelectReverse.Enabled = False
+        MnuViewPlay.Enabled = False
+        MnuPageDown.Enabled = False
+        MnuPageUp.Enabled = False
+        MnuSearch.Enabled = False
+        RefreshLibListMenu()
+        ImageGalleryMain.ClearImages() '清空所有图片
+        PicboxThumb.Image = Nothing
+        LblTitle.Text = ""
+        LblAuthor.Text = ""
+        LblTags.Text = ""
+        LblCharacters.Text = ""
+        LblNotes.Text = ""
+        SearchTextBox.Enabled = False
+        SearchTextBox.Text = ""
+        StatusLabel.Text = "就绪"
+        ArtworkStatusLabel.Text = "<无稿件库>"
+        _artworkCount = 0
+        SelectStatusLabel.Text = "0个稿件"
+        StorageStatusLabel.Text = "存储: 0B (0个文件)"
+        PageStatusLabel.Text = "页码: 0/0"
+        PageStatusLabel.Visible = False
+        TSSep2.Visible = False
+        TSSep1.Visible = False
+        SearchStatusLabel.Visible = False
+        MnuLibExportCSV.Enabled = False
+    End Sub
+
+    ''' <summary>
+    ''' 初始化系统菜单
+    ''' </summary>
+    Private Sub SysMenuInit()
+        Dim menuHandle = GetSystemMenu(Handle, False) '获取菜单句柄
+        InsertMenu(menuHandle, 5, MF_BYPOSITION Or MF_STRING, 2, "全屏(&F)")
+        InsertMenu(menuHandle, 6, MF_BYPOSITION Or MF_SEPARATOR, 0, Nothing)
+        InsertMenu(menuHandle, 7, MF_BYPOSITION Or MF_STRING, 1, "窗口置顶(&T)")
+        InsertMenu(menuHandle, 8, MF_BYPOSITION Or MF_STRING, 2, "自定义功能(&C)")
+    End Sub
+
+    ''' <summary>
+    ''' 载入数据并设置图片墙
+    ''' </summary>
+    Private Sub LoadArtworks()
+        Text = $"{_libraryManager.GetCurrentLibrary.LibraryName} - Furry Art Studio"
+        StatusLabel.Text = "正在载入数据..."
+        ArtworkListSplitContainer.UseWaitCursor = True
+        '设置菜单
+        MnuLibOpenFolder.Enabled = True
+        MnuLibCopy.Enabled = True
+        MnuLibCopyPath.Enabled = True
+        MnuLibClone.Enabled = True
+        MnuLibExport.Enabled = True
+        MnuLibClose.Enabled = True
+        MnuLibRename.Enabled = True
+        MnuLibDelete.Enabled = True
+        MnuLibProperties.Enabled = True
+        MnuMsNew.Enabled = True
+        MnuMsImport.Enabled = True
+        MnuAdvancedSearch.Enabled = True
+        MnuSelectAll.Enabled = True
+        MnuSelectReverse.Enabled = True
+        MnuViewPlay.Enabled = True
+        PageStatusLabel.Visible = True
+        TSSep2.Visible = True
+        MnuLibExportCSV.Enabled = True
+        MnuSearch.Enabled = True
+        '设置UI
+        LblTitle.Text = "请选择一个项目"
+        LblAuthor.Text = ""
+        LblTags.Text = ""
+        LblCharacters.Text = ""
+        LblNotes.Text = ""
+        PicboxThumb.Image = Nothing
+        SearchTextBox.Enabled = True
+        '设置图片墙
+        ImageGalleryMain.ClearImages() '清空所有图片
+        ArtworkStatusLabel.Text = $"稿件库: {_libraryManager.GetCurrentLibrary.LibraryName}" '稿件库名称
+        Dim artworks = _libraryManager.GetCurrentLibrary.GetAllArtworksComplete '获取当前库全部数据
+        SelectStatusLabel.Text = $"{artworks.Count}个稿件" '稿件数量
+        '遍历所有稿件
+        Dim libraryPath = _libraryManager.GetCurrentLibrary.LibraryPath
+        SetGallery(artworks, libraryPath) '载入稿件
+        _artworkCount = artworks.Count
+        Dim result = GetFolderInfo(libraryPath)
+        '设置状态栏
+        StorageStatusLabel.Text = $"存储: {result.sizeString} ({result.fileCount:N0}个文件)"
+        Dim page As Integer = Math.Ceiling(_artworkCount / ImageGalleryMain.PageSize)
+        MnuPageDown.Enabled = page > 1
+        PageStatusLabel.Text = $"页码: 1/{page}" '在初始化阶段暂时获得不到准确的页码
+        ArtworkListSplitContainer.UseWaitCursor = False
+        StatusLabel.Text = "就绪"
+    End Sub
+    Private Sub SetGallery(artworks As List(Of Artwork), libraryPath As String)
+        For Each artwork In artworks
+            Dim artworkPath As String = Path.Combine(libraryPath, artwork.UUID.ToString())
+            If Not Directory.Exists(artworkPath) Then '保证文件夹存在
+                Directory.CreateDirectory(artworkPath)
+            End If
+            Dim previewPath As String = Path.Combine(artworkPath, ".preview.jpg")
+            If Not File.Exists(previewPath) And Directory.GetFiles(artworkPath).Count > 0 Then '保证缩略图存在
+                Using img As Image = LoadImageFromFile(Directory.GetFiles(artworkPath)(0))
+                    img.Save(previewPath, ImageFormat.Jpeg)
+                End Using
+            End If
+            Dim fileCount As Integer = artwork.FilePaths.Length
+            Dim gi As New GalleryImage With {
+                .Title = artwork.Title,
+                .UUID = artwork.UUID.ToString,
+                .ID = artwork.ID,
+                .Count = fileCount - 1'去除缩略图
+            }
+            If File.Exists(previewPath) Then
+                Using sourceImage As Image = Image.FromFile(previewPath)
+                    '创建独立于文件的新位图
+                    gi.Thumbnail = New Bitmap(sourceImage.Width, sourceImage.Height, sourceImage.PixelFormat)
+                    Using g As Graphics = Graphics.FromImage(gi.Thumbnail)
+                        g.DrawImage(sourceImage, 0, 0, sourceImage.Width, sourceImage.Height)
+                    End Using
+                End Using
+            End If
+            ImageGalleryMain.AddImage(gi)
+        Next
+    End Sub
+#End Region
+
+#Region "其他"
+    ''' <summary>
+    ''' 查看属性信息
+    ''' </summary>
+    Private Sub StorageStatusLabel_Click(sender As Object, e As EventArgs) Handles StorageStatusLabel.Click
+        MnuLibProperties.PerformClick()
+    End Sub
+    Private Sub SearchTextBox_TextChanged(sender As Object, e As EventArgs) Handles SearchTextBox.TextChanged
+        SearchArtwork()
+    End Sub
+    ''' <summary>
+    ''' 搜索稿件
+    ''' </summary>
+    Private Sub SearchArtwork()
+        StatusLabel.Text = "正在搜索..."
+        ClearSelect()
+        If SearchTextBox.Text = "" Then
+            RefreshLib()
+            TSSep1.Visible = False
+            SearchStatusLabel.Visible = False
+            If _libraryManager.GetCurrentLibrary IsNot Nothing Then Text = $"{_libraryManager.GetCurrentLibrary.LibraryName} - Furry Art Studio"
+        Else
+            ImageGalleryMain.ClearImages()
+            Dim resultArtwork As List(Of Artwork) = _libraryManager.GetCurrentLibrary.SearchArtworks(SearchTextBox.Text)
+            Dim libraryPath = _libraryManager.GetCurrentLibrary.LibraryPath
+            SetGallery(resultArtwork, libraryPath) '载入稿件
+            TSSep1.Visible = True
+            SearchStatusLabel.Visible = True
+            SearchStatusLabel.Text = $"{ImageGalleryMain.TotalImageCount}个稿件"
+            Dim page As Integer = Math.Ceiling(ImageGalleryMain.TotalImageCount / ImageGalleryMain.PageSize)
+            MnuPageDown.Enabled = page > 1
+            PageStatusLabel.Text = $"页码: 1/{page}" '在初始化阶段暂时获得不到准确的页码
+            SelectStatusLabel.Text = $"{_artworkCount}个稿件"
+            Text = $"{ImageGalleryMain.TotalImageCount}个稿件 - {_libraryManager.GetCurrentLibrary.LibraryName} - Furry Art Studio"
+        End If
+        StatusLabel.Text = "就绪"
+    End Sub
+#End Region
+
+#End Region
+
+#Region "文件菜单项"
+    Private Sub MnuDevTools_Click(sender As Object, e As EventArgs) Handles MnuDevTools.Click
+        DevToolsForm.Show()
+    End Sub
+    Private Sub MnuProperties_Click(sender As Object, e As EventArgs) Handles MnuProperties.Click
+        StatusLabel.Text = "设置首选项"
+        PropertiesForm.ShowDialog()
+        StatusLabel.Text = "就绪"
+    End Sub
+    Private Sub MnuExit_Click(sender As Object, e As EventArgs) Handles MnuExit.Click
+        Me.Close()
+    End Sub
+#End Region
+
+#Region "稿件库菜单项"
+    ''' <summary>
+    ''' 刷新当前库菜单列表
+    ''' </summary>
+    Private Sub RefreshLibListMenu()
+        MnuLibList.DropDownItems.Clear()
+        Dim artworksPath As String = Path.Combine(Application.StartupPath, "Artworks")
+        If Not Directory.Exists(artworksPath) Then Directory.CreateDirectory(artworksPath) '检查 Artworks 文件夹是否存在
+        Dim libraryFolders = Directory.GetDirectories(Path.Combine(Application.StartupPath, "Artworks"))
+        If libraryFolders.Length = 0 Then
+            Dim artworkMenuItem As New ToolStripMenuItem() With {
+                .Text = "<无稿件库>",
+                .Enabled = False
+            }
+            MnuLibList.DropDownItems.Add(artworkMenuItem)
+            Exit Sub
+        End If
+        Dim menuCount As Integer = 0
+        For Each foldername In libraryFolders '将稿件库文件夹添加到'当前库'菜单中
+            menuCount += 1
+            Dim artworkMenuItem As New ToolStripMenuItem With {
+                .Tag = Path.GetFileName(foldername)
+            }
+            artworkMenuItem.Text = $"&{menuCount}. {artworkMenuItem.Tag}"
+            If menuCount < 9 Then
+                artworkMenuItem.ShortcutKeys = Keys.Alt + Keys.D0 + menuCount
+            End If
+            MnuLibList.DropDownItems.Add(artworkMenuItem)
+            AddHandler artworkMenuItem.Click, AddressOf OnArtworkMenuClick
+        Next
+    End Sub
+    ''' <summary>
+    ''' 处理新增的稿件库菜单项
+    ''' </summary>
+    Private Sub OnArtworkMenuClick(sender As Object, e As EventArgs)
+        Dim menuItem As ToolStripMenuItem = TryCast(sender, ToolStripMenuItem)
+        If menuItem IsNot Nothing Then
+            Dim foldername As String = TryCast(menuItem.Tag, String)
+            If Not String.IsNullOrEmpty(foldername) Then
+                _libraryManager.AddLibrary(foldername) '新增并切换到稿件库
+                _libraryManager.SwitchLibrary(foldername)
+                LoadArtworks() '重新载入稿件库
+            End If
+        End If
+    End Sub
+    Private Sub MnuLibNew_Click(sender As Object, e As EventArgs) Handles MnuLibNew.Click
+        Using inputForm As New InputDialogForm With {
+            .Text = "新建稿件库"
+        }
+            inputForm.InputTxtbox.Text = "新稿件库"
+            StatusLabel.Text = "正在创建稿件库..."
+            If inputForm.ShowDialog() = DialogResult.OK Then '显示对话框并获取结果
+                Dim newLib As String = inputForm.InputValue
+                _libraryManager.AddLibrary(newLib)
+                _libraryManager.SwitchLibrary(newLib)
+                RefreshLib() '刷新
+            Else
+            End If
+            StatusLabel.Text = "就绪"
+        End Using
+    End Sub
+    Private Sub MnuLibImport_Click(sender As Object, e As EventArgs) Handles MnuLibImport.Click
+        Dim pawFileDlg As New OpenFileDialog()
+    End Sub
+    Private Sub MnuLibExport_Click(sender As Object, e As EventArgs) Handles MnuLibExport.Click
+
+    End Sub
+    Private Sub MnuLibExportCSV_Click(sender As Object, e As EventArgs) Handles MnuLibExportCSV.Click
+        StatusLabel.Text = "正在导出为CSV..."
+        Using saveFileDialog As New SaveFileDialog() With {
+            .Filter = "CSV文件(*.csv)|*.csv|所有文件(*.*)|*.*",
+            .FileName = $"{_libraryManager.GetCurrentLibrary.LibraryName}.csv"
+            }
+            If saveFileDialog.ShowDialog() = DialogResult.OK Then
+                _libraryManager.GetCurrentLibrary.ExportTableToCSV(saveFileDialog.FileName)
+            End If
+        End Using
+        StatusLabel.Text = "就绪"
+    End Sub
+    Private Sub MnuLibRefresh_Click(sender As Object, e As EventArgs) Handles MnuLibRefresh.Click
+        RefreshLib()
+    End Sub
+    ''' <summary>
+    ''' 刷新菜单列表, 并重新载入数据
+    ''' </summary>
+    Private Sub RefreshLib()
+        RefreshLibListMenu()
+        If _libraryManager.GetCurrentLibrary IsNot Nothing Then LoadArtworks()
+        If SearchTextBox.Text <> "" Then SearchArtwork()
+    End Sub
+    Private Sub MnuLibClone_Click(sender As Object, e As EventArgs) Handles MnuLibClone.Click
+        Using inputForm As New InputDialogForm With {
+            .Text = "克隆稿件库"
+        }
+            inputForm.InputTxtbox.Text = _libraryManager.GetCurrentLibrary.LibraryName & "的副本"
+            StatusLabel.Text = "正在克隆稿件库..."
+            If inputForm.ShowDialog() = DialogResult.OK Then '显示对话框并获取结果
+                Dim newLib As String = inputForm.InputValue
+                Dim newPath As String = Path.Combine(Application.StartupPath, "Artworks", newLib)
+                Try
+                    FileIO.FileSystem.CopyDirectory(_libraryManager.GetCurrentLibrary.LibraryPath, newPath, FileIO.UIOption.AllDialogs)
+                Catch ex As OperationCanceledException
+                    Exit Sub '操作被取消, 忽略即可
+                End Try
+                _libraryManager.AddLibrary(newLib)
+                _libraryManager.SwitchLibrary(newLib)
+                RefreshLib() '刷新
+            Else
+            End If
+            StatusLabel.Text = "就绪"
+        End Using
+    End Sub
+    Private Sub MnuLibOpenFolder_Click(sender As Object, e As EventArgs) Handles MnuLibOpenFolder.Click
+        Shell($"explorer /select,{_libraryManager.GetCurrentLibrary.LibraryPath}", 1)
+    End Sub
+    Private Sub MnuLibCopy_Click(sender As Object, e As EventArgs) Handles MnuLibCopy.Click
+        CopyDirectoryToClipboard(_libraryManager.GetCurrentLibrary.LibraryPath)
+    End Sub
+    Private Sub MnuLibCopyPath_Click(sender As Object, e As EventArgs) Handles MnuLibCopyPath.Click
+        Clipboard.SetDataObject(_libraryManager.GetCurrentLibrary.LibraryPath)
+    End Sub
+    Private Sub MnuLibClose_Click(sender As Object, e As EventArgs) Handles MnuLibClose.Click
+        StatusLabel.Text = "正在关闭稿件库..."
+        _libraryManager.CloseLibrary(_libraryManager.GetCurrentLibrary.LibraryName)
+        MenuInit()
+    End Sub
+    Private Sub MnuLibRename_Click(sender As Object, e As EventArgs) Handles MnuLibRename.Click
+        Dim oldLib As String = _libraryManager.GetCurrentLibrary.LibraryName
+        Dim oldPath As String = Path.Combine(Application.StartupPath, "Artworks", oldLib)
+        Using inputForm As New InputDialogForm With {
+            .Text = "重命名稿件库"
+        }
+            inputForm.InputTxtbox.Text = _libraryManager.GetCurrentLibrary.LibraryName
+            StatusLabel.Text = "正在重命名稿件库..."
+            If inputForm.ShowDialog() = DialogResult.OK Then '显示对话框并获取结果
+                Try
+                    Dim newLib As String = inputForm.InputValue
+                    _libraryManager.CloseLibrary(_libraryManager.GetCurrentLibrary.LibraryName) '先释放数据库资源
+                    Dim newPath As String = Path.Combine(Application.StartupPath, "Artworks", newLib)
+                    Directory.Move(oldPath, newPath) '重命名
+                    _libraryManager.AddLibrary(newLib) '载入新稿件库
+                    _libraryManager.SwitchLibrary(newLib)
+                Catch ex As Exception
+                    MessageBox.Show($"创建失败: {ex.Message}")
+                End Try
+                RefreshLib() '更名后重新载入数据库
+            Else
+            End If
+            StatusLabel.Text = "就绪"
+        End Using
+    End Sub
+    Private Sub MnuLibDelete_Click(sender As Object, e As EventArgs) Handles MnuLibDelete.Click
+        Dim isShiftPressed As Boolean = My.Computer.Keyboard.ShiftKeyDown
+        Dim nowPath As String = _libraryManager.GetCurrentLibrary.LibraryPath
+        Dim nowLib As String = _libraryManager.GetCurrentLibrary.LibraryName
+        _libraryManager.CloseLibrary(nowLib) '先释放数据库资源, 再尝试删除文件
+        Try
+            StatusLabel.Text = "正在删除稿件库..."
+            If isShiftPressed Then
+                DelDirPermanently(nowPath)
+            Else
+                FileIO.FileSystem.DeleteDirectory(nowPath,
+                                                  FileIO.UIOption.AllDialogs,
+                                                  FileIO.RecycleOption.SendToRecycleBin)
+            End If
+            MenuInit()
+        Catch ex As OperationCanceledException '操作被取消, 回滚操作
+            _libraryManager.AddLibrary(nowLib)
+            _libraryManager.SwitchLibrary(nowLib)
+        End Try
+        StatusLabel.Text = "就绪"
+    End Sub
+    ''' <summary>
+    ''' 永久删除文件夹
+    ''' </summary>
+    ''' <param name="folderPath">文件夹目录</param>
+    Private Sub DelDirPermanently(folderPath As String)
+        MsgBox("这里是永久删除的源代码，还没写呢")
+    End Sub
+    Private Sub MnuLibProperties_Click(sender As Object, e As EventArgs) Handles MnuLibProperties.Click
+        '待开发
+    End Sub
+#End Region
+
+#Region "稿件菜单项"
+    Private Sub MnuMsNew_Click(sender As Object, e As EventArgs) Handles MnuMsNew.Click
+        StatusLabel.Text = "正在新建稿件..."
+        Dim initArtwork As New Artwork With {
+            .CreateTime = Now
+        }
+        Using editForm As New EditDialogForm(initArtwork, _libraryManager.GetCurrentLibrary.LibraryPath)
+            If editForm.ShowDialog() = DialogResult.OK Then
+                Dim newArtwork As Artwork = editForm.EditedArtwork '获得新建的稿件对象
+                _libraryManager.GetCurrentLibrary.AddArtwork(newArtwork)
+                RefreshLib()
+            End If
+        End Using
+        StatusLabel.Text = "就绪"
+    End Sub
+    Private Sub MnuMsImport_Click(sender As Object, e As EventArgs) Handles MnuMsImport.Click
+
+    End Sub
+    Private Sub MnuMsView_Click(sender As Object, e As EventArgs) Handles MnuMsView.Click
+
+    End Sub
+    Private Sub MnuMsEdit_Click(sender As Object, e As EventArgs) Handles MnuMsEdit.Click
+        StatusLabel.Text = "正在编辑稿件..."
+        Dim nowArtwork As Artwork = _libraryManager.GetCurrentLibrary.GetArtworkByUUID(Guid.Parse(ImageGalleryMain.SelectedImages(0).UUID))
+        Using editForm As New EditDialogForm(nowArtwork, _libraryManager.GetCurrentLibrary.LibraryPath)
+            If editForm.ShowDialog() = DialogResult.OK Then
+                Dim newArtwork As Artwork = editForm.EditedArtwork '获得新建的稿件对象
+                _libraryManager.GetCurrentLibrary.UpdateArtwork(newArtwork)
+                RefreshLib()
+            End If
+        End Using
+        StatusLabel.Text = "就绪"
+    End Sub
+    Private Sub MnuMsDelete_Click(sender As Object, e As EventArgs) Handles MnuMsDelete.Click
+        Dim isShiftPressed As Boolean = My.Computer.Keyboard.ShiftKeyDown
+        StatusLabel.Text = "正在删除稿件..."
+        Dim imgList As List(Of GalleryImage) = ImageGalleryMain.SelectedImages()
+        Dim uuidList As List(Of Guid) = imgList.Select(Function(c) Guid.Parse(c.UUID)).ToList()
+        Dim titleList As List(Of String) = imgList.Select(Function(c) c.Title).ToList()
+        Dim nowPath As String = _libraryManager.GetCurrentLibrary.LibraryPath
+        Try
+            If isShiftPressed Then
+                For Each uuid In uuidList
+                    DelDirPermanently(Path.Combine(nowPath, uuid.ToString)) '永久删除数据
+                    _libraryManager.GetCurrentLibrary.SoftDeleteArtwork(uuid) '标记为软删除
+                Next
+            Else
+                Dim result = MessageBox.Show($"确实要将这 {titleList.Count} 项放入回收站吗?" & vbCrLf & String.Join(vbCrLf, titleList.Take(5)) & If(titleList.Count > 5, vbCrLf & $"...等 {titleList.Count} 个项目", ""),
+                    "删除项目",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Question)
+                If result <> DialogResult.Yes Then
+                    StatusLabel.Text = "就绪"
+                    Return
+                End If
+                For Each uuid In uuidList
+                    FileIO.FileSystem.DeleteDirectory(Path.Combine(nowPath, uuid.ToString),
+                                                      FileIO.UIOption.OnlyErrorDialogs,
+                                                      FileIO.RecycleOption.SendToRecycleBin) '移动到回收站
+                    _libraryManager.GetCurrentLibrary.SoftDeleteArtwork(uuid) '标记为软删除
+                Next
+            End If
+            RefreshLib()
+        Catch ex As OperationCanceledException
+            '忽略
+        End Try
+        StatusLabel.Text = "就绪"
+    End Sub
+    Private Sub MnuMsExport_Click(sender As Object, e As EventArgs) Handles MnuMsExport.Click
+        '待开发
+    End Sub
+    Private Sub MnuMsPrint_Click(sender As Object, e As EventArgs) Handles MnuMsPrint.Click
+        StatusLabel.Text = "正在初始化打印..."
+        '获取选中的图片列表
+        Dim selectedImages As New List(Of String)()
+        Dim selectedItem As List(Of GalleryImage) = ImageGalleryMain.SelectedImages
+        '获取图片目录
+        Dim artworkDir = Path.Combine(_libraryManager.GetCurrentLibrary.LibraryPath, selectedItem(0).UUID)
+        '获取目录下所有图片文件
+        If Directory.Exists(artworkDir) Then
+            '支持的图片格式
+            Dim imageExtensions() As String = {".jpg", ".jpeg", ".png", ".bmp", ".gif", ".tiff", ".webp"}
+            Dim files = Directory.GetFiles(artworkDir, "*.*")
+            For Each file In files
+                '排除 .preview.jpg 缩略图文件
+                Dim fileName As String = Path.GetFileName(file)
+                If fileName.EndsWith(".preview.jpg", StringComparison.OrdinalIgnoreCase) Then
+                    Continue For
+                End If
+                If imageExtensions.Contains(Path.GetExtension(file).ToLower()) Then
+                    selectedImages.Add(file)
+                End If
+            Next
+        End If
+        '检查是否有图片
+        If selectedImages.Count = 0 Then
+            MessageBox.Show("没有找到可打印的图片文件", "Furry Art Studio", MessageBoxButtons.OK, MessageBoxIcon.Information)
+            Return
+        End If
+        Dim isShiftPressed As Boolean = My.Computer.Keyboard.ShiftKeyDown
+        Dim nowArtwork As Artwork = _libraryManager.GetCurrentLibrary.GetArtworkByUUID(Guid.Parse(selectedItem(0).UUID))
+        Dim docName As String = $"{nowArtwork.Title} - {nowArtwork.Author}"
+        If isShiftPressed Then
+            Dim pd As New PrintDocument With {
+                .DocumentName = docName,'标题 - 作者
+                .DefaultPageSettings = New PageSettings With {
+                .Landscape = True '默认横向
+            }
+        }
+            _currentPrintImages = selectedImages
+            AddHandler pd.PrintPage, AddressOf Pd_Printpage
+            AddHandler pd.EndPrint, AddressOf Pd_EndPrint
+            Dim printDialog As New PrintDialog With {
+                .Document = pd,
+                .AllowPrintToFile = True,
+                .AllowSomePages = False,
+                .AllowSelection = False,
+                .UseEXDialog = True,
+                .PrinterSettings = New PrinterSettings With {
+                .PrintFileName = docName
+            }
+        } '设置打印对话框
+            Dim pageSetupDialog As New PageSetupDialog With {
+                .Document = pd,
+                .EnableMetric = True
+            } '设置页面设置对话框
+            '先显示页面设置
+            If pageSetupDialog.ShowDialog() = DialogResult.OK Then
+                '再显示打印对话框
+                If printDialog.ShowDialog() = DialogResult.OK Then
+                    StatusLabel.Text = "正在打印..."
+                    '开始打印
+                    pd.Print()
+                End If
+            End If
+        Else
+            '使用新的自定义打印对话框
+            Using printForm As New PrintForm(selectedImages, nowArtwork)
+                If printForm.ShowDialog() = DialogResult.OK AndAlso printForm.PrintDocumentInstance IsNot Nothing Then
+                    Try
+                        '开始打印
+                        StatusLabel.Text = "正在打印..."
+                        printForm.PrintDocumentInstance.Print()
+                    Catch ex As Exception
+                        MessageBox.Show($"打印时出错: {ex.Message}",
+                                  "打印错误",
+                                  MessageBoxButtons.OK,
+                                  MessageBoxIcon.Error)
+                    End Try
+                ElseIf printForm.UserCancelled Then
+                End If
+            End Using
+        End If
+        StatusLabel.Text = "就绪"
+    End Sub
+    Private Sub Pd_Printpage(sender As Object, e As PrintPageEventArgs)
+        If _currentPrintImages Is Nothing OrElse _currentPrintIndex >= _currentPrintImages.Count Then
+            e.HasMorePages = False
+            Return
+        End If
+        Try
+            Dim currentImagePath = _currentPrintImages(_currentPrintIndex) '加载当前图片
+            Using img As Image = Image.FromFile(currentImagePath) '使用Using确保释放资源
+                Dim marginBounds = e.MarginBounds '获取页面边距区域
+                Dim destRect As Rectangle '保持图片比例
+                If img.Width / img.Height > marginBounds.Width / marginBounds.Height Then
+                    '图片比页面区域宽
+                    Dim height = CInt(img.Height * marginBounds.Width / img.Width)
+                    destRect = New Rectangle(marginBounds.X,
+                                         marginBounds.Y + (marginBounds.Height - height) \ 2,
+                                         marginBounds.Width,
+                                         height)
+                Else
+                    '图片比页面区域高
+                    Dim width = CInt(img.Width * marginBounds.Height / img.Height)
+                    destRect = New Rectangle(marginBounds.X + (marginBounds.Width - width) \ 2,
+                                         marginBounds.Y,
+                                         width,
+                                         marginBounds.Height)
+                End If
+                '绘制图片
+                e.Graphics.DrawImage(img, destRect)
+            End Using
+            '移动到下一张图片
+            _currentPrintIndex += 1
+            '检查是否还有更多页面
+            e.HasMorePages = (_currentPrintIndex < _currentPrintImages.Count)
+        Catch ex As Exception
+            '处理图片加载失败的情况
+            MessageBox.Show($"无法加载图片: {ex.Message}", "Furry Art Studio", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            '跳过这张图片，继续下一张
+            _currentPrintIndex += 1
+            e.HasMorePages = (_currentPrintIndex < _currentPrintImages.Count)
+        End Try
+    End Sub
+    Private Sub Pd_EndPrint(sender As Object, e As PrintEventArgs)
+        If _currentPrintImages IsNot Nothing Then '打印完成后清理资源
+            _currentPrintImages.Clear()
+            _currentPrintImages = Nothing
+        End If
+        _currentPrintIndex = 0
+    End Sub
+    ''' <summary>
+    ''' 获得已选择的稿件UUID目录
+    ''' </summary>
+    ''' <returns>一个包含已选择稿件UUID的列表</returns>
+    Private Function GetSelectedArtworkList() As List(Of String)
+        Dim artworkPaths As New List(Of String)()
+        For Each selectedItem As GalleryImage In ImageGalleryMain.SelectedImages
+            Dim artworkPath = Path.Combine(_libraryManager.GetCurrentLibrary.LibraryPath, selectedItem.UUID)
+            artworkPaths.Add(artworkPath)
+        Next
+        Return artworkPaths
+    End Function
+    Private Sub MnuMsOpenFolder_Click(sender As Object, e As EventArgs) Handles MnuMsOpenFolder.Click
+        Dim artworkPaths = GetSelectedArtworkList()
+        If artworkPaths.Count > 5 Then '当用户打开超过5个稿件时, 进行确认
+            Dim result = MessageBox.Show(
+                            $"您将同时打开{artworkPaths.Count}个文件夹, 确定要继续吗?",
+                            "Furry Art Studio", MessageBoxButtons.YesNo, MessageBoxIcon.Warning)
+            If result = DialogResult.No Then Exit Sub
+        End If
+        For Each artworkPath In artworkPaths
+            Shell($"explorer {artworkPath}", 1)
+        Next
+    End Sub
+    Private Sub MnuMsCopy_Click(sender As Object, e As EventArgs) Handles MnuMsCopy.Click
+        Dim artworkPaths = GetSelectedArtworkList() '获取所有选中的项目的目录路径
+        If My.Computer.Keyboard.ShiftKeyDown Then
+            Dim artworkObject As New DataObject()
+            Dim artworkInfo As New StringBuilder
+            artworkInfo.Append($"## 稿件信息:{vbCrLf}")
+            artworkInfo.Append($"当前时间: {Now:yyyy-MM-dd HH:mm:ss}{vbCrLf}")
+            artworkInfo.Append($"{SeparatorDash}{vbCrLf}")
+            Dim count As Integer = 0
+            For Each selectedItem As GalleryImage In ImageGalleryMain.SelectedImages
+                count += 1
+                Dim artwork As Artwork = _libraryManager.GetCurrentLibrary.GetArtworkByUUID(Guid.Parse(selectedItem.UUID))
+                If count > 1 Then artworkInfo.Append($"{SeparatorDash}{vbCrLf}") '当多个稿件时添加分割线
+                artworkInfo.Append($"### 标题: {artwork.Title} - {artwork.Author}{vbCrLf}")
+                artworkInfo.Append($" - 标识符: {artwork.UUID}{vbCrLf}")
+                artworkInfo.Append($" - 更新时间: {artwork.UpdateTime:yyyy-MM-dd HH:mm:ss}{vbCrLf}")
+                artworkInfo.Append($" - 入库时间: {artwork.ImportTime:yyyy-MM-dd HH:mm:ss}{vbCrLf}")
+                artworkInfo.Append($" - 创作时间: {artwork.CreateTime:yyyy-MM-dd HH:mm:ss}{vbCrLf}")
+                artworkInfo.Append($" - 标签: {FormatArrayWithEllipsis(artwork.Tags)}{vbCrLf}")
+                artworkInfo.Append($" - 角色: {FormatArrayWithEllipsis(artwork.Characters)}{vbCrLf}")
+            Next
+            artworkInfo.Append($"{SeparatorDash}{vbCrLf}")
+            artworkInfo.Append($"总计{count}个稿件{vbCrLf}")
+            artworkInfo.Append($"*由 Furry Art Studio 提供技术支持*")
+            artworkObject.SetData(DataFormats.Text, artworkInfo) '复制信息文本
+            CopyDirectoryToClipboard(artworkPaths.ToArray(), artworkObject) '同时复制稿件
+        Else
+            CopyDirectoryToClipboard(artworkPaths.ToArray())
+        End If
+    End Sub
+    Private Sub MnuMsCopyPath_Click(sender As Object, e As EventArgs) Handles MnuMsCopyPath.Click
+        Dim artworkPaths = GetSelectedArtworkList()
+        Dim sb As New StringBuilder()
+        For i As Integer = 0 To artworkPaths.Count - 1
+            sb.Append(artworkPaths(i))
+            If i < artworkPaths.Count - 1 Then
+                sb.AppendLine()
+            End If
+        Next
+        Clipboard.SetDataObject(sb.ToString())
+    End Sub
+#End Region
+
+#Region "视图菜单项"
+    Private Sub MnuViewPlay_Click(sender As Object, e As EventArgs) Handles MnuViewPlay.Click
+        '待开发
+    End Sub
+    Private Sub MnuAdvancedSearch_Click(sender As Object, e As EventArgs) Handles MnuAdvancedSearch.Click
+        '待开发
+    End Sub
+    Private Sub MnuSearch_Click(sender As Object, e As EventArgs) Handles MnuSearch.Click
+        SearchTextBox.Focus()
+    End Sub
+    Private Sub MnuSelectAll_Click(sender As Object, e As EventArgs) Handles MnuSelectAll.Click
+        ImageGalleryMain.SelectAll()
+    End Sub
+    Private Sub MnuSelectReverse_Click(sender As Object, e As EventArgs) Handles MnuSelectReverse.Click
+        ImageGalleryMain.SelectReverse()
+    End Sub
+    Private Sub MnuPageUp_Click(sender As Object, e As EventArgs) Handles MnuPageUp.Click
+        ImageGalleryMain.SetPage(ImageGalleryMain.Page - 1)
+        UpdatePageMenu()
+    End Sub
+    Private Sub MnuPageDown_Click(sender As Object, e As EventArgs) Handles MnuPageDown.Click
+        ImageGalleryMain.SetPage(ImageGalleryMain.Page + 1)
+        UpdatePageMenu()
+    End Sub
+    Private Sub UpdatePageMenu()
+        If ImageGalleryMain.Page = 1 Then
+            MnuPageUp.Enabled = False
+        Else
+            MnuPageUp.Enabled = True
+        End If
+        If ImageGalleryMain.Page = ImageGalleryMain.GetTotalPages Then
+            MnuPageDown.Enabled = False
+        Else
+            MnuPageDown.Enabled = True
+        End If
+    End Sub
+#End Region
+
+#Region "图片墙功能"
+    Private Sub ClearSelect()
+        MnuMsView.Enabled = False
+        MnuMsEdit.Enabled = False
+        MnuMsDelete.Enabled = False
+        MnuMsExport.Enabled = False
+        MnuMsPrint.Enabled = False
+        MnuMsOpenFolder.Enabled = False
+        MnuMsCopy.Enabled = False
+        MnuMsCopyPath.Enabled = False
+        SelectStatusLabel.Text = $"{_artworkCount}个稿件"
+        LblTitle.Text = "请选择一个项目"
+        LblAuthor.Text = ""
+        LblTags.Text = ""
+        LblCharacters.Text = ""
+        LblNotes.Text = ""
+        PicboxThumb.Image = Nothing
+    End Sub
+    Private Sub ImageGalleryMain_SelectionChanged(sender As Object, e As SelectionChangedEventArgs) Handles ImageGalleryMain.SelectionChanged
+        Dim selectedImages = e.SelectedImages
+        Dim selectedCount As Integer = selectedImages.Count
+        If selectedImages.Count = 0 Then
+            ClearSelect()
+        ElseIf selectedImages.Count = 1 Then
+            Dim selectedImage = selectedImages(0)
+            Dim selectedArtwork = _libraryManager.GetCurrentLibrary.GetArtworkByUUID(Guid.Parse(selectedImage.UUID))
+            MnuMsView.Enabled = True
+            MnuMsEdit.Enabled = True
+            MnuMsExport.Enabled = True
+            MnuMsPrint.Enabled = True
+            MnuMsOpenFolder.Enabled = True
+            MnuMsCopy.Enabled = True
+            MnuMsCopyPath.Enabled = True
+            MnuMsDelete.Enabled = True
+            SelectStatusLabel.Text = $"已选: 1/{_artworkCount}"
+            PicboxThumb.Image = selectedImage.Thumbnail
+            LblTitle.Text = $"{selectedArtwork.Title}"
+            LblAuthor.Text = $"{selectedArtwork.Author}"
+            LblCharacters.Text = $"角色: {FormatArrayWithEllipsis(selectedArtwork.Characters)}"
+            LblTags.Text = $"标签: {FormatArrayWithEllipsis(selectedArtwork.Tags)}"
+            LblNotes.Text = $"备注: {selectedArtwork.Notes}"
+        ElseIf selectedCount > 1 Then '选择多个时
+            MnuMsView.Enabled = False
+            MnuMsEdit.Enabled = False
+            MnuMsDelete.Enabled = True
+            MnuMsExport.Enabled = True
+            MnuMsPrint.Enabled = False
+            MnuMsOpenFolder.Enabled = True
+            MnuMsCopy.Enabled = True
+            MnuMsCopyPath.Enabled = True
+            SelectStatusLabel.Text = $"已选: {selectedCount}/{_artworkCount}"
+            LblTitle.Text = $"已选择{selectedCount}个项目"
+            LblAuthor.Text = ""
+            LblCharacters.Text = ""
+            LblTags.Text = ""
+            LblNotes.Text = ""
+            PicboxThumb.Image = Nothing
+        End If
+    End Sub
+    Private Sub ImageGalleryMain_PageChanged(page As Integer) Handles ImageGalleryMain.PageChanged
+        PageStatusLabel.Text = $"页码: {page}/{ImageGalleryMain.GetTotalPages}"
+        UpdatePageMenu()
+    End Sub
+
+#End Region
+
+#Region "关于菜单项"
+    Private Sub MnuHelpAbout_Click(sender As Object, e As EventArgs) Handles MnuHelpAbout.Click
+        AboutForm.ShowDialog()
+    End Sub
+
+
+
+
+
+
+
+
+#End Region
+
+
+    '添加一个缩略图编辑器，比较难
+    'Shift，方向键支持
+    '幻灯片放映/预览支持
+
+End Class

@@ -1,0 +1,271 @@
+﻿Imports System.Drawing.Printing
+Imports System.Runtime.InteropServices
+Public Class PrintForm
+    '打印设置变量
+    Private _printSettings As PrinterSettings
+    Private _pageSettings As PageSettings
+    Private _selectedImages As List(Of String)
+    Private _printCount As Integer = 1
+    Private _currentPrintIndex As Integer = 0
+    Private _copiesPrinted As Integer = 0
+    Private _artwork As Artwork
+    '用于外部调用的属性
+    Public Property PrintDocumentInstance As PrintDocument
+    Public Property UserCancelled As Boolean = False
+    '构造函数
+    Public Sub New(images As List(Of String), artwork As Artwork)
+        InitializeComponent()
+        _selectedImages = images
+        _artwork = artwork
+        _printSettings = New PrinterSettings()
+        _pageSettings = New PageSettings(_printSettings)
+        InitializeForm()
+    End Sub
+    '初始化窗体
+    Private Sub InitializeForm()
+        '加载打印机和纸张
+        LoadPrinters()
+        '设置默认值
+        txtPrintCount.Text = "1"
+        txtTop.Text = "25"
+        txtBottom.Text = "25"
+        txtLeft.Text = "25"
+        txtRight.Text = "25"
+        rbHorizonal.Checked = True
+        '绑定事件
+        AddHandler btnPrint.Click, AddressOf btnPrint_Click
+        AddHandler btnCancel.Click, AddressOf btnCancel_Click
+    End Sub
+
+#Region "打印机与纸张设置"
+    Private Sub LoadPrinters() '设置打印机
+        cbPrinter.Items.Clear()
+        For Each printerName As String In PrinterSettings.InstalledPrinters
+            cbPrinter.Items.Add(printerName)
+        Next
+        Dim settings As New PrinterSettings()
+        cbPrinter.SelectedItem = settings.PrinterName '设置默认打印机
+    End Sub
+    Private Sub LoadPaperSizes(printerName As String) '设置纸张
+        cbPaper.Items.Clear()
+        Dim settings As New PrinterSettings() With {
+            .PrinterName = printerName
+        }
+        Dim pd As New PrintDocument With {
+            .PrinterSettings = settings
+        }
+        For Each paperSize As PaperSize In pd.DefaultPageSettings.PrinterSettings.PaperSizes
+            cbPaper.Items.Add(paperSize.PaperName)
+        Next
+        cbPaper.SelectedIndex = 0
+    End Sub
+    Private Sub CbPrinter_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cbPrinter.SelectedIndexChanged
+        LoadPaperSizes(cbPrinter.Text)
+    End Sub
+#End Region
+
+#Region "限制文本框输入"
+    Private Function ValidateInputs() As Boolean
+        '验证打印份数
+        If Not Integer.TryParse(txtPrintCount.Text, _printCount) OrElse _printCount < 1 Then
+            MessageBox.Show("打印份数必须大于0", "输入错误", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            txtPrintCount.Focus()
+            txtPrintCount.SelectAll()
+            Return False
+        End If
+        '验证边距输入
+        Dim margins As New List(Of TextBox) From {txtTop, txtBottom, txtLeft, txtRight}
+        For Each txtBox In margins
+            If Not Integer.TryParse(txtBox.Text, Nothing) Then
+                MessageBox.Show("边距必须是数字", "输入错误", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                txtBox.Focus()
+                txtBox.SelectAll()
+                Return False
+            End If
+        Next
+        '检查打印机选择
+        If String.IsNullOrWhiteSpace(cbPrinter.Text) Then
+            MessageBox.Show("请选择打印机", "打印机错误", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            Return False
+        End If
+        Return True
+    End Function
+    Private Sub TxtTop_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtTop.KeyPress
+        If Char.IsDigit(e.KeyChar) Or e.KeyChar = Chr(8) Then '检测0-9，退格键
+            e.Handled = False '处理
+        Else
+            e.Handled = True '程序认为已经处理过了，于是不会处理
+        End If '进行检测处理，禁止输入0-9以及退格键以外的东西
+    End Sub
+    Private Sub TxtBottom_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtBottom.KeyPress
+        If Char.IsDigit(e.KeyChar) Or e.KeyChar = Chr(8) Then '检测0-9，退格键
+            e.Handled = False '处理
+        Else
+            e.Handled = True '程序认为已经处理过了，于是不会处理
+        End If '进行检测处理，禁止输入0-9以及退格键以外的东西
+    End Sub
+    Private Sub TxtLeft_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtLeft.KeyPress
+        If Char.IsDigit(e.KeyChar) Or e.KeyChar = Chr(8) Then '检测0-9，退格键
+            e.Handled = False '处理
+        Else
+            e.Handled = True '程序认为已经处理过了，于是不会处理
+        End If '进行检测处理，禁止输入0-9以及退格键以外的东西
+    End Sub
+    Private Sub TxtRight_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtRight.KeyPress
+        If Char.IsDigit(e.KeyChar) Or e.KeyChar = Chr(8) Then '检测0-9，退格键
+            e.Handled = False '处理
+        Else
+            e.Handled = True '程序认为已经处理过了，于是不会处理
+        End If '进行检测处理，禁止输入0-9以及退格键以外的东西
+    End Sub
+    Private Sub TxtPrintCount_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtPrintCount.KeyPress
+        If Char.IsDigit(e.KeyChar) Or e.KeyChar = Chr(8) Then '检测0-9，退格键
+            e.Handled = False '处理
+        Else
+            e.Handled = True '程序认为已经处理过了，于是不会处理
+        End If '进行检测处理，禁止输入0-9以及退格键以外的东西
+    End Sub
+#End Region
+
+#Region "窗体相关"
+    Private Sub PrintForm_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        LoadPrinters()
+        LoadPaperSizes(cbPrinter.Text)
+        SystemThemeChange()
+        Dim MnuHandle = GetSystemMenu(Handle, False) '获取菜单句柄
+        RemoveMenu(MnuHandle, SC_RESTORE, MF_BYCOMMAND) '去除还原菜单
+        RemoveMenu(MnuHandle, SC_MAXIMIZE, MF_BYCOMMAND) '去除最大化菜单
+        RemoveMenu(MnuHandle, SC_SIZE, MF_BYCOMMAND) '去除大小菜单
+        RemoveMenu(MnuHandle, SC_MINIMIZE, MF_BYCOMMAND) '去除最小化菜单
+    End Sub
+    Private Sub SystemThemeChange()
+        Dim Darkmode As Boolean
+        Dim dKey = Microsoft.Win32.Registry.CurrentUser.OpenSubKey("SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize", True).GetValue("AppsUseLightTheme", "0") '判断是否为深色主题
+        If dKey = 0 Then '如果是深色模式
+            BackColor = Color.FromArgb(32, 33, 36)
+            For Each Ctls In Me.Controls '获取控件集合
+                Ctls.ForeColor = Color.FromArgb(218, 220, 224)
+                Ctls.BackColor = Color.FromArgb(32, 33, 36)
+            Next
+            Darkmode = True
+        Else
+            BackColor = Color.FromArgb(255, 255, 255)
+            For Each Ctls In Me.Controls '获取控件集合
+                Ctls.ForeColor = Color.FromArgb(0, 0, 0)
+                Ctls.BackColor = Color.FromArgb(255, 255, 255)
+            Next
+            Darkmode = False
+        End If
+        DwmSetWindowAttribute(Handle, DwmWindowAttribute.UseImmersiveDarkMode, Darkmode, Marshal.SizeOf(Of Integer))
+        SetPreferredAppMode(PreferredAppMode.AllowDark)
+        FlushMenuThemes()
+    End Sub
+    Private Sub BtnPrinterSetup_Click(sender As Object, e As EventArgs) Handles btnPrinterSetup.Click
+        Dim isShiftPressed As Boolean = My.Computer.Keyboard.ShiftKeyDown
+        If isShiftPressed Then
+            Process.Start("control", "printers")
+        Else
+            Process.Start("ms-settings:printers")
+        End If
+    End Sub
+    Private Sub BtnPrint_Click(sender As Object, e As EventArgs)
+        If Not ValidateInputs() Then Return '判断输入是否正确
+        Dim pd As New PrintDocument() '创建打印文档
+        PrintDocumentInstance = pd
+        '配置打印机设置
+        pd.PrinterSettings.PrinterName = cbPrinter.Text
+        pd.PrinterSettings.Copies = CShort(_printCount)
+        '配置页面设置
+        Dim pageSettings = pd.DefaultPageSettings
+        pageSettings.PrinterSettings = pd.PrinterSettings
+        '设置纸张大小
+        If cbPaper.SelectedItem IsNot Nothing Then
+            For Each paperSize As PaperSize In pageSettings.PrinterSettings.PaperSizes
+                If paperSize.PaperName = cbPaper.Text Then
+                    pageSettings.PaperSize = paperSize
+                    Exit For
+                End If
+            Next
+        End If
+        '设置方向
+        pageSettings.Landscape = rbHorizonal.Checked
+        '设置边距(转换为百分之一英寸)
+        pageSettings.Margins = New Margins(
+            CInt(txtLeft.Text),
+            CInt(txtRight.Text),
+            CInt(txtTop.Text),
+            CInt(txtBottom.Text)
+        )
+        '设置文档名称
+        pd.DocumentName = $"{_artwork.Title} - {_artwork.Author}"
+        '添加打印事件处理
+        AddHandler pd.BeginPrint, AddressOf Pd_BeginPrint
+        AddHandler pd.PrintPage, AddressOf Pd_PrintPage
+        AddHandler pd.EndPrint, AddressOf Pd_EndPrint
+        '设置对话框结果并关闭
+        Me.DialogResult = DialogResult.OK
+        Me.Close()
+    End Sub
+    Private Sub BtnCancel_Click(sender As Object, e As EventArgs)
+        UserCancelled = True
+        Me.DialogResult = DialogResult.Cancel
+        Me.Close()
+    End Sub
+#End Region
+
+#Region "打印事件处理"
+    Private Sub Pd_BeginPrint(sender As Object, e As PrintEventArgs)
+        _currentPrintIndex = 0
+        _copiesPrinted = 0
+    End Sub
+    Private Sub Pd_PrintPage(sender As Object, e As PrintPageEventArgs)
+        If _selectedImages Is Nothing OrElse _currentPrintIndex >= _selectedImages.Count Then
+            e.HasMorePages = False
+            Return
+        End If
+        Try
+            Dim currentImagePath = _selectedImages(_currentPrintIndex)
+            Using img As Image = Image.FromFile(currentImagePath)
+                '获取可打印区域
+                Dim marginBounds = e.MarginBounds
+                '计算保持比例的矩形
+                Dim destRect As Rectangle
+                If img.Width / img.Height > marginBounds.Width / marginBounds.Height Then
+                    '图片比页面区域宽
+                    Dim height = CInt(img.Height * marginBounds.Width / img.Width)
+                    destRect = New Rectangle(
+                        marginBounds.X,
+                        marginBounds.Y + (marginBounds.Height - height) \ 2,
+                        marginBounds.Width,
+                        height
+                    )
+                Else
+                    '图片比页面区域高
+                    Dim width = CInt(img.Width * marginBounds.Height / img.Height)
+                    destRect = New Rectangle(
+                        marginBounds.X + (marginBounds.Width - width) \ 2,
+                        marginBounds.Y,
+                        width,
+                        marginBounds.Height
+                    )
+                End If
+                '绘制图片
+                e.Graphics.DrawImage(img, destRect)
+            End Using
+            _currentPrintIndex += 1 '移动到下一张图片
+            e.HasMorePages = (_currentPrintIndex < _selectedImages.Count) '检查是否还有更多页面
+
+        Catch ex As Exception
+            '处理图片加载失败的情况
+            _currentPrintIndex += 1 '跳过这张图片
+            e.HasMorePages = (_currentPrintIndex < _selectedImages.Count)
+        End Try
+    End Sub
+    Private Sub Pd_EndPrint(sender As Object, e As PrintEventArgs)
+        '清理资源
+        If e.PrintAction = PrintAction.PrintToPrinter Then
+        End If
+    End Sub
+#End Region
+
+End Class
