@@ -80,8 +80,16 @@ Public Module WinAPI
     <DllImport("user32.dll")>
     Public Function SetMenuItemInfo(hMenu As IntPtr, un As Integer, fByPosition As Boolean, <MarshalAs(UnmanagedType.Struct, SizeConst:=80)> ByRef lpmii As MENUITEMINFO) As Boolean
     End Function
+    'GetMenuItemInfo 函数 - 获取菜单项信息
+    <DllImport("user32.dll", CharSet:=CharSet.Auto)>
+    Public Function GetMenuItemInfo(hMenu As IntPtr, uItem As Integer, fByPosition As Boolean, ByRef lpmii As MENUITEMINFO) As Boolean
+    End Function
+    'DeleteObject 函数 - 释放资源
+    <DllImport("gdi32.dll")>
+    Public Function DeleteObject(hObject As IntPtr) As Boolean
+    End Function
     'MENUITEMINFO 结构体
-    <StructLayout(LayoutKind.Sequential, CharSet:=CharSet.Auto)>
+    <StructLayout(LayoutKind.Sequential)>
     Public Structure MENUITEMINFO
         Public cbSize As Integer
         Public fMask As Integer
@@ -92,9 +100,9 @@ Public Module WinAPI
         Public hbmpChecked As IntPtr
         Public hbmpUnchecked As IntPtr
         Public dwItemData As IntPtr
-        Public dwTypeData As IntPtr
+        Public dwTypeData As String
         Public cch As Integer
-        Public hbmpItem As IntPtr   ' 用于设置图标的句柄
+        Public hbmpItem As IntPtr
     End Structure
     Public Const MIIM_BITMAP As Integer = &H80
     Public Const MIIM_TYPE As Integer = &H10

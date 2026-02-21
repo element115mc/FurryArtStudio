@@ -1,4 +1,5 @@
-﻿Imports System.Drawing.Imaging
+﻿Imports System.Drawing.Drawing2D
+Imports System.Drawing.Imaging
 Imports System.Drawing.Printing
 Imports System.IO
 Imports System.Runtime.InteropServices
@@ -141,34 +142,34 @@ Public Class MainForm
     ''' 系统主题发生变化时调用以更新
     ''' </summary>
     Private Sub SystemThemeChange()
-        Dim regKey = Microsoft.Win32.Registry.CurrentUser.OpenSubKey("SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize", True)
-        Dim dKey = regKey.GetValue("AppsUseLightTheme", "0") '判断是否为深色主题
-        Dim isDarkMode As Boolean = (dKey = 0)
-        '颜色常量
-        Dim bgColor As Color = Color.FromArgb(32, 33, 36)
-        Dim frColor As Color = Color.FromArgb(218, 220, 224)
-        '获取控件集合
-        Dim controlList As List(Of Control) = GetAllControls(Me)
-        '判断颜色
-        If isDarkMode Then
-            ImageGalleryMain.DisplayMode = GalleryDisplayMode.Dark '设置图片墙主题
-            KryptonMgrMain.GlobalPaletteMode = PaletteMode.MaterialDark '设置菜单栏主题
-            InitializeMenuImages(True) '设置菜单图标主题
-        Else
-            bgColor = Color.FromArgb(255, 255, 255)
-            frColor = Color.FromArgb(0, 0, 0)
-            ImageGalleryMain.DisplayMode = GalleryDisplayMode.Normal
-            KryptonMgrMain.GlobalPaletteMode = PaletteMode.MaterialLight
-            InitializeMenuImages()
-        End If
-        For Each control In controlList
-            control.ForeColor = frColor
-            control.BackColor = bgColor
-        Next
-        'WinAPI
-        DwmSetWindowAttribute(Handle, DwmWindowAttribute.UseImmersiveDarkMode, isDarkMode, Marshal.SizeOf(Of Integer))
-        SetPreferredAppMode(PreferredAppMode.AllowDark)
-        FlushMenuThemes()
+        Using regKey = Microsoft.Win32.Registry.CurrentUser.OpenSubKey("SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize", True)
+            Dim isDarkMode As Boolean = (regKey.GetValue("AppsUseLightTheme", "1") = 0) '判断是否为深色主题
+            '颜色常量
+            Dim bgColor As Color = Color.FromArgb(32, 33, 36)
+            Dim frColor As Color = Color.FromArgb(218, 220, 224)
+            '获取控件集合
+            Dim controlList As List(Of Control) = GetAllControls(Me)
+            '判断颜色
+            If isDarkMode Then
+                ImageGalleryMain.DisplayMode = GalleryDisplayMode.Dark '设置图片墙主题
+                KryptonMgrMain.GlobalPaletteMode = PaletteMode.MaterialDark '设置菜单栏主题
+                InitializeMenuImages(True) '设置菜单图标主题
+            Else
+                bgColor = Color.FromArgb(255, 255, 255)
+                frColor = Color.FromArgb(0, 0, 0)
+                ImageGalleryMain.DisplayMode = GalleryDisplayMode.Normal
+                KryptonMgrMain.GlobalPaletteMode = PaletteMode.MaterialLight
+                InitializeMenuImages()
+            End If
+            For Each control In controlList
+                control.ForeColor = frColor
+                control.BackColor = bgColor
+            Next
+            'WinAPI
+            DwmSetWindowAttribute(Handle, DwmWindowAttribute.UseImmersiveDarkMode, isDarkMode, Marshal.SizeOf(Of Integer))
+            SetPreferredAppMode(PreferredAppMode.AllowDark)
+            FlushMenuThemes()
+        End Using
     End Sub
     ''' <summary>
     ''' 初始化菜单图标
@@ -179,8 +180,8 @@ Public Class MainForm
     {
         (MnuOnTop, "MenuPin"),
         (MnuDevTools, "MenuDevTools"),
-        (MnuProperties, "MenuProperties"),
-        (MnuExit, "MenuEdit"),
+        (MnuProperties, "MenuSettings"),
+        (MnuExit, "MenuClose"),
         (MnuLibList, "MenuFolders"),
         (MnuLibRefresh, "MenuRefresh"),
         (MnuLibNew, "MenuFolderNew"),
@@ -213,9 +214,18 @@ Public Class MainForm
     }
         For Each setting In menuIcons
             Dim resourceName = setting.BaseName & If(isDarkMode, "Dark", "Light")
-            setting.MenuItem.Image = DirectCast(
-            My.Resources.Icons.ResourceManager.GetObject(resourceName),
-            Image)
+            Using img As Image = DirectCast(My.Resources.Icons.ResourceManager.GetObject(resourceName), Image)
+                Dim size As Integer = 32 '图标尺寸
+                Dim thumb As New Bitmap(size, size)
+                Using g = Graphics.FromImage(thumb)
+                    g.InterpolationMode = InterpolationMode.HighQualityBicubic
+                    g.SmoothingMode = SmoothingMode.HighQuality
+                    g.PixelOffsetMode = PixelOffsetMode.HighQuality
+                    g.CompositingQuality = CompositingQuality.HighQuality
+                    g.DrawImage(img, 0, 0, size, size)
+                End Using
+                setting.MenuItem.Image = thumb '使用高质量缩略图
+            End Using
         Next
         Dim menuHandle = GetSystemMenu(Handle, False) '设置窗体菜单
         If isDarkMode Then
@@ -293,6 +303,7 @@ Public Class MainForm
         EnableMenuItem(menuHandle, 2, MF_GRAYED)
         EnableMenuItem(menuHandle, 4, MF_GRAYED)
         EnableMenuItem(menuHandle, 6, MF_GRAYED)
+        GC.Collect()
     End Sub
 
     ''' <summary>
@@ -322,37 +333,44 @@ Public Class MainForm
     ''' <param name="icon">原始图标资源</param>
     ''' <param name="isDarkMode">是否为深色模式</param>
     Public Sub ApplyMenuIcon(hMenu As IntPtr, wParam As Integer, icon As Bitmap, Optional isDarkMode As Boolean = False)
-        Dim size As Integer = 18 '图标尺寸
-        Dim resizedBmp As New Bitmap(size, size, PixelFormat.Format24bppRgb)
-        Using g As Graphics = Graphics.FromImage(resizedBmp)
-            '设置高质量缩放参数
-            g.InterpolationMode = Drawing2D.InterpolationMode.HighQualityBicubic
-            g.SmoothingMode = Drawing2D.SmoothingMode.HighQuality
-            g.PixelOffsetMode = Drawing2D.PixelOffsetMode.HighQuality
-            g.CompositingQuality = Drawing2D.CompositingQuality.HighQuality
-            '清空背景, 并按照主题填充
-            If isDarkMode Then
-                g.Clear(Color.FromArgb(43, 43, 43))
-            Else
-                g.Clear(SystemColors.Menu)
+        '释放旧的位图句柄
+        Dim mii As New MENUITEMINFO With {
+            .cbSize = Marshal.SizeOf(Of MENUITEMINFO)(),
+            .fMask = MIIM_BITMAP
+        }
+        If GetMenuItemInfo(hMenu, wParam, False, mii) Then
+            If mii.hbmpItem <> IntPtr.Zero Then
+                DeleteObject(mii.hbmpItem)
             End If
-            '计算保持宽高比的绘制区域
-            Dim srcWidth As Integer = icon.Width
-            Dim srcHeight As Integer = icon.Height
-            '计算缩放比例
-            Dim ratio As Double = Math.Min(CDbl(size) / srcWidth, CDbl(size) / srcHeight)
-            Dim newWidth As Integer = CInt(srcWidth * ratio)
-            Dim newHeight As Integer = CInt(srcHeight * ratio)
-            '居中绘制
-            Dim x As Integer = (size - newWidth) \ 2
-            Dim y As Integer = (size - newHeight) \ 2
-            '绘制缩放后的图像
-            Dim destRect As New Rectangle(x, y, newWidth, newHeight)
-            g.DrawImage(icon, destRect, 0, 0, srcWidth, srcHeight, GraphicsUnit.Pixel)
+        End If
+        '创建新位图并设置
+        Dim size As Integer = 18 '图标尺寸
+        Using resizedBmp As New Bitmap(size, size, PixelFormat.Format24bppRgb)
+            Using g As Graphics = Graphics.FromImage(resizedBmp) '设置高质量缩放参数
+                g.InterpolationMode = InterpolationMode.HighQualityBicubic
+                g.SmoothingMode = SmoothingMode.HighQuality
+                g.PixelOffsetMode = PixelOffsetMode.HighQuality
+                g.CompositingQuality = CompositingQuality.HighQuality
+                '清空背景, 并按照主题填充
+                If isDarkMode Then
+                    g.Clear(Color.FromArgb(43, 43, 43))
+                Else
+                    g.Clear(SystemColors.Menu)
+                End If
+                '计算保持宽高比的绘制区域
+                Dim srcWidth As Integer = icon.Width
+                Dim srcHeight As Integer = icon.Height
+                '计算缩放比例
+                Dim ratio As Double = Math.Min(size / srcWidth, size / srcHeight)
+                Dim newWidth As Integer = CInt(srcWidth * ratio)
+                Dim newHeight As Integer = CInt(srcHeight * ratio)
+                Dim x As Integer = (size - newWidth) \ 2
+                Dim y As Integer = (size - newHeight) \ 2
+                g.DrawImage(icon, New Rectangle(x, y, newWidth, newHeight), 0, 0, srcWidth, srcHeight, GraphicsUnit.Pixel)
+            End Using '绘制缩放后的图像
+            Dim hBitmap = resizedBmp.GetHbitmap()
+            SetMenuItemBitmaps(hMenu, wParam, MF_BYCOMMAND, hBitmap, Nothing)
         End Using
-        SetMenuItemBitmaps(hMenu, wParam, MF_BYCOMMAND, resizedBmp.GetHbitmap, Nothing)
-        '释放对象
-        resizedBmp.Dispose()
     End Sub
 
     ''' <summary>
