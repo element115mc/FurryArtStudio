@@ -23,8 +23,10 @@ Partial Class MainForm
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
         Me.components = New System.ComponentModel.Container()
+        Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(MainForm))
         Me.MnuStrip = New System.Windows.Forms.MenuStrip()
         Me.MnuFile = New System.Windows.Forms.ToolStripMenuItem()
+        Me.MnuOnTop = New System.Windows.Forms.ToolStripMenuItem()
         Me.MnuDevTools = New System.Windows.Forms.ToolStripMenuItem()
         Me.MnuProperties = New System.Windows.Forms.ToolStripMenuItem()
         Me.ToolStripSeparator1 = New System.Windows.Forms.ToolStripSeparator()
@@ -54,9 +56,9 @@ Partial Class MainForm
         Me.ToolStripSeparator3 = New System.Windows.Forms.ToolStripSeparator()
         Me.MnuMsView = New System.Windows.Forms.ToolStripMenuItem()
         Me.MnuMsEdit = New System.Windows.Forms.ToolStripMenuItem()
-        Me.MnuMsDelete = New System.Windows.Forms.ToolStripMenuItem()
         Me.MnuMsExport = New System.Windows.Forms.ToolStripMenuItem()
         Me.MnuMsPrint = New System.Windows.Forms.ToolStripMenuItem()
+        Me.MnuMsDelete = New System.Windows.Forms.ToolStripMenuItem()
         Me.ToolStripSeparator4 = New System.Windows.Forms.ToolStripSeparator()
         Me.MnuMsOpenFolder = New System.Windows.Forms.ToolStripMenuItem()
         Me.MnuMsCopy = New System.Windows.Forms.ToolStripMenuItem()
@@ -84,6 +86,7 @@ Partial Class MainForm
         Me.MnuHelpAbout = New System.Windows.Forms.ToolStripMenuItem()
         Me.SearchTextBox = New System.Windows.Forms.TextBox()
         Me.ArtworkListSplitContainer = New System.Windows.Forms.SplitContainer()
+        Me.ImageGalleryMain = New FurryArtStudio.ImageGallery()
         Me.BtnPrev = New System.Windows.Forms.Button()
         Me.BtnNext = New System.Windows.Forms.Button()
         Me.LblNotes = New System.Windows.Forms.Label()
@@ -108,7 +111,6 @@ Partial Class MainForm
         Me.StorageStatusLabel = New System.Windows.Forms.ToolStripStatusLabel()
         Me.TSSep5 = New System.Windows.Forms.ToolStripStatusLabel()
         Me.KryptonMgrMain = New Krypton.Toolkit.KryptonManager(Me.components)
-        Me.ImageGalleryMain = New FurryArtStudio.ImageGallery()
         Me.MnuStrip.SuspendLayout()
         CType(Me.ArtworkListSplitContainer, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.ArtworkListSplitContainer.Panel1.SuspendLayout()
@@ -131,13 +133,21 @@ Partial Class MainForm
         '
         'MnuFile
         '
-        Me.MnuFile.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.MnuDevTools, Me.MnuProperties, Me.ToolStripSeparator1, Me.MnuExit})
+        Me.MnuFile.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.MnuOnTop, Me.MnuDevTools, Me.MnuProperties, Me.ToolStripSeparator1, Me.MnuExit})
         Me.MnuFile.Name = "MnuFile"
         Me.MnuFile.Size = New System.Drawing.Size(71, 24)
         Me.MnuFile.Text = "文件(&F)"
         '
+        'MnuOnTop
+        '
+        Me.MnuOnTop.Image = CType(resources.GetObject("MnuOnTop.Image"), System.Drawing.Image)
+        Me.MnuOnTop.Name = "MnuOnTop"
+        Me.MnuOnTop.Size = New System.Drawing.Size(235, 26)
+        Me.MnuOnTop.Text = "窗口置顶(&T)"
+        '
         'MnuDevTools
         '
+        Me.MnuDevTools.Image = CType(resources.GetObject("MnuDevTools.Image"), System.Drawing.Image)
         Me.MnuDevTools.Name = "MnuDevTools"
         Me.MnuDevTools.ShortcutKeys = System.Windows.Forms.Keys.F12
         Me.MnuDevTools.Size = New System.Drawing.Size(235, 26)
@@ -146,6 +156,7 @@ Partial Class MainForm
         '
         'MnuProperties
         '
+        Me.MnuProperties.Image = CType(resources.GetObject("MnuProperties.Image"), System.Drawing.Image)
         Me.MnuProperties.Name = "MnuProperties"
         Me.MnuProperties.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.K), System.Windows.Forms.Keys)
         Me.MnuProperties.Size = New System.Drawing.Size(235, 26)
@@ -158,6 +169,7 @@ Partial Class MainForm
         '
         'MnuExit
         '
+        Me.MnuExit.Image = CType(resources.GetObject("MnuExit.Image"), System.Drawing.Image)
         Me.MnuExit.Name = "MnuExit"
         Me.MnuExit.ShortcutKeys = CType((System.Windows.Forms.Keys.Alt Or System.Windows.Forms.Keys.F4), System.Windows.Forms.Keys)
         Me.MnuExit.Size = New System.Drawing.Size(235, 26)
@@ -172,12 +184,14 @@ Partial Class MainForm
         '
         'MnuLibList
         '
+        Me.MnuLibList.Image = CType(resources.GetObject("MnuLibList.Image"), System.Drawing.Image)
         Me.MnuLibList.Name = "MnuLibList"
         Me.MnuLibList.Size = New System.Drawing.Size(258, 26)
         Me.MnuLibList.Text = "当前库(&U)"
         '
         'MnuLibRefresh
         '
+        Me.MnuLibRefresh.Image = CType(resources.GetObject("MnuLibRefresh.Image"), System.Drawing.Image)
         Me.MnuLibRefresh.Name = "MnuLibRefresh"
         Me.MnuLibRefresh.ShortcutKeys = System.Windows.Forms.Keys.F5
         Me.MnuLibRefresh.Size = New System.Drawing.Size(258, 26)
@@ -190,6 +204,7 @@ Partial Class MainForm
         '
         'MnuLibNew
         '
+        Me.MnuLibNew.Image = CType(resources.GetObject("MnuLibNew.Image"), System.Drawing.Image)
         Me.MnuLibNew.Name = "MnuLibNew"
         Me.MnuLibNew.ShortcutKeys = CType(((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.Shift) _
             Or System.Windows.Forms.Keys.N), System.Windows.Forms.Keys)
@@ -198,6 +213,7 @@ Partial Class MainForm
         '
         'MnuLibImport
         '
+        Me.MnuLibImport.Image = CType(resources.GetObject("MnuLibImport.Image"), System.Drawing.Image)
         Me.MnuLibImport.Name = "MnuLibImport"
         Me.MnuLibImport.ShortcutKeys = CType(((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.Shift) _
             Or System.Windows.Forms.Keys.O), System.Windows.Forms.Keys)
@@ -206,14 +222,16 @@ Partial Class MainForm
         '
         'MnuLibExport
         '
+        Me.MnuLibExport.Image = CType(resources.GetObject("MnuLibExport.Image"), System.Drawing.Image)
         Me.MnuLibExport.Name = "MnuLibExport"
         Me.MnuLibExport.ShortcutKeys = CType(((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.Shift) _
             Or System.Windows.Forms.Keys.E), System.Windows.Forms.Keys)
         Me.MnuLibExport.Size = New System.Drawing.Size(258, 26)
-        Me.MnuLibExport.Text = "导出(&E)"
+        Me.MnuLibExport.Text = "导出(&E)..."
         '
         'MnuLibExportCSV
         '
+        Me.MnuLibExportCSV.Image = CType(resources.GetObject("MnuLibExportCSV.Image"), System.Drawing.Image)
         Me.MnuLibExportCSV.Name = "MnuLibExportCSV"
         Me.MnuLibExportCSV.Size = New System.Drawing.Size(258, 26)
         Me.MnuLibExportCSV.Text = "导出为 CSV 文件(&V)..."
@@ -225,18 +243,21 @@ Partial Class MainForm
         '
         'MnuLibClone
         '
+        Me.MnuLibClone.Image = CType(resources.GetObject("MnuLibClone.Image"), System.Drawing.Image)
         Me.MnuLibClone.Name = "MnuLibClone"
         Me.MnuLibClone.Size = New System.Drawing.Size(258, 26)
-        Me.MnuLibClone.Text = "克隆当前库(&L)..."
+        Me.MnuLibClone.Text = "克隆(&L)..."
         '
         'MnuLibOpenFolder
         '
+        Me.MnuLibOpenFolder.Image = CType(resources.GetObject("MnuLibOpenFolder.Image"), System.Drawing.Image)
         Me.MnuLibOpenFolder.Name = "MnuLibOpenFolder"
         Me.MnuLibOpenFolder.Size = New System.Drawing.Size(258, 26)
         Me.MnuLibOpenFolder.Text = "打开目录(&O)"
         '
         'MnuLibCopy
         '
+        Me.MnuLibCopy.Image = CType(resources.GetObject("MnuLibCopy.Image"), System.Drawing.Image)
         Me.MnuLibCopy.Name = "MnuLibCopy"
         Me.MnuLibCopy.Size = New System.Drawing.Size(258, 26)
         Me.MnuLibCopy.Text = "复制文件夹(&C)"
@@ -254,20 +275,23 @@ Partial Class MainForm
         '
         'MnuLibClose
         '
+        Me.MnuLibClose.Image = CType(resources.GetObject("MnuLibClose.Image"), System.Drawing.Image)
         Me.MnuLibClose.Name = "MnuLibClose"
         Me.MnuLibClose.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.W), System.Windows.Forms.Keys)
         Me.MnuLibClose.Size = New System.Drawing.Size(258, 26)
-        Me.MnuLibClose.Text = "关闭当前库(&X)"
+        Me.MnuLibClose.Text = "关闭(&X)"
         '
         'MnuLibRename
         '
+        Me.MnuLibRename.Image = CType(resources.GetObject("MnuLibRename.Image"), System.Drawing.Image)
         Me.MnuLibRename.Name = "MnuLibRename"
         Me.MnuLibRename.ShortcutKeys = CType((System.Windows.Forms.Keys.Shift Or System.Windows.Forms.Keys.F2), System.Windows.Forms.Keys)
         Me.MnuLibRename.Size = New System.Drawing.Size(258, 26)
-        Me.MnuLibRename.Text = "重命名(&N)..."
+        Me.MnuLibRename.Text = "重命名(&M)..."
         '
         'MnuLibDelete
         '
+        Me.MnuLibDelete.Image = CType(resources.GetObject("MnuLibDelete.Image"), System.Drawing.Image)
         Me.MnuLibDelete.Name = "MnuLibDelete"
         Me.MnuLibDelete.ShortcutKeys = CType((System.Windows.Forms.Keys.Alt Or System.Windows.Forms.Keys.Delete), System.Windows.Forms.Keys)
         Me.MnuLibDelete.Size = New System.Drawing.Size(258, 26)
@@ -280,6 +304,7 @@ Partial Class MainForm
         '
         'MnuLibProperties
         '
+        Me.MnuLibProperties.Image = CType(resources.GetObject("MnuLibProperties.Image"), System.Drawing.Image)
         Me.MnuLibProperties.Name = "MnuLibProperties"
         Me.MnuLibProperties.ShortcutKeys = CType((System.Windows.Forms.Keys.Alt Or System.Windows.Forms.Keys.I), System.Windows.Forms.Keys)
         Me.MnuLibProperties.Size = New System.Drawing.Size(258, 26)
@@ -287,13 +312,14 @@ Partial Class MainForm
         '
         'MnuManuscript
         '
-        Me.MnuManuscript.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.MnuMsNew, Me.MnuMsImport, Me.ToolStripSeparator3, Me.MnuMsView, Me.MnuMsEdit, Me.MnuMsDelete, Me.MnuMsExport, Me.MnuMsPrint, Me.ToolStripSeparator4, Me.MnuMsOpenFolder, Me.MnuMsCopy, Me.MnuMsCopyPath})
+        Me.MnuManuscript.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.MnuMsNew, Me.MnuMsImport, Me.ToolStripSeparator3, Me.MnuMsView, Me.MnuMsEdit, Me.MnuMsExport, Me.MnuMsPrint, Me.MnuMsDelete, Me.ToolStripSeparator4, Me.MnuMsOpenFolder, Me.MnuMsCopy, Me.MnuMsCopyPath})
         Me.MnuManuscript.Name = "MnuManuscript"
         Me.MnuManuscript.Size = New System.Drawing.Size(78, 24)
         Me.MnuManuscript.Text = "稿件(&M)"
         '
         'MnuMsNew
         '
+        Me.MnuMsNew.Image = CType(resources.GetObject("MnuMsNew.Image"), System.Drawing.Image)
         Me.MnuMsNew.Name = "MnuMsNew"
         Me.MnuMsNew.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.N), System.Windows.Forms.Keys)
         Me.MnuMsNew.Size = New System.Drawing.Size(245, 26)
@@ -301,6 +327,7 @@ Partial Class MainForm
         '
         'MnuMsImport
         '
+        Me.MnuMsImport.Image = CType(resources.GetObject("MnuMsImport.Image"), System.Drawing.Image)
         Me.MnuMsImport.Name = "MnuMsImport"
         Me.MnuMsImport.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.O), System.Windows.Forms.Keys)
         Me.MnuMsImport.Size = New System.Drawing.Size(245, 26)
@@ -313,6 +340,7 @@ Partial Class MainForm
         '
         'MnuMsView
         '
+        Me.MnuMsView.Image = CType(resources.GetObject("MnuMsView.Image"), System.Drawing.Image)
         Me.MnuMsView.Name = "MnuMsView"
         Me.MnuMsView.ShortcutKeyDisplayString = "Enter"
         Me.MnuMsView.Size = New System.Drawing.Size(245, 26)
@@ -320,20 +348,15 @@ Partial Class MainForm
         '
         'MnuMsEdit
         '
+        Me.MnuMsEdit.Image = CType(resources.GetObject("MnuMsEdit.Image"), System.Drawing.Image)
         Me.MnuMsEdit.Name = "MnuMsEdit"
         Me.MnuMsEdit.ShortcutKeys = System.Windows.Forms.Keys.F2
         Me.MnuMsEdit.Size = New System.Drawing.Size(245, 26)
         Me.MnuMsEdit.Text = "编辑(&E)..."
         '
-        'MnuMsDelete
-        '
-        Me.MnuMsDelete.Name = "MnuMsDelete"
-        Me.MnuMsDelete.ShortcutKeys = System.Windows.Forms.Keys.Delete
-        Me.MnuMsDelete.Size = New System.Drawing.Size(245, 26)
-        Me.MnuMsDelete.Text = "删除(&D)..."
-        '
         'MnuMsExport
         '
+        Me.MnuMsExport.Image = CType(resources.GetObject("MnuMsExport.Image"), System.Drawing.Image)
         Me.MnuMsExport.Name = "MnuMsExport"
         Me.MnuMsExport.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.E), System.Windows.Forms.Keys)
         Me.MnuMsExport.Size = New System.Drawing.Size(245, 26)
@@ -341,10 +364,19 @@ Partial Class MainForm
         '
         'MnuMsPrint
         '
+        Me.MnuMsPrint.Image = CType(resources.GetObject("MnuMsPrint.Image"), System.Drawing.Image)
         Me.MnuMsPrint.Name = "MnuMsPrint"
         Me.MnuMsPrint.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.P), System.Windows.Forms.Keys)
         Me.MnuMsPrint.Size = New System.Drawing.Size(245, 26)
         Me.MnuMsPrint.Text = "打印(&P)..."
+        '
+        'MnuMsDelete
+        '
+        Me.MnuMsDelete.Image = CType(resources.GetObject("MnuMsDelete.Image"), System.Drawing.Image)
+        Me.MnuMsDelete.Name = "MnuMsDelete"
+        Me.MnuMsDelete.ShortcutKeys = System.Windows.Forms.Keys.Delete
+        Me.MnuMsDelete.Size = New System.Drawing.Size(245, 26)
+        Me.MnuMsDelete.Text = "删除(&D)..."
         '
         'ToolStripSeparator4
         '
@@ -353,6 +385,7 @@ Partial Class MainForm
         '
         'MnuMsOpenFolder
         '
+        Me.MnuMsOpenFolder.Image = CType(resources.GetObject("MnuMsOpenFolder.Image"), System.Drawing.Image)
         Me.MnuMsOpenFolder.Name = "MnuMsOpenFolder"
         Me.MnuMsOpenFolder.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.T), System.Windows.Forms.Keys)
         Me.MnuMsOpenFolder.Size = New System.Drawing.Size(245, 26)
@@ -360,6 +393,7 @@ Partial Class MainForm
         '
         'MnuMsCopy
         '
+        Me.MnuMsCopy.Image = CType(resources.GetObject("MnuMsCopy.Image"), System.Drawing.Image)
         Me.MnuMsCopy.Name = "MnuMsCopy"
         Me.MnuMsCopy.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.C), System.Windows.Forms.Keys)
         Me.MnuMsCopy.Size = New System.Drawing.Size(245, 26)
@@ -380,6 +414,7 @@ Partial Class MainForm
         '
         'MnuViewPlay
         '
+        Me.MnuViewPlay.Image = CType(resources.GetObject("MnuViewPlay.Image"), System.Drawing.Image)
         Me.MnuViewPlay.Name = "MnuViewPlay"
         Me.MnuViewPlay.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.F5), System.Windows.Forms.Keys)
         Me.MnuViewPlay.Size = New System.Drawing.Size(283, 26)
@@ -412,6 +447,7 @@ Partial Class MainForm
         '
         'MnuSearch
         '
+        Me.MnuSearch.Image = CType(resources.GetObject("MnuSearch.Image"), System.Drawing.Image)
         Me.MnuSearch.Name = "MnuSearch"
         Me.MnuSearch.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.F), System.Windows.Forms.Keys)
         Me.MnuSearch.Size = New System.Drawing.Size(283, 26)
@@ -432,6 +468,7 @@ Partial Class MainForm
         '
         'MnuPageUp
         '
+        Me.MnuPageUp.Image = CType(resources.GetObject("MnuPageUp.Image"), System.Drawing.Image)
         Me.MnuPageUp.Name = "MnuPageUp"
         Me.MnuPageUp.ShortcutKeyDisplayString = "PageUp"
         Me.MnuPageUp.Size = New System.Drawing.Size(283, 26)
@@ -439,6 +476,7 @@ Partial Class MainForm
         '
         'MnuPageDown
         '
+        Me.MnuPageDown.Image = CType(resources.GetObject("MnuPageDown.Image"), System.Drawing.Image)
         Me.MnuPageDown.Name = "MnuPageDown"
         Me.MnuPageDown.ShortcutKeyDisplayString = "PageDown"
         Me.MnuPageDown.Size = New System.Drawing.Size(283, 26)
@@ -453,56 +491,59 @@ Partial Class MainForm
         '
         'MnuHelpTutorial
         '
+        Me.MnuHelpTutorial.Image = CType(resources.GetObject("MnuHelpTutorial.Image"), System.Drawing.Image)
         Me.MnuHelpTutorial.Name = "MnuHelpTutorial"
         Me.MnuHelpTutorial.ShortcutKeys = System.Windows.Forms.Keys.F1
-        Me.MnuHelpTutorial.Size = New System.Drawing.Size(224, 26)
+        Me.MnuHelpTutorial.Size = New System.Drawing.Size(218, 26)
         Me.MnuHelpTutorial.Text = "快速入门(&T)"
         '
         'ToolStripSeparator8
         '
         Me.ToolStripSeparator8.Name = "ToolStripSeparator8"
-        Me.ToolStripSeparator8.Size = New System.Drawing.Size(221, 6)
+        Me.ToolStripSeparator8.Size = New System.Drawing.Size(215, 6)
         '
         'MnuHelpWebsite
         '
         Me.MnuHelpWebsite.Name = "MnuHelpWebsite"
-        Me.MnuHelpWebsite.Size = New System.Drawing.Size(224, 26)
+        Me.MnuHelpWebsite.Size = New System.Drawing.Size(218, 26)
         Me.MnuHelpWebsite.Text = "官网(&W)"
         '
         'MnuHelpGithub
         '
+        Me.MnuHelpGithub.Image = CType(resources.GetObject("MnuHelpGithub.Image"), System.Drawing.Image)
         Me.MnuHelpGithub.Name = "MnuHelpGithub"
-        Me.MnuHelpGithub.Size = New System.Drawing.Size(224, 26)
+        Me.MnuHelpGithub.Size = New System.Drawing.Size(218, 26)
         Me.MnuHelpGithub.Text = "&GitHub"
         '
         'MnuCheckUpdate
         '
         Me.MnuCheckUpdate.Name = "MnuCheckUpdate"
-        Me.MnuCheckUpdate.Size = New System.Drawing.Size(224, 26)
+        Me.MnuCheckUpdate.Size = New System.Drawing.Size(218, 26)
         Me.MnuCheckUpdate.Text = "检查更新(&U)"
         '
         'ToolStripSeparator10
         '
         Me.ToolStripSeparator10.Name = "ToolStripSeparator10"
-        Me.ToolStripSeparator10.Size = New System.Drawing.Size(221, 6)
+        Me.ToolStripSeparator10.Size = New System.Drawing.Size(215, 6)
         '
         'MnuHelpLicense
         '
         Me.MnuHelpLicense.Name = "MnuHelpLicense"
-        Me.MnuHelpLicense.Size = New System.Drawing.Size(224, 26)
+        Me.MnuHelpLicense.Size = New System.Drawing.Size(218, 26)
         Me.MnuHelpLicense.Text = "许可证(&L)..."
         '
         'MnuHelpPrivacy
         '
         Me.MnuHelpPrivacy.Name = "MnuHelpPrivacy"
-        Me.MnuHelpPrivacy.Size = New System.Drawing.Size(224, 26)
+        Me.MnuHelpPrivacy.Size = New System.Drawing.Size(218, 26)
         Me.MnuHelpPrivacy.Text = "隐私政策(&P)..."
         '
         'MnuHelpAbout
         '
+        Me.MnuHelpAbout.Image = CType(resources.GetObject("MnuHelpAbout.Image"), System.Drawing.Image)
         Me.MnuHelpAbout.Name = "MnuHelpAbout"
         Me.MnuHelpAbout.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.F1), System.Windows.Forms.Keys)
-        Me.MnuHelpAbout.Size = New System.Drawing.Size(224, 26)
+        Me.MnuHelpAbout.Size = New System.Drawing.Size(218, 26)
         Me.MnuHelpAbout.Text = "关于(&A)..."
         '
         'SearchTextBox
@@ -540,6 +581,19 @@ Partial Class MainForm
         Me.ArtworkListSplitContainer.Size = New System.Drawing.Size(982, 535)
         Me.ArtworkListSplitContainer.SplitterDistance = 750
         Me.ArtworkListSplitContainer.TabIndex = 3
+        '
+        'ImageGalleryMain
+        '
+        Me.ImageGalleryMain.AutoScroll = True
+        Me.ImageGalleryMain.BackColor = System.Drawing.Color.White
+        Me.ImageGalleryMain.DisplayMode = FurryArtStudio.GalleryDisplayMode.Normal
+        Me.ImageGalleryMain.Location = New System.Drawing.Point(3, 34)
+        Me.ImageGalleryMain.MaxItemSize = 240
+        Me.ImageGalleryMain.MinItemSize = 120
+        Me.ImageGalleryMain.Name = "ImageGalleryMain"
+        Me.ImageGalleryMain.PageSize = 100
+        Me.ImageGalleryMain.Size = New System.Drawing.Size(744, 498)
+        Me.ImageGalleryMain.TabIndex = 3
         '
         'BtnPrev
         '
@@ -713,19 +767,6 @@ Partial Class MainForm
         Me.KryptonMgrMain.ToolkitStrings.MessageBoxStrings.LessDetails = "L&ess Details..."
         Me.KryptonMgrMain.ToolkitStrings.MessageBoxStrings.MoreDetails = "&More Details..."
         '
-        'ImageGalleryMain
-        '
-        Me.ImageGalleryMain.AutoScroll = True
-        Me.ImageGalleryMain.BackColor = System.Drawing.Color.White
-        Me.ImageGalleryMain.DisplayMode = FurryArtStudio.GalleryDisplayMode.Normal
-        Me.ImageGalleryMain.Location = New System.Drawing.Point(3, 34)
-        Me.ImageGalleryMain.MaxItemSize = 240
-        Me.ImageGalleryMain.MinItemSize = 120
-        Me.ImageGalleryMain.Name = "ImageGalleryMain"
-        Me.ImageGalleryMain.PageSize = 100
-        Me.ImageGalleryMain.Size = New System.Drawing.Size(744, 498)
-        Me.ImageGalleryMain.TabIndex = 3
-        '
         'MainForm
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 15.0!)
@@ -838,4 +879,5 @@ Partial Class MainForm
     Friend WithEvents MnuLibExportCSV As ToolStripMenuItem
     Friend WithEvents MnuDevTools As ToolStripMenuItem
     Friend WithEvents MnuCheckUpdate As ToolStripMenuItem
+    Friend WithEvents MnuOnTop As ToolStripMenuItem
 End Class

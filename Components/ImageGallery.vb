@@ -412,7 +412,7 @@ Public Class ImageGallery
             End If
             '绘制选中边框
             If _selectedImages.Contains(item.Image) Then
-                Using p As New Pen(Color.Blue, 5)
+                Using p As New Pen(Color.FromArgb(58, 162, 143), 5) '之前是Blue
                     g.DrawRectangle(p, item.Bounds)
                 End Using
             End If

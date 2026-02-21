@@ -1,0 +1,385 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="MenuCloneLight" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Lightmode-Icons\copy-plus.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <comment>克隆 - 浅色模式</comment>
+  </data>
+  <data name="MenuCloseDark" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Darkmode-Icons\x.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <comment>关闭 - 深色模式</comment>
+  </data>
+  <data name="MenuCloseLight" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Lightmode-Icons\x.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <comment>关闭 - 浅色模式</comment>
+  </data>
+  <data name="MenuCopyDark" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Darkmode-Icons\copy.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <comment>复制 - 深色模式</comment>
+  </data>
+  <data name="MenuCopyLight" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Lightmode-Icons\copy.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <comment>复制 - 浅色模式</comment>
+  </data>
+  <data name="MenuCopyToDark" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Darkmode-Icons\arrow-big-right-dash.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <comment>复制到 - 深色模式</comment>
+  </data>
+  <data name="MenuCopyToLight" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Lightmode-Icons\arrow-big-right-dash.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <comment>复制到 - 浅色模式</comment>
+  </data>
+  <data name="MenuDeleteLight" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Lightmode-Icons\trash-2.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <comment>删除 - 浅色模式</comment>
+  </data>
+  <data name="MenuDevToolsDark" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Darkmode-Icons\code.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <comment>开发者工具 - 深色模式</comment>
+  </data>
+  <data name="MenuDevToolsLight" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Lightmode-Icons\code.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <comment>开发者工具 - 浅色模式</comment>
+  </data>
+  <data name="MenuEditDark" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Darkmode-Icons\pencil.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <comment>编辑 - 深色模式</comment>
+  </data>
+  <data name="MenuFolderEditLight" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Lightmode-Icons\folder-pen.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <comment>重命名稿件库 - 浅色模式</comment>
+  </data>
+  <data name="MenuEditLight" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Lightmode-Icons\pencil.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <comment>编辑 - 浅色模式</comment>
+  </data>
+  <data name="MenuExportCsvDark" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Darkmode-Icons\file-spreadsheet.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <comment>导出为CSV文件 - 深色模式</comment>
+  </data>
+  <data name="MenuExportCsvLight" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Lightmode-Icons\file-spreadsheet.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <comment>导出为CSV文件 - 浅色模式</comment>
+  </data>
+  <data name="MenuFileInputDark" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Darkmode-Icons\file-input.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <comment>导入稿件 - 深色模式</comment>
+  </data>
+  <data name="MenuFileInputLight" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Lightmode-Icons\file-input.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <comment>导入稿件 - 浅色模式</comment>
+  </data>
+  <data name="MenuFileNewDark" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Darkmode-Icons\file-plus.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <comment>新建稿件 - 深色模式</comment>
+  </data>
+  <data name="MenuFileOutputDark" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Darkmode-Icons\file-output.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <comment>导出稿件 - 深色模式</comment>
+  </data>
+  <data name="MenuFileOutputLight" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Lightmode-Icons\file-output.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <comment>到处稿件 - 浅色模式</comment>
+  </data>
+  <data name="MenuFileNewLight" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Lightmode-Icons\file-plus.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <comment>新建稿件 - 浅色模式</comment>
+  </data>
+  <data name="MenuFolderCloseDark" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Darkmode-Icons\folder-x.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <comment>关闭稿件库 - 深色模式</comment>
+  </data>
+  <data name="MenuFolderCloseLight" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Lightmode-Icons\folder-x.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <comment>关闭稿件库 - 浅色模式</comment>
+  </data>
+  <data name="MenuFolderDelDark" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Darkmode-Icons\folder-minus.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <comment>删除稿件库 - 深色模式</comment>
+  </data>
+  <data name="MenuFolderDelLight" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Lightmode-Icons\folder-minus.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <comment>删除稿件库 - 浅色模式</comment>
+  </data>
+  <data name="MenuFolderEditDark" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Darkmode-Icons\folder-pen.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <comment>重命名稿件库 - 深色模式</comment>
+  </data>
+  <data name="MenuFolderInputDark" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Darkmode-Icons\folder-input.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <comment>导入稿件库 - 深色模式</comment>
+  </data>
+  <data name="MenuFolderInputLight" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Lightmode-Icons\folder-input.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <comment>导入稿件库 - 浅色模式</comment>
+  </data>
+  <data name="MenuFolderNewDark" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Darkmode-Icons\folder-plus.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <comment>新建稿件库 - 深色模式</comment>
+  </data>
+  <data name="MenuFolderNewLight" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Lightmode-Icons\folder-plus.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <comment>新建稿件库 - 浅色模式</comment>
+  </data>
+  <data name="MenuFolderOpenDark" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Darkmode-Icons\folder-open.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <comment>打开所在文件夹 - 深色模式</comment>
+  </data>
+  <data name="MenuFolderOpenLight" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Lightmode-Icons\folder-open.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <comment>打开所在文件夹 - 浅色模式</comment>
+  </data>
+  <data name="MenuFolderOutputDark" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Darkmode-Icons\folder-output.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <comment>导出稿件库 - 深色模式</comment>
+  </data>
+  <data name="MenuFolderOutputLight" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Lightmode-Icons\folder-output.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <comment>导出稿件库 - 浅色模式</comment>
+  </data>
+  <data name="MenuFoldersDark" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Darkmode-Icons\folders.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <comment>稿件库 - 深色模式</comment>
+  </data>
+  <data name="MenuFoldersLight" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Lightmode-Icons\folders.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <comment>稿件库 - 浅色模式</comment>
+  </data>
+  <data name="MenuGithubDark" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Darkmode-Icons\github.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <comment>GitHub - 深色模式</comment>
+  </data>
+  <data name="MenuGithubLight" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Lightmode-Icons\github.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <comment>GitHub - 浅色模式</comment>
+  </data>
+  <data name="MenuImagePlayDark" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Darkmode-Icons\image-play.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <comment>幻灯片放映 - 深色模式</comment>
+  </data>
+  <data name="MenuImagePlayLight" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Lightmode-Icons\image-play.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <comment>幻灯片放映 - 浅色模式</comment>
+  </data>
+  <data name="MenuInfoDark" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Darkmode-Icons\info.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <comment>关于 - 深色模式</comment>
+  </data>
+  <data name="MenuPropertiesLight" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Lightmode-Icons\chart-pie.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <comment>统计信息 - 浅色模式</comment>
+  </data>
+  <data name="MenuInfoLight" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Lightmode-Icons\info.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <comment>关于 - 浅色模式</comment>
+  </data>
+  <data name="MenuMoveToDark" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Darkmode-Icons\arrow-big-right.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <comment>移动到 - 深色模式</comment>
+  </data>
+  <data name="MenuMoveToLight" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Lightmode-Icons\arrow-big-right.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <comment>移动到 - 浅色模式</comment>
+  </data>
+  <data name="MenuNextDark" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Darkmode-Icons\arrow-right.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <comment>下一页 - 深色模式</comment>
+  </data>
+  <data name="MenuNextLight" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Lightmode-Icons\arrow-right.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <comment>下一页 - 浅色模式</comment>
+  </data>
+  <data name="MenuPinDark" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Darkmode-Icons\pin.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <comment>置顶 - 深色模式</comment>
+  </data>
+  <data name="MenuPinLight" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Lightmode-Icons\pin.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <comment>置顶 - 浅色模式</comment>
+  </data>
+  <data name="MenuPreviousDark" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Darkmode-Icons\arrow-left.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <comment>上一页 - 深色模式</comment>
+  </data>
+  <data name="MenuPreviousLight" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Lightmode-Icons\arrow-left.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <comment>上一页 - 浅色模式</comment>
+  </data>
+  <data name="MenuPrintDark" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Darkmode-Icons\printer.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <comment>打印 - 深色模式</comment>
+  </data>
+  <data name="MenuPrintLight" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Lightmode-Icons\printer.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <comment>打印 - 浅色模式</comment>
+  </data>
+  <data name="MenuPropertiesDark" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Darkmode-Icons\chart-pie.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <comment>统计信息 - 深色模式</comment>
+  </data>
+  <data name="MenuRefreshDark" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Darkmode-Icons\refresh-cw.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <comment>刷新 - 深色模式</comment>
+  </data>
+  <data name="MenuRefreshLight" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Lightmode-Icons\refresh-cw.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <comment>刷新 - 浅色模式</comment>
+  </data>
+  <data name="MenuSearchDark" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Darkmode-Icons\search.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <comment>搜索 - 深色模式</comment>
+  </data>
+  <data name="MenuSearchLight" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Lightmode-Icons\search.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <comment>搜索 - 浅色模式</comment>
+  </data>
+  <data name="MenuSettingsDark" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Darkmode-Icons\settings.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <comment>设置 - 深色模式</comment>
+  </data>
+  <data name="MenuSettingsLight" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Lightmode-Icons\settings.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <comment>设置 - 浅色模式</comment>
+  </data>
+  <data name="MenuDeleteDark" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Darkmode-Icons\trash-2.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <comment>删除 - 深色模式</comment>
+  </data>
+  <data name="MenuTutorialDark" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Darkmode-Icons\circle-question-mark.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <comment>快速入门 - 深色模式</comment>
+  </data>
+  <data name="MenuTutorialLight" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Lightmode-Icons\circle-question-mark.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <comment>快速入门 - 浅色模式</comment>
+  </data>
+  <data name="MenuViewDark" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Darkmode-Icons\eye.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <comment>查看 - 深色模式</comment>
+  </data>
+  <data name="MenuViewLight" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Lightmode-Icons\eye.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <comment>查看 - 浅色模式</comment>
+  </data>
+  <data name="MenuCloneDark" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Darkmode-Icons\copy-plus.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <comment>克隆 - 深色模式</comment>
+  </data>
+</root>

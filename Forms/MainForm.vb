@@ -33,6 +33,8 @@ Public Class MainForm
         MnuDevTools.Enabled = False
 #End If
         StatusLabel.Text = "就绪"
+        SystemThemeChange()
+        GC.Collect()
     End Sub
 
     ''' <summary>
@@ -54,10 +56,26 @@ Public Class MainForm
                     If TopMost = False Then
                         TopMost = True
                         CheckMenuItem(hMenu, 1, MF_CHECKED) '窗口置顶
+                        MnuOnTop.Checked = True
                     Else
                         TopMost = False
                         CheckMenuItem(hMenu, 1, MF_UNCHECKED) '取消置顶
+                        MnuOnTop.Checked = False
                     End If
+                Case 2
+                    NewManuscript()
+                Case 3
+                    RefreshLib()
+                Case 4
+                    '待开发
+                Case 5
+                    StatusLabel.Text = "设置首选项"
+                    PropertiesForm.ShowDialog()
+                    StatusLabel.Text = "就绪"
+                Case 6
+                    ShowLibProperties()
+                Case 7
+                    AboutForm.ShowDialog()
             End Select
         End If
         If m.Msg = WM_DWMCOLORIZATIONCOLORCHANGED Then SystemThemeChange() '更新程序主题
@@ -133,13 +151,15 @@ Public Class MainForm
         Dim controlList As List(Of Control) = GetAllControls(Me)
         '判断颜色
         If isDarkMode Then
-            ImageGalleryMain.DisplayMode = GalleryDisplayMode.Dark
-            KryptonMgrMain.GlobalPaletteMode = PaletteMode.MaterialDark '修改菜单栏颜色
+            ImageGalleryMain.DisplayMode = GalleryDisplayMode.Dark '设置图片墙主题
+            KryptonMgrMain.GlobalPaletteMode = PaletteMode.MaterialDark '设置菜单栏主题
+            InitializeMenuImages(True) '设置菜单图标主题
         Else
             bgColor = Color.FromArgb(255, 255, 255)
             frColor = Color.FromArgb(0, 0, 0)
             ImageGalleryMain.DisplayMode = GalleryDisplayMode.Normal
-            KryptonMgrMain.GlobalPaletteMode = PaletteMode.MaterialLight '修改菜单栏颜色
+            KryptonMgrMain.GlobalPaletteMode = PaletteMode.MaterialLight
+            InitializeMenuImages()
         End If
         For Each control In controlList
             control.ForeColor = frColor
@@ -149,6 +169,72 @@ Public Class MainForm
         DwmSetWindowAttribute(Handle, DwmWindowAttribute.UseImmersiveDarkMode, isDarkMode, Marshal.SizeOf(Of Integer))
         SetPreferredAppMode(PreferredAppMode.AllowDark)
         FlushMenuThemes()
+    End Sub
+    ''' <summary>
+    ''' 初始化菜单图标
+    ''' </summary>
+    ''' <param name="isDarkMode">(可选)设置深色主题, 默认为浅色</param>
+    Private Sub InitializeMenuImages(Optional isDarkMode As Boolean = False)
+        Dim menuIcons As New List(Of (MenuItem As ToolStripMenuItem, BaseName As String)) From
+    {
+        (MnuOnTop, "MenuPin"),
+        (MnuDevTools, "MenuDevTools"),
+        (MnuProperties, "MenuProperties"),
+        (MnuExit, "MenuEdit"),
+        (MnuLibList, "MenuFolders"),
+        (MnuLibRefresh, "MenuRefresh"),
+        (MnuLibNew, "MenuFolderNew"),
+        (MnuLibImport, "MenuFolderInput"),
+        (MnuLibExport, "MenuFolderOutput"),
+        (MnuLibExportCSV, "MenuExportCsv"),
+        (MnuLibClone, "MenuClone"),
+        (MnuLibOpenFolder, "MenuFolderOpen"),
+        (MnuLibCopy, "MenuCopy"),
+        (MnuLibClose, "MenuFolderClose"),
+        (MnuLibRename, "MenuFolderEdit"),
+        (MnuLibDelete, "MenuFolderDel"),
+        (MnuLibProperties, "MenuProperties"),
+        (MnuMsNew, "MenuFileNew"),
+        (MnuMsImport, "MenuFileInput"),
+        (MnuMsView, "MenuView"),
+        (MnuMsEdit, "MenuEdit"),
+        (MnuMsExport, "MenuFileOutput"),
+        (MnuMsPrint, "MenuPrint"),
+        (MnuMsDelete, "MenuDelete"),
+        (MnuMsOpenFolder, "MenuFolderOpen"),
+        (MnuMsCopy, "MenuCopy"),
+        (MnuViewPlay, "MenuImagePlay"),
+        (MnuSearch, "MenuSearch"),
+        (MnuPageUp, "MenuPrevious"),
+        (MnuPageDown, "MenuNext"),
+        (MnuHelpTutorial, "MenuTutorial"),
+        (MnuHelpGithub, "MenuGithub"),
+        (MnuHelpAbout, "MenuInfo")
+    }
+        For Each setting In menuIcons
+            Dim resourceName = setting.BaseName & If(isDarkMode, "Dark", "Light")
+            setting.MenuItem.Image = DirectCast(
+            My.Resources.Icons.ResourceManager.GetObject(resourceName),
+            Image)
+        Next
+        Dim menuHandle = GetSystemMenu(Handle, False) '设置窗体菜单
+        If isDarkMode Then
+            ApplyMenuIcon(menuHandle, 1, My.Resources.Icons.MenuPinDark, True)
+            ApplyMenuIcon(menuHandle, 2, My.Resources.Icons.MenuFileNewDark, True)
+            ApplyMenuIcon(menuHandle, 3, My.Resources.Icons.MenuRefreshDark, True)
+            ApplyMenuIcon(menuHandle, 4, My.Resources.Icons.MenuImagePlayDark, True)
+            ApplyMenuIcon(menuHandle, 5, My.Resources.Icons.MenuSettingsDark, True)
+            ApplyMenuIcon(menuHandle, 6, My.Resources.Icons.MenuPropertiesDark, True)
+            ApplyMenuIcon(menuHandle, 7, My.Resources.Icons.MenuInfoDark, True)
+        Else
+            ApplyMenuIcon(menuHandle, 1, My.Resources.Icons.MenuPinLight)
+            ApplyMenuIcon(menuHandle, 2, My.Resources.Icons.MenuFileNewLight)
+            ApplyMenuIcon(menuHandle, 3, My.Resources.Icons.MenuRefreshLight)
+            ApplyMenuIcon(menuHandle, 4, My.Resources.Icons.MenuImagePlayLight)
+            ApplyMenuIcon(menuHandle, 5, My.Resources.Icons.MenuSettingsLight)
+            ApplyMenuIcon(menuHandle, 6, My.Resources.Icons.MenuPropertiesLight)
+            ApplyMenuIcon(menuHandle, 7, My.Resources.Icons.MenuInfoLight)
+        End If
     End Sub
 
     ''' <summary>
@@ -203,6 +289,10 @@ Public Class MainForm
         TSSep1.Visible = False
         SearchStatusLabel.Visible = False
         MnuLibExportCSV.Enabled = False
+        Dim menuHandle = GetSystemMenu(Handle, False) '获取菜单句柄
+        EnableMenuItem(menuHandle, 2, MF_GRAYED)
+        EnableMenuItem(menuHandle, 4, MF_GRAYED)
+        EnableMenuItem(menuHandle, 6, MF_GRAYED)
     End Sub
 
     ''' <summary>
@@ -210,10 +300,59 @@ Public Class MainForm
     ''' </summary>
     Private Sub SysMenuInit()
         Dim menuHandle = GetSystemMenu(Handle, False) '获取菜单句柄
-        InsertMenu(menuHandle, 5, MF_BYPOSITION Or MF_STRING, 2, "全屏(&F)")
-        InsertMenu(menuHandle, 6, MF_BYPOSITION Or MF_SEPARATOR, 0, Nothing)
-        InsertMenu(menuHandle, 7, MF_BYPOSITION Or MF_STRING, 1, "窗口置顶(&T)")
-        InsertMenu(menuHandle, 8, MF_BYPOSITION Or MF_STRING, 2, "自定义功能(&C)")
+        InsertMenu(menuHandle, 0, MF_BYPOSITION Or MF_STRING, 1, "窗口置顶(&T)")
+        InsertMenu(menuHandle, 1, MF_BYPOSITION Or MF_SEPARATOR, 0, Nothing)
+        InsertMenu(menuHandle, 8, MF_BYPOSITION Or MF_STRING, 2, "新建稿件(&N)...")
+        InsertMenu(menuHandle, 9, MF_BYPOSITION Or MF_STRING, 3, "刷新(&R)")
+        InsertMenu(menuHandle, 10, MF_BYPOSITION Or MF_STRING, 4, "幻灯片放映(&P)")
+        InsertMenu(menuHandle, 11, MF_BYPOSITION Or MF_SEPARATOR, 0, Nothing)
+        InsertMenu(menuHandle, 12, MF_BYPOSITION Or MF_STRING, 5, "选项(&O)...")
+        InsertMenu(menuHandle, 13, MF_BYPOSITION Or MF_STRING, 6, "统计信息(&T)...")
+        InsertMenu(menuHandle, 14, MF_BYPOSITION Or MF_STRING, 7, "关于(&A)...")
+        InsertMenu(menuHandle, 15, MF_BYPOSITION Or MF_SEPARATOR, 0, Nothing)
+        EnableMenuItem(menuHandle, 2, MF_GRAYED)
+        EnableMenuItem(menuHandle, 4, MF_GRAYED)
+        EnableMenuItem(menuHandle, 6, MF_GRAYED)
+    End Sub
+    ''' <summary>
+    ''' 为指定的菜单项设置图标, 并处理透明度背景模拟
+    ''' </summary>
+    ''' <param name="hMenu">菜单句柄(hMenu)</param>
+    ''' <param name="wParam">菜单项标识符(wParam)</param>
+    ''' <param name="icon">原始图标资源</param>
+    ''' <param name="isDarkMode">是否为深色模式</param>
+    Public Sub ApplyMenuIcon(hMenu As IntPtr, wParam As Integer, icon As Bitmap, Optional isDarkMode As Boolean = False)
+        Dim size As Integer = 18 '图标尺寸
+        Dim resizedBmp As New Bitmap(size, size, PixelFormat.Format24bppRgb)
+        Using g As Graphics = Graphics.FromImage(resizedBmp)
+            '设置高质量缩放参数
+            g.InterpolationMode = Drawing2D.InterpolationMode.HighQualityBicubic
+            g.SmoothingMode = Drawing2D.SmoothingMode.HighQuality
+            g.PixelOffsetMode = Drawing2D.PixelOffsetMode.HighQuality
+            g.CompositingQuality = Drawing2D.CompositingQuality.HighQuality
+            '清空背景, 并按照主题填充
+            If isDarkMode Then
+                g.Clear(Color.FromArgb(43, 43, 43))
+            Else
+                g.Clear(SystemColors.Menu)
+            End If
+            '计算保持宽高比的绘制区域
+            Dim srcWidth As Integer = icon.Width
+            Dim srcHeight As Integer = icon.Height
+            '计算缩放比例
+            Dim ratio As Double = Math.Min(CDbl(size) / srcWidth, CDbl(size) / srcHeight)
+            Dim newWidth As Integer = CInt(srcWidth * ratio)
+            Dim newHeight As Integer = CInt(srcHeight * ratio)
+            '居中绘制
+            Dim x As Integer = (size - newWidth) \ 2
+            Dim y As Integer = (size - newHeight) \ 2
+            '绘制缩放后的图像
+            Dim destRect As New Rectangle(x, y, newWidth, newHeight)
+            g.DrawImage(icon, destRect, 0, 0, srcWidth, srcHeight, GraphicsUnit.Pixel)
+        End Using
+        SetMenuItemBitmaps(hMenu, wParam, MF_BYCOMMAND, resizedBmp.GetHbitmap, Nothing)
+        '释放对象
+        resizedBmp.Dispose()
     End Sub
 
     ''' <summary>
@@ -243,6 +382,10 @@ Public Class MainForm
         TSSep2.Visible = True
         MnuLibExportCSV.Enabled = True
         MnuSearch.Enabled = True
+        Dim menuHandle = GetSystemMenu(Handle, False) '获取菜单句柄
+        EnableMenuItem(menuHandle, 2, MF_ENABLED)
+        EnableMenuItem(menuHandle, 4, MF_ENABLED)
+        EnableMenuItem(menuHandle, 6, MF_ENABLED)
         '设置UI
         LblTitle.Text = "请选择一个项目"
         LblAuthor.Text = ""
@@ -344,6 +487,19 @@ Public Class MainForm
 #End Region
 
 #Region "文件菜单项"
+    Private Sub MnuOnTop_Click(sender As Object, e As EventArgs) Handles MnuOnTop.Click
+        Dim hMenu = GetSystemMenu(Handle, False)
+
+        If MnuOnTop.Checked = False Then
+            MnuOnTop.Checked = True
+            TopMost = True
+            CheckMenuItem(hMenu, 1, MF_CHECKED) '窗口置顶
+        Else
+            MnuOnTop.Checked = False
+            TopMost = False
+            CheckMenuItem(hMenu, 1, MF_UNCHECKED) '取消置顶
+        End If
+    End Sub
     Private Sub MnuDevTools_Click(sender As Object, e As EventArgs) Handles MnuDevTools.Click
         DevToolsForm.Show()
     End Sub
@@ -537,12 +693,26 @@ Public Class MainForm
         MsgBox("这里是永久删除的源代码，还没写呢")
     End Sub
     Private Sub MnuLibProperties_Click(sender As Object, e As EventArgs) Handles MnuLibProperties.Click
-        '待开发
+        ShowLibProperties()
+    End Sub
+    Private Sub ShowLibProperties()
+        Dim sb As New StringBuilder
+        Dim library = _libraryManager.GetCurrentLibrary
+        sb.Append($"稿件库: {library.LibraryName}{vbCrLf}")
+        sb.Append($"库目录: {library.LibraryPath}{vbCrLf}")
+        sb.Append($"稿件数: {library.GetAllArtworksComplete.Count}{vbCrLf}")
+        Dim result = GetFolderInfo(library.LibraryPath)
+        sb.Append($"存储: {result.sizeString} 文件: {result.fileCount:N0}{vbCrLf}")
+        sb.Append($"当前时间: {Now:yyyy-MM-dd HH:mm:ss}")
+        MessageBox.Show(sb.ToString, "Furry Art Studio", MessageBoxButtons.OK, MessageBoxIcon.Information)
     End Sub
 #End Region
 
 #Region "稿件菜单项"
     Private Sub MnuMsNew_Click(sender As Object, e As EventArgs) Handles MnuMsNew.Click
+        NewManuscript()
+    End Sub
+    Private Sub NewManuscript()
         StatusLabel.Text = "正在新建稿件..."
         Dim initArtwork As New Artwork With {
             .CreateTime = Now
@@ -918,17 +1088,27 @@ Public Class MainForm
     Private Sub MnuHelpAbout_Click(sender As Object, e As EventArgs) Handles MnuHelpAbout.Click
         AboutForm.ShowDialog()
     End Sub
+    Private Sub MnuHelpGithub_Click(sender As Object, e As EventArgs) Handles MnuHelpGithub.Click
+        Process.Start("https://github.com/xionglongztz/FurryArtStudio")
+    End Sub
+    Private Sub MnuHelpWebsite_Click(sender As Object, e As EventArgs) Handles MnuHelpWebsite.Click
 
+    End Sub
+    Private Sub MnuHelpLicense_Click(sender As Object, e As EventArgs) Handles MnuHelpLicense.Click
 
+    End Sub
+    Private Sub MnuHelpPrivacy_Click(sender As Object, e As EventArgs) Handles MnuHelpPrivacy.Click
 
+    End Sub
+    Private Sub MnuHelpTutorial_Click(sender As Object, e As EventArgs) Handles MnuHelpTutorial.Click
 
+    End Sub
+    Private Sub MnuCheckUpdate_Click(sender As Object, e As EventArgs) Handles MnuCheckUpdate.Click
 
-
+    End Sub
 
 
 #End Region
-
-
     '添加一个缩略图编辑器，比较难
     'Shift，方向键支持
     '幻灯片放映/预览支持

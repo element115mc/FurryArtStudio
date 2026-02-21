@@ -209,6 +209,11 @@
     <Compile Include="Components\ImageGallery.vb">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Resources\Icons.Designer.vb">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Icons.resx</DependentUpon>
+    </Compile>
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
       <AutoGen>True</AutoGen>
@@ -251,6 +256,11 @@
     <EmbeddedResource Include="Forms\PrintForm.resx">
       <DependentUpon>PrintForm.vb</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Icons.resx">
+      <CustomToolNamespace>My.Resources</CustomToolNamespace>
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Icons.Designer.vb</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="My Project\Resources.resx">
       <Generator>VbMyResourcesResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.vb</LastGenOutput>
@@ -285,8 +295,75 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Resources\" />
     <Folder Include="Tutorial\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Resources\Darkmode-Icons\arrow-big-right-dash.png" />
+    <Content Include="Resources\Darkmode-Icons\arrow-big-right.png" />
+    <Content Include="Resources\Darkmode-Icons\arrow-left.png" />
+    <Content Include="Resources\Darkmode-Icons\arrow-right.png" />
+    <Content Include="Resources\Darkmode-Icons\chart-pie.png" />
+    <Content Include="Resources\Darkmode-Icons\circle-question-mark.png" />
+    <Content Include="Resources\Darkmode-Icons\code.png" />
+    <Content Include="Resources\Darkmode-Icons\copy-plus.png" />
+    <Content Include="Resources\Darkmode-Icons\copy.png" />
+    <Content Include="Resources\Darkmode-Icons\eye.png" />
+    <Content Include="Resources\Darkmode-Icons\file-input.png" />
+    <Content Include="Resources\Darkmode-Icons\file-output.png" />
+    <Content Include="Resources\Darkmode-Icons\file-plus.png" />
+    <Content Include="Resources\Darkmode-Icons\file-spreadsheet.png" />
+    <Content Include="Resources\Darkmode-Icons\folder-input.png" />
+    <Content Include="Resources\Darkmode-Icons\folder-minus.png" />
+    <Content Include="Resources\Darkmode-Icons\folder-open.png" />
+    <Content Include="Resources\Darkmode-Icons\folder-output.png" />
+    <Content Include="Resources\Darkmode-Icons\folder-pen.png" />
+    <Content Include="Resources\Darkmode-Icons\folder-plus.png" />
+    <Content Include="Resources\Darkmode-Icons\folder-x.png" />
+    <Content Include="Resources\Darkmode-Icons\folders.png" />
+    <Content Include="Resources\Darkmode-Icons\github.png" />
+    <Content Include="Resources\Darkmode-Icons\image-play.png" />
+    <Content Include="Resources\Darkmode-Icons\info.png" />
+    <Content Include="Resources\Darkmode-Icons\pencil.png" />
+    <Content Include="Resources\Darkmode-Icons\pin.png" />
+    <Content Include="Resources\Darkmode-Icons\printer.png" />
+    <Content Include="Resources\Darkmode-Icons\search.png" />
+    <Content Include="Resources\Darkmode-Icons\settings.png" />
+    <Content Include="Resources\Darkmode-Icons\trash-2.png" />
+    <Content Include="Resources\Darkmode-Icons\x.png" />
+    <Content Include="Resources\Lightmode-Icons\arrow-big-right-dash.png" />
+    <Content Include="Resources\Lightmode-Icons\arrow-big-right.png" />
+    <Content Include="Resources\Lightmode-Icons\arrow-left.png" />
+    <Content Include="Resources\Lightmode-Icons\arrow-right.png" />
+    <Content Include="Resources\Lightmode-Icons\chart-pie.png" />
+    <Content Include="Resources\Lightmode-Icons\circle-question-mark.png" />
+    <Content Include="Resources\Lightmode-Icons\code.png" />
+    <Content Include="Resources\Lightmode-Icons\copy-plus.png" />
+    <Content Include="Resources\Lightmode-Icons\copy.png" />
+    <Content Include="Resources\Lightmode-Icons\eye.png" />
+    <Content Include="Resources\Lightmode-Icons\file-input.png" />
+    <Content Include="Resources\Lightmode-Icons\file-output.png" />
+    <Content Include="Resources\Lightmode-Icons\file-plus.png" />
+    <Content Include="Resources\Lightmode-Icons\file-spreadsheet.png" />
+    <Content Include="Resources\Lightmode-Icons\folder-input.png" />
+    <Content Include="Resources\Lightmode-Icons\folder-minus.png" />
+    <Content Include="Resources\Lightmode-Icons\folder-open.png" />
+    <Content Include="Resources\Lightmode-Icons\folder-output.png" />
+    <Content Include="Resources\Lightmode-Icons\folder-pen.png" />
+    <Content Include="Resources\Lightmode-Icons\folder-plus.png" />
+    <Content Include="Resources\Lightmode-Icons\folder-x.png" />
+    <Content Include="Resources\Lightmode-Icons\folders.png" />
+    <Content Include="Resources\Lightmode-Icons\github.png" />
+    <Content Include="Resources\Lightmode-Icons\image-play.png" />
+    <Content Include="Resources\Lightmode-Icons\info.png" />
+    <Content Include="Resources\Lightmode-Icons\pencil.png" />
+    <Content Include="Resources\Lightmode-Icons\pin.png" />
+    <Content Include="Resources\Lightmode-Icons\printer.png" />
+    <Content Include="Resources\Lightmode-Icons\refresh-ccw.png" />
+    <Content Include="Resources\Lightmode-Icons\refresh-cw.png" />
+    <Content Include="Resources\Lightmode-Icons\search.png" />
+    <Content Include="Resources\Lightmode-Icons\settings.png" />
+    <Content Include="Resources\Lightmode-Icons\trash-2.png" />
+    <Content Include="Resources\Lightmode-Icons\x.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
   <Import Project="packages\System.ValueTuple.4.6.1\build\net471\System.ValueTuple.targets" Condition="Exists('packages\System.ValueTuple.4.6.1\build\net471\System.ValueTuple.targets')" />

@@ -2,7 +2,7 @@
 
 Public Module WinAPI
 
-#Region "窗口与菜单"
+#Region "菜单"
     'GetSystemMenu 函数 - 获得系统菜单
     <DllImport("user32.dll")>
     Public Function GetSystemMenu(
@@ -76,6 +76,50 @@ Public Module WinAPI
         ByVal nPos As Integer
     ) As Integer
     End Function
+    'SetMenuItemInfo 函数 - 设置菜单项信息
+    <DllImport("user32.dll")>
+    Public Function SetMenuItemInfo(hMenu As IntPtr, un As Integer, fByPosition As Boolean, <MarshalAs(UnmanagedType.Struct, SizeConst:=80)> ByRef lpmii As MENUITEMINFO) As Boolean
+    End Function
+    'MENUITEMINFO 结构体
+    <StructLayout(LayoutKind.Sequential, CharSet:=CharSet.Auto)>
+    Public Structure MENUITEMINFO
+        Public cbSize As Integer
+        Public fMask As Integer
+        Public fType As Integer
+        Public fState As Integer
+        Public wID As Integer
+        Public hSubMenu As IntPtr
+        Public hbmpChecked As IntPtr
+        Public hbmpUnchecked As IntPtr
+        Public dwItemData As IntPtr
+        Public dwTypeData As IntPtr
+        Public cch As Integer
+        Public hbmpItem As IntPtr   ' 用于设置图标的句柄
+    End Structure
+    Public Const MIIM_BITMAP As Integer = &H80
+    Public Const MIIM_TYPE As Integer = &H10
+    '菜单常量
+    Public Const MF_SEPARATOR = &H800 '分隔符
+    Public Const MF_STRING = &H0 '字符串
+    Public Const MF_BITMAP = &H4 '位图
+    Public Const MF_GRAYED = &H1 '灰色菜单
+    Public Const MF_ENABLED = &H0 '菜单可用
+    Public Const MF_CHECKED = &H8 '勾选
+    Public Const MF_UNCHECKED = &H0 '取消勾选
+    Public Const MF_HILITE = &H80 '高亮
+    Public Const MF_BYCOMMAND = &H0 '标识符
+    Public Const MF_BYPOSITION = &H400 '位置
+    '菜单项常量
+    Public Const SC_RESTORE = &HF120 '还原
+    Public Const SC_MOVE = &HF010 '移动
+    Public Const SC_SIZE = &HF000 '大小
+    Public Const SC_MINIMIZE = &HF020 '最小化
+    Public Const SC_MAXIMIZE = &HF030 '最大化
+    Public Const SC_CLOSE = &HF060 '关闭
+
+#End Region
+
+#Region "窗口"
     'ChangeWindowMessageFilter 函数 - 修改指定窗口(UIPI)消息筛选器的用户界面特权隔离, 解除管理员模式下无法拖拽的问题
     <DllImport("user32.dll")>
     Public Function ChangeWindowMessageFilter(
@@ -101,24 +145,6 @@ Public Module WinAPI
     Public Const WM_COMMAND = &H111 '窗体选择菜单项
     Public Const WM_SYSCOMMAND = &H112 '窗体选择系统菜单项
     Public Const WM_DWMCOLORIZATIONCOLORCHANGED = &H320 '窗体主题色被更改(深色同样有效)
-    '菜单常量
-    Public Const MF_SEPARATOR = &H800 '分隔符
-    Public Const MF_STRING = &H0 '字符串
-    Public Const MF_BITMAP = &H4 '位图
-    Public Const MF_GRAYED = &H1 '灰色菜单
-    Public Const MF_ENABLED = &H0 '菜单可用
-    Public Const MF_CHECKED = &H8 '勾选
-    Public Const MF_UNCHECKED = &H0 '取消勾选
-    Public Const MF_HILITE = &H80 '高亮
-    Public Const MF_BYCOMMAND = &H0 '标识符
-    Public Const MF_BYPOSITION = &H400 '位置
-    '菜单项常量
-    Public Const SC_RESTORE = &HF120 '还原
-    Public Const SC_MOVE = &HF010 '移动
-    Public Const SC_SIZE = &HF000 '大小
-    Public Const SC_MINIMIZE = &HF020 '最小化
-    Public Const SC_MAXIMIZE = &HF030 '最大化
-    Public Const SC_CLOSE = &HF060 '关闭
 #End Region
 
 #Region "主题"
