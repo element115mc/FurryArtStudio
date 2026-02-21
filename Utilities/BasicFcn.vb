@@ -1,4 +1,5 @@
 ﻿Imports System.Drawing.Drawing2D
+Imports System.Drawing.Imaging
 Imports System.IO
 Imports System.Runtime.InteropServices
 Imports System.Security.Principal
@@ -221,6 +222,7 @@ Module BasicFcn
             Return Nothing
         End Try
     End Function
+
     ''' <summary>
     ''' 获得特定控件的全部子控件
     ''' </summary>
@@ -240,6 +242,7 @@ Module BasicFcn
             End If
         Next
     End Sub
+
     ''' <summary>
     ''' 将 RGB 转换成 COLORREF 格式
     ''' </summary>
@@ -263,6 +266,7 @@ Module BasicFcn
             MessageBox.Show("设置标题栏颜色失败: " & ex.Message)
         End Try
     End Sub
+
     ''' <summary>
     ''' 创建圆角矩形图标
     ''' </summary>
@@ -326,13 +330,19 @@ Module BasicFcn
         End Using
         Return Icon.FromHandle(bmp.GetHicon())
     End Function
-    '获取圆形路径
+
+    ''' <summary>
+    ''' 获取圆形路径
+    ''' </summary>
     Private Function GetCirclePath(rect As Rectangle) As GraphicsPath
         Dim path As New GraphicsPath()
         path.AddEllipse(rect)
         Return path
     End Function
-    '获取圆角矩形路径
+
+    ''' <summary>
+    ''' 获取圆角矩形路径
+    ''' </summary>
     Private Function GetRoundedRectanglePath(rect As Rectangle, radius As Integer) As GraphicsPath
         Dim path As New GraphicsPath()
         '确保半径不超过矩形尺寸的一半
@@ -345,6 +355,7 @@ Module BasicFcn
         path.CloseFigure()
         Return path
     End Function
+
     ''' <summary>
     ''' 判断当前是否以管理员权限运行
     ''' </summary>
@@ -353,6 +364,7 @@ Module BasicFcn
         Dim principal As New WindowsPrincipal(identity)
         Return principal.IsInRole(WindowsBuiltInRole.Administrator)
     End Function
+
     ''' <summary>
     ''' 判断一个文件是否为图片
     ''' </summary>
@@ -362,4 +374,70 @@ Module BasicFcn
         Dim ext As String = Path.GetExtension(filePath).ToLower()
         Return imageExtensions.Contains(ext)
     End Function
+
+    ''' <summary>
+    ''' 为指定的菜单项设置图标, 并处理透明度背景模拟
+    ''' </summary>
+    ''' <param name="hMenu">菜单句柄(hMenu)</param>
+    ''' <param name="wParam">菜单项标识符(wParam)</param>
+    ''' <param name="icon">原始图标资源</param>
+    ''' <param name="isDarkMode">是否为深色模式</param>
+    Public Sub ApplyMenuIcon(hMenu As IntPtr, wParam As Integer, icon As Bitmap, Optional isDarkMode As Boolean = False)
+        '释放旧的位图句柄
+        Dim mii As New MENUITEMINFO With {
+            .cbSize = Marshal.SizeOf(Of MENUITEMINFO)(),
+            .fMask = MIIM_BITMAP
+        }
+        If GetMenuItemInfo(hMenu, wParam, False, mii) Then
+            If mii.hbmpItem <> IntPtr.Zero Then
+                DeleteObject(mii.hbmpItem)
+            End If
+        End If
+        '创建新位图并设置
+        Dim size As Integer = 18 '图标尺寸
+        Using resizedBmp As New Bitmap(size, size, PixelFormat.Format24bppRgb)
+            Using g As Graphics = Graphics.FromImage(resizedBmp) '设置高质量缩放参数
+                g.InterpolationMode = InterpolationMode.HighQualityBicubic
+                g.SmoothingMode = SmoothingMode.HighQuality
+                g.PixelOffsetMode = PixelOffsetMode.HighQuality
+                g.CompositingQuality = CompositingQuality.HighQuality
+                '清空背景, 并按照主题填充
+                If isDarkMode Then
+                    g.Clear(Color.FromArgb(43, 43, 43))
+                Else
+                    g.Clear(SystemColors.Menu)
+                End If
+                '计算保持宽高比的绘制区域
+                Dim srcWidth As Integer = icon.Width
+                Dim srcHeight As Integer = icon.Height
+                '计算缩放比例
+                Dim ratio As Double = Math.Min(size / srcWidth, size / srcHeight)
+                Dim newWidth As Integer = CInt(srcWidth * ratio)
+                Dim newHeight As Integer = CInt(srcHeight * ratio)
+                Dim x As Integer = (size - newWidth) \ 2
+                Dim y As Integer = (size - newHeight) \ 2
+                g.DrawImage(icon, New Rectangle(x, y, newWidth, newHeight), 0, 0, srcWidth, srcHeight, GraphicsUnit.Pixel)
+            End Using '绘制缩放后的图像
+            Dim hBitmap = resizedBmp.GetHbitmap()
+            SetMenuItemBitmaps(hMenu, wParam, MF_BYCOMMAND, hBitmap, Nothing)
+        End Using
+    End Sub
+    ''' <summary>
+    ''' 设置菜单项的快捷键文本
+    ''' </summary>
+    ''' <param name="menuHandle">菜单句柄</param>
+    ''' <param name="position">菜单位置</param>
+    ''' <param name="id">菜单ID</param>
+    ''' <param name="text">菜单内容</param>
+    ''' <param name="shortcut">快捷键文本</param>
+    Public Sub SetMenuItemWithShortcut(menuHandle As IntPtr, position As Integer, id As Integer, text As String, shortcut As String)
+        Dim mii As New MENUITEMINFO()
+        mii.cbSize = Marshal.SizeOf(mii)
+        mii.fMask = MIIM_FTYPE Or MIIM_STRING Or MIIM_ID
+        mii.fType = MFT_STRING
+        mii.wID = id
+        mii.dwTypeData = text & vbTab & shortcut
+        mii.cch = Len(mii.dwTypeData)
+        SetMenuItemInfo(menuHandle, position, True, mii)
+    End Sub
 End Module

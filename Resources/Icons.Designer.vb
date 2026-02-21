@@ -487,6 +487,26 @@ Namespace My.Resources
         '''<summary>
         '''  查找 System.Drawing.Bitmap 类型的本地化资源。
         '''</summary>
+        Public Shared ReadOnly Property MenuFullscreenDark() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("MenuFullscreenDark", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找 System.Drawing.Bitmap 类型的本地化资源。
+        '''</summary>
+        Public Shared ReadOnly Property MenuFullscreenLight() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("MenuFullscreenLight", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找 System.Drawing.Bitmap 类型的本地化资源。
+        '''</summary>
         Public Shared ReadOnly Property MenuGithubDark() As System.Drawing.Bitmap
             Get
                 Dim obj As Object = ResourceManager.GetObject("MenuGithubDark", resourceCulture)
@@ -547,9 +567,9 @@ Namespace My.Resources
         '''<summary>
         '''  查找 System.Drawing.Bitmap 类型的本地化资源。
         '''</summary>
-        Public Shared ReadOnly Property MenuMoveToDark() As System.Drawing.Bitmap
+        Public Shared ReadOnly Property MenuLeftDark() As System.Drawing.Bitmap
             Get
-                Dim obj As Object = ResourceManager.GetObject("MenuMoveToDark", resourceCulture)
+                Dim obj As Object = ResourceManager.GetObject("MenuLeftDark", resourceCulture)
                 Return CType(obj,System.Drawing.Bitmap)
             End Get
         End Property
@@ -557,9 +577,9 @@ Namespace My.Resources
         '''<summary>
         '''  查找 System.Drawing.Bitmap 类型的本地化资源。
         '''</summary>
-        Public Shared ReadOnly Property MenuMoveToLight() As System.Drawing.Bitmap
+        Public Shared ReadOnly Property MenuLeftLight() As System.Drawing.Bitmap
             Get
-                Dim obj As Object = ResourceManager.GetObject("MenuMoveToLight", resourceCulture)
+                Dim obj As Object = ResourceManager.GetObject("MenuLeftLight", resourceCulture)
                 Return CType(obj,System.Drawing.Bitmap)
             End Get
         End Property
@@ -680,6 +700,26 @@ Namespace My.Resources
         Public Shared ReadOnly Property MenuRefreshLight() As System.Drawing.Bitmap
             Get
                 Dim obj As Object = ResourceManager.GetObject("MenuRefreshLight", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找 System.Drawing.Bitmap 类型的本地化资源。
+        '''</summary>
+        Public Shared ReadOnly Property MenuRightDark() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("MenuRightDark", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找 System.Drawing.Bitmap 类型的本地化资源。
+        '''</summary>
+        Public Shared ReadOnly Property MenuRightLight() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("MenuRightLight", resourceCulture)
                 Return CType(obj,System.Drawing.Bitmap)
             End Get
         End Property

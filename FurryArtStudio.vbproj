@@ -307,6 +307,7 @@
     <Folder Include="Tutorial\" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Resources\Darkmode-Icons\arrow-big-left.png" />
     <Content Include="Resources\Darkmode-Icons\arrow-big-right-dash.png" />
     <Content Include="Resources\Darkmode-Icons\arrow-big-right.png" />
     <Content Include="Resources\Darkmode-Icons\arrow-left.png" />
@@ -329,6 +330,7 @@
     <Content Include="Resources\Darkmode-Icons\folder-plus.png" />
     <Content Include="Resources\Darkmode-Icons\folder-x.png" />
     <Content Include="Resources\Darkmode-Icons\folders.png" />
+    <Content Include="Resources\Darkmode-Icons\fullscreen.png" />
     <Content Include="Resources\Darkmode-Icons\github.png" />
     <Content Include="Resources\Darkmode-Icons\image-play.png" />
     <Content Include="Resources\Darkmode-Icons\image.png" />
@@ -345,6 +347,7 @@
     <Content Include="Resources\Darkmode-Icons\trash-2.png" />
     <Content Include="Resources\Darkmode-Icons\wallpaper.png" />
     <Content Include="Resources\Darkmode-Icons\x.png" />
+    <Content Include="Resources\Lightmode-Icons\arrow-big-left.png" />
     <Content Include="Resources\Lightmode-Icons\arrow-big-right-dash.png" />
     <Content Include="Resources\Lightmode-Icons\arrow-big-right.png" />
     <Content Include="Resources\Lightmode-Icons\arrow-left.png" />
@@ -367,6 +370,7 @@
     <Content Include="Resources\Lightmode-Icons\folder-plus.png" />
     <Content Include="Resources\Lightmode-Icons\folder-x.png" />
     <Content Include="Resources\Lightmode-Icons\folders.png" />
+    <Content Include="Resources\Lightmode-Icons\fullscreen.png" />
     <Content Include="Resources\Lightmode-Icons\github.png" />
     <Content Include="Resources\Lightmode-Icons\image-play.png" />
     <Content Include="Resources\Lightmode-Icons\image.png" />

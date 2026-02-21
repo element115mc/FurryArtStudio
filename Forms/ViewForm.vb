@@ -1,12 +1,14 @@
 ﻿Imports System.IO
 Imports System.Runtime.InteropServices
+Imports System.Text.RegularExpressions
 Imports System.Threading
+Imports System.Windows.Forms.VisualStyles.VisualStyleElement
 
 Public Class ViewForm
     '稿件
     Private _currentArtwork As Artwork '当前稿件
     Private _allArtworks As List(Of Artwork) '全部稿件列表
-    '文件
+    '索引
     Private _currentFileIndex As Integer = 0 '当前文件索引
     Private _currentArtworkIndex As Integer = -1 '当前稿件索引
     '异步
@@ -16,7 +18,7 @@ Public Class ViewForm
     Private _cancellationTokenSource As CancellationTokenSource '任务取消令牌
     '事件
     Private _mainForm As Form '保存主窗口引用
-    '支持的文件扩展名
+    '扩展名
     Private ReadOnly _imageExtensions As String() = {".jpg", ".jpeg", ".png", ".gif", ".bmp", ".tiff", ".ico", ".webp"}
 #Region "窗体相关"
     ''' <summary>
@@ -44,7 +46,9 @@ Public Class ViewForm
         Me.Text = "图片浏览器"
         PictureBoxMain.SizeMode = PictureBoxSizeMode.Zoom
         PictureBoxMain.Dock = DockStyle.Fill
-        SystemThemeChange()
+        SysMenuInit() '初始化菜单
+        UpdateMenuStates() '更新菜单状态
+        SystemThemeChange() '初始化主题
         '加载当前稿件的第一张图片
         LoadCurrentArtworkFirstImage()
     End Sub
@@ -74,10 +78,12 @@ Public Class ViewForm
                 bgColor = BgColorDark
                 frColor = FrColorDark
                 Icon = CreateRoundedRectangleIcon(True, My.Resources.Icons.FormImageDark)
+                InitializeMenuImages(True) '设置菜单图标主题
             Else
                 bgColor = BgColorLight
                 frColor = FrColorLight
                 Icon = CreateRoundedRectangleIcon(False, My.Resources.Icons.FormImageLight)
+                InitializeMenuImages()
             End If
             For Each control In controlList
                 control.ForeColor = frColor
@@ -90,6 +96,91 @@ Public Class ViewForm
             SetPreferredAppMode(PreferredAppMode.AllowDark)
             FlushMenuThemes()
         End Using
+    End Sub
+    ''' <summary>
+    ''' 初始化系统菜单
+    ''' </summary>
+    Private Sub SysMenuInit()
+        Dim menuHandle = GetSystemMenu(Handle, False) '获取菜单句柄
+        InsertMenu(menuHandle, 0, MF_BYPOSITION Or MF_STRING, 1, "上一张(&P)")
+        InsertMenu(menuHandle, 1, MF_BYPOSITION Or MF_STRING, 2, "下一张(&N)")
+        InsertMenu(menuHandle, 2, MF_BYPOSITION Or MF_SEPARATOR, 0, Nothing)
+        InsertMenu(menuHandle, 3, MF_BYPOSITION Or MF_STRING, 3, "上一稿件(&R)")
+        InsertMenu(menuHandle, 4, MF_BYPOSITION Or MF_STRING, 4, "下一稿件(&E)")
+        InsertMenu(menuHandle, 5, MF_BYPOSITION Or MF_SEPARATOR, 0, Nothing)
+        InsertMenu(menuHandle, 6, MF_BYPOSITION Or MF_STRING, 5, "窗口置顶(&T)")
+        InsertMenu(menuHandle, 7, MF_BYPOSITION Or MF_STRING, 6, "复制(&C)")
+        InsertMenu(menuHandle, 8, MF_BYPOSITION Or MF_SEPARATOR, 0, Nothing)
+        InsertMenu(menuHandle, 9, MF_BYPOSITION Or MF_STRING, 7, "详情(&I)...")
+        InsertMenu(menuHandle, 10, MF_BYPOSITION Or MF_STRING, 8, "幻灯片放映(&P)")
+        InsertMenu(menuHandle, 11, MF_BYPOSITION Or MF_STRING, 9, "帮助(&H)...")
+        InsertMenu(menuHandle, 12, MF_BYPOSITION Or MF_SEPARATOR, 0, Nothing)
+        InsertMenu(menuHandle, 13, MF_BYPOSITION Or MF_STRING, 10, "全屏(&F)")
+        '设置菜单项快捷键
+        SetMenuItemWithShortcut(menuHandle, 0, 1, "上一张(&P)", "PageUp")
+        SetMenuItemWithShortcut(menuHandle, 1, 2, "下一张(&N)", "PageDown")
+        SetMenuItemWithShortcut(menuHandle, 3, 3, "上一稿件(&R)", "Ctrl+Left")
+        SetMenuItemWithShortcut(menuHandle, 4, 4, "下一稿件(&E)", "Ctrl+Right")
+        SetMenuItemWithShortcut(menuHandle, 6, 5, "窗口置顶(&T)", "Alt+T")
+        SetMenuItemWithShortcut(menuHandle, 7, 6, "复制(&C)", "Ctrl+C")
+        SetMenuItemWithShortcut(menuHandle, 9, 7, "详情(&I)...", "I")
+        SetMenuItemWithShortcut(menuHandle, 10, 8, "幻灯片放映(&P)", "Ctrl+F5")
+        SetMenuItemWithShortcut(menuHandle, 11, 9, "帮助(&H)...", "F1")
+        SetMenuItemWithShortcut(menuHandle, 13, 10, "全屏(&F)", "F11")
+    End Sub
+    Private Sub InitializeMenuImages(Optional isDarkMode As Boolean = False)
+        Dim menuHandle = GetSystemMenu(Handle, False) '设置窗体菜单
+        If isDarkMode Then
+            ApplyMenuIcon(menuHandle, 1, My.Resources.Icons.MenuPreviousDark, True)
+            ApplyMenuIcon(menuHandle, 2, My.Resources.Icons.MenuNextDark, True)
+            ApplyMenuIcon(menuHandle, 3, My.Resources.Icons.MenuLeftDark, True)
+            ApplyMenuIcon(menuHandle, 4, My.Resources.Icons.MenuRightDark, True)
+            ApplyMenuIcon(menuHandle, 5, My.Resources.Icons.MenuPinDark, True)
+            ApplyMenuIcon(menuHandle, 6, My.Resources.Icons.MenuCopyDark, True)
+            ApplyMenuIcon(menuHandle, 7, My.Resources.Icons.MenuInfoDark, True)
+            ApplyMenuIcon(menuHandle, 8, My.Resources.Icons.MenuImagePlayDark, True)
+            ApplyMenuIcon(menuHandle, 9, My.Resources.Icons.MenuTutorialDark, True)
+            ApplyMenuIcon(menuHandle, 10, My.Resources.Icons.MenuFullscreenDark, True)
+        Else
+            ApplyMenuIcon(menuHandle, 1, My.Resources.Icons.MenuPreviousLight)
+            ApplyMenuIcon(menuHandle, 2, My.Resources.Icons.MenuNextLight)
+            ApplyMenuIcon(menuHandle, 3, My.Resources.Icons.MenuLeftLight)
+            ApplyMenuIcon(menuHandle, 4, My.Resources.Icons.MenuRightLight)
+            ApplyMenuIcon(menuHandle, 5, My.Resources.Icons.MenuPinLight)
+            ApplyMenuIcon(menuHandle, 6, My.Resources.Icons.MenuCopyLight)
+            ApplyMenuIcon(menuHandle, 7, My.Resources.Icons.MenuInfoLight)
+            ApplyMenuIcon(menuHandle, 8, My.Resources.Icons.MenuImagePlayLight)
+            ApplyMenuIcon(menuHandle, 9, My.Resources.Icons.MenuTutorialLight)
+            ApplyMenuIcon(menuHandle, 10, My.Resources.Icons.MenuFullscreenLight)
+        End If
+    End Sub
+    Protected Overrides Sub WndProc(ByRef m As Message) '窗体消息处理函数
+        If m.Msg = WM_SYSCOMMAND Then '窗体响应菜单
+            Dim hMenu = GetSystemMenu(Handle, False)
+            Select Case m.WParam.ToInt32'对应菜单标号
+                Case 1 '上一张
+                    NavigatePrevious()
+                Case 2 '下一张
+                    NavigateNext()
+                Case 3 '上个稿件
+                    NavigatePreviousArtwork()
+                Case 4 '下个稿件
+                    NavigateNextArtwork()
+                Case 5 '窗口置顶
+                    SetWindowOnTop()
+                Case 6 '复制
+                    Clipboard.SetImage(PictureBoxMain.Image)
+                Case 7 '详情
+                    ShowArtworkInfo()
+                Case 8'幻灯片放映
+                    '待开发
+                Case 9 '帮助
+                    ShowHelp()
+                Case 10 '全屏
+                    '待开发
+            End Select
+        End If
+        MyBase.WndProc(m) '循环监听消息
     End Sub
 #End Region
 
@@ -113,9 +204,43 @@ Public Class ViewForm
             End If
         Next
         '按文件名排序
-        result.Sort()
+        result = result.OrderBy(Function(p) p, New NaturalStringComparer()).ToList()
         Return result
     End Function
+#Region "自然字符串排序比较器"
+    Public Class NaturalStringComparer
+        Implements IComparer(Of String)
+        Private Shared ReadOnly _regex As New Regex("\d+", RegexOptions.Compiled)
+        Public Function Compare(x As String, y As String) As Integer Implements IComparer(Of String).Compare
+            Return CompareNatural(x, y)
+        End Function
+        Private Shared Function CompareNatural(x As String, y As String) As Integer
+            ' 提取文件名（不含路径）
+            Dim xFile = Path.GetFileNameWithoutExtension(x)
+            Dim yFile = Path.GetFileNameWithoutExtension(y)
+            Dim xMatches = _regex.Matches(xFile)
+            Dim yMatches = _regex.Matches(yFile)
+            '如果没有数字，使用普通字符串比较
+            If xMatches.Count = 0 OrElse yMatches.Count = 0 Then
+                Return String.Compare(xFile, yFile, StringComparison.OrdinalIgnoreCase)
+            End If
+            '逐个比较数字部分
+            Dim i As Integer = 0
+            While i < Math.Min(xMatches.Count, yMatches.Count)
+                Dim xNum = Integer.Parse(xMatches(i).Value)
+                Dim yNum = Integer.Parse(yMatches(i).Value)
+
+                If xNum <> yNum Then
+                    Return xNum.CompareTo(yNum)
+                End If
+
+                i += 1
+            End While
+            '如果数字部分都相同，比较长度
+            Return xMatches.Count.CompareTo(yMatches.Count)
+        End Function
+    End Class
+#End Region
 
     ''' <summary>
     ''' 加载当前稿件的第一个有效图片
@@ -175,6 +300,7 @@ Public Class ViewForm
             Else
                 Me.Text = $"{title} - [{_currentFileIndex + 1}/{totalImages}] {fileName} - 图片浏览器"
             End If
+            UpdateMenuStates() '同时更新标题
         End If
     End Sub
 
@@ -194,7 +320,35 @@ Public Class ViewForm
                              $"备注: {_currentArtwork.Notes}{vbCrLf}"
         MessageBox.Show(info, "稿件信息", MessageBoxButtons.OK, MessageBoxIcon.Information)
     End Sub
-
+    ''' <summary>
+    ''' 显示帮助信息
+    ''' </summary>
+    Private Sub ShowHelp()
+        Dim helpString As String = $"上一张        左箭头或上箭头,'W','A','P',PageUp,小于号{vbCrLf}" &
+                                   $"下一张        右箭头或下箭头,'S','D','N',PageDown,大于号,空格或回车{vbCrLf}" &
+                                   $"上一稿件        Ctrl+PageUp,Ctrl+上箭头,Ctrl+左箭头{vbCrLf}" &
+                                   $"下一稿件        Ctrl+PageDown,Ctrl+下箭头,Ctrl+右箭头{vbCrLf}" &
+                                   $"第一张        Home{vbCrLf}" &
+                                   $"最后一张        End{vbCrLf}" &
+                                   $"关闭        Esc{vbCrLf}" &
+                                   $"显示信息        I{vbCrLf}" &
+                                   $"切换全屏        F11{vbCrLf}" &
+                                   $"显示帮助        F1"
+        MessageBox.Show(helpString, "使用帮助说明", MessageBoxButtons.OK, MessageBoxIcon.Information)
+    End Sub
+    ''' <summary>
+    ''' 置顶
+    ''' </summary>
+    Private Sub SetWindowOnTop()
+        Dim hMenu = GetSystemMenu(Handle, False)
+        If TopMost = False Then
+            TopMost = True
+            CheckMenuItem(hMenu, 5, MF_CHECKED) '窗口置顶
+        Else
+            TopMost = False
+            CheckMenuItem(hMenu, 5, MF_UNCHECKED) '取消置顶
+        End If
+    End Sub
     ''' <summary>
     ''' 当库关闭时, 本窗口也将关闭
     ''' </summary>
@@ -212,10 +366,15 @@ Public Class ViewForm
     ''' <param name="filePath">图片路径</param>
     Private Async Sub LoadImageAsync(filePath As String)
         Try
+            Dim hMenu = GetSystemMenu(Me.Handle, False)
             SyncLock _loadingLock
                 If _isProcessing Then Return  '防止重复进入
                 _isProcessing = True
             End SyncLock
+            For i = 1 To 4
+                EnableMenuItem(hMenu, i, MF_BYCOMMAND Or MF_GRAYED)
+            Next
+            EnableMenuItem(hMenu, 6, MF_BYCOMMAND Or MF_GRAYED)
             '取消之前的加载任务
             _cancellationTokenSource?.Cancel()
             _cancellationTokenSource = New CancellationTokenSource()
@@ -251,8 +410,10 @@ Public Class ViewForm
             '无论如何都要释放加载状态
             SyncLock _loadingLock
                 _isProcessing = False
+                EnableMenuItem(GetSystemMenu(Me.Handle, False), 6, MF_BYCOMMAND Or MF_ENABLED)
             End SyncLock
             Me.Cursor = Cursors.Default
+            UpdateMenuStates()
         End Try
     End Sub
 
@@ -362,7 +523,6 @@ Public Class ViewForm
     ''' </summary>
     Private Sub NavigateToFirstArtwork()
         If _allArtworks Is Nothing Then Return
-
         For i As Integer = 0 To _allArtworks.Count - 1
             Dim imageFiles As List(Of String) = GetImageFiles(_allArtworks(i).FilePaths)
             If imageFiles.Count > 0 Then
@@ -380,7 +540,6 @@ Public Class ViewForm
     ''' </summary>
     Private Sub NavigateToLastArtwork()
         If _allArtworks Is Nothing Then Return
-
         For i As Integer = _allArtworks.Count - 1 To 0 Step -1
             Dim imageFiles As List(Of String) = GetImageFiles(_allArtworks(i).FilePaths)
             If imageFiles.Count > 0 Then
@@ -392,6 +551,7 @@ Public Class ViewForm
             End If
         Next
     End Sub
+
     ''' <summary>
     ''' 导航到上一个稿件
     ''' </summary>
@@ -434,7 +594,7 @@ Public Class ViewForm
     End Sub
 #End Region
 
-#Region "按键处理"
+#Region "其他"
     '窗体键盘事件处理 - 使用窗体事件确保响应
     Private Sub ViewForm_KeyDown(sender As Object, e As KeyEventArgs) Handles MyBase.KeyDown
         If _isProcessing Then '当正在加载图片时, 取消处理按键响应
@@ -444,15 +604,22 @@ Public Class ViewForm
         '处理组合键
         If e.Control Then
             Select Case e.KeyCode
-                Case Keys.PageUp '上一个稿件
+                Case Keys.PageUp, Keys.Up, Keys.Left '上一个稿件
                     NavigatePreviousArtwork()
                     e.Handled = True
                     Return
-                Case Keys.PageDown '下一个稿件
+                Case Keys.PageDown, Keys.Right, Keys.Down '下一个稿件
                     NavigateNextArtwork()
                     e.Handled = True
                     Return
+                Case Keys.C
+                    Clipboard.SetImage(PictureBoxMain.Image)
             End Select
+        End If
+        If e.Alt And e.KeyCode = Keys.T Then
+            SetWindowOnTop()
+            e.Handled = True
+            e.SuppressKeyPress = True '防止发出声音
         End If
         '处理单键
         Select Case e.KeyCode
@@ -479,18 +646,103 @@ Public Class ViewForm
                 ShowArtworkInfo()
                 e.Handled = True
             Case Keys.Insert '老板键
+            Case Keys.F1
+                ShowHelp()
         End Select
-    End Sub
-#End Region
-
-#Region "全屏处理"
-    Private Sub PictureBoxMain_DoubleClick(sender As Object, e As EventArgs) Handles PictureBoxMain.DoubleClick
-        ToggleFullScreen()
     End Sub
     '切换全屏模式
     Private Sub ToggleFullScreen()
         '全屏
     End Sub
+    Private Sub PictureBoxMain_MouseDown(sender As Object, e As MouseEventArgs) Handles PictureBoxMain.MouseDown
+        If e.Button = MouseButtons.Left Then
+            '左键按下时模拟标题栏拖动
+            ReleaseCapture()
+            SendMessage(Me.Handle, WM_NCLBUTTONDOWN, HTCAPTION, 0)
+        ElseIf e.Button = MouseButtons.Right Then
+            '右键按下时显示系统菜单
+            Dim hMenu As IntPtr = GetSystemMenu(Me.Handle, False) '获取系统菜单句柄
+            If hMenu = IntPtr.Zero Then Return
+            '将客户区坐标转换为屏幕坐标
+            Dim screenPos As Point = Me.PointToScreen(New Point(e.X, e.Y))
+            '获取要执行的菜单命令
+            Dim cmd As Integer = TrackPopupMenu(hMenu, TPM_LEFTALIGN Or TPM_RETURNCMD,
+                                            screenPos.X, screenPos.Y, 0, Me.Handle, IntPtr.Zero)
+            '如果有命令, 发送给窗口
+            If cmd <> 0 Then
+                SendMessage(Me.Handle, WM_SYSCOMMAND, cmd, 0)
+            End If
+        End If
+    End Sub
+    Private Sub PictureBoxMain_MouseWheel(sender As Object, e As MouseEventArgs) Handles PictureBoxMain.MouseWheel
+        If _isProcessing Then '当正在加载图片时, 取消处理按键响应
+            Return
+        End If
+        If e.Delta > 0 Then
+            NavigatePrevious()
+        Else
+            NavigateNext()
+        End If
+    End Sub
+    ''' <summary>
+    ''' 根据当前状态更新菜单项的启用/禁用
+    ''' </summary>
+    Private Sub UpdateMenuStates()
+        Dim hMenu As IntPtr = GetSystemMenu(Me.Handle, False)
+        If hMenu = IntPtr.Zero Then Return
+        Dim currentImages As List(Of String) = GetCurrentArtworkImages()
+        Dim isFirstImage As Boolean = (_currentArtworkIndex = 0 AndAlso _currentFileIndex = 0) '第一个稿件第一个文件
+        Dim isLastImage As Boolean = (_currentArtworkIndex = _allArtworks.Count - 1 AndAlso
+                                  _currentFileIndex = currentImages.Count - 1) '最后一个稿件最后一个文件
+        If Not isFirstImage Then '判断是否为第一个文件
+            EnableMenuItem(hMenu, 1, MF_BYCOMMAND Or MF_ENABLED)
+        Else
+            EnableMenuItem(hMenu, 1, MF_BYCOMMAND Or MF_GRAYED)
+        End If
+        If Not isLastImage Then '判断是否为最后一个文件
+            EnableMenuItem(hMenu, 2, MF_BYCOMMAND Or MF_ENABLED)
+        Else
+            EnableMenuItem(hMenu, 2, MF_BYCOMMAND Or MF_GRAYED)
+        End If
+        If HasPreviousArtwork() Then '判断是否为第一个稿件
+            EnableMenuItem(hMenu, 3, MF_BYCOMMAND Or MF_ENABLED)
+        Else
+            EnableMenuItem(hMenu, 3, MF_BYCOMMAND Or MF_GRAYED)
+        End If
+        If HasNextArtwork() Then '判断是否为最后一个稿件
+            EnableMenuItem(hMenu, 4, MF_BYCOMMAND Or MF_ENABLED)
+        Else
+            EnableMenuItem(hMenu, 4, MF_BYCOMMAND Or MF_GRAYED)
+        End If
+    End Sub
+
+    ''' <summary>
+    ''' 检查是否存在上一个有图片的稿件
+    ''' </summary>
+    Private Function HasPreviousArtwork() As Boolean
+        If _allArtworks Is Nothing OrElse _currentArtworkIndex <= 0 Then Return False
+
+        For i As Integer = _currentArtworkIndex - 1 To 0 Step -1
+            Dim imageFiles As List(Of String) = GetImageFiles(_allArtworks(i).FilePaths)
+            If imageFiles.Count > 0 Then Return True
+        Next
+
+        Return False
+    End Function
+
+    ''' <summary>
+    ''' 检查是否存在下一个有图片的稿件
+    ''' </summary>
+    Private Function HasNextArtwork() As Boolean
+        If _allArtworks Is Nothing OrElse _currentArtworkIndex >= _allArtworks.Count - 1 Then Return False
+
+        For i As Integer = _currentArtworkIndex + 1 To _allArtworks.Count - 1
+            Dim imageFiles As List(Of String) = GetImageFiles(_allArtworks(i).FilePaths)
+            If imageFiles.Count > 0 Then Return True
+        Next
+
+        Return False
+    End Function
 #End Region
 
 End Class

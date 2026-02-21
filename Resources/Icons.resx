@@ -290,13 +290,13 @@
     <value>Lightmode-Icons\info.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
     <comment>关于 - 浅色模式</comment>
   </data>
-  <data name="MenuMoveToDark" type="System.Resources.ResXFileRef, System.Windows.Forms">
+  <data name="MenuRightDark" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Darkmode-Icons\arrow-big-right.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-    <comment>移动到 - 深色模式</comment>
+    <comment>向右 - 深色模式</comment>
   </data>
-  <data name="MenuMoveToLight" type="System.Resources.ResXFileRef, System.Windows.Forms">
+  <data name="MenuRightLight" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Lightmode-Icons\arrow-big-right.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-    <comment>移动到 - 浅色模式</comment>
+    <comment>向右 - 浅色模式</comment>
   </data>
   <data name="MenuNextDark" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Darkmode-Icons\arrow-right.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -388,6 +388,7 @@
   </data>
   <data name="MenuEditLineDark" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Darkmode-Icons\pencil-line.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <comment>重命名 - 深色模式</comment>
   </data>
   <data name="MenuTerminalDark" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Darkmode-Icons\terminal.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -399,6 +400,7 @@
   </data>
   <data name="MenuEditLineLight" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Lightmode-Icons\pencil-line.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <comment>重命名 - 浅色模式</comment>
   </data>
   <data name="MenuStarLight" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Lightmode-Icons\star.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -427,5 +429,21 @@
   <data name="FormImageLight" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Lightmode-Icons\image.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
     <comment>图片 - 浅色模式</comment>
+  </data>
+  <data name="MenuLeftLight" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Lightmode-Icons\arrow-big-left.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <comment>向左 - 浅色模式</comment>
+  </data>
+  <data name="MenuFullscreenLight" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Lightmode-Icons\fullscreen.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <comment>全屏 - 浅色模式</comment>
+  </data>
+  <data name="MenuLeftDark" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Darkmode-Icons\arrow-big-left.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <comment>向左 - 深色模式</comment>
+  </data>
+  <data name="MenuFullscreenDark" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Darkmode-Icons\fullscreen.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <comment>全屏 - 深色模式</comment>
   </data>
 </root>

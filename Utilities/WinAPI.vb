@@ -69,6 +69,10 @@ Public Module WinAPI
         <MarshalAs(UnmanagedType.LPTStr)> ByVal lpNewItem As String
     ) As <MarshalAs(UnmanagedType.Bool)> Boolean
     End Function
+    'TrackPopupMenu 函数 - 弹出菜单
+    <DllImport("user32.dll")>
+    Public Function TrackPopupMenu(hMenu As IntPtr, uFlags As Integer, x As Integer, y As Integer, nReserved As Integer, hWnd As IntPtr, prcRect As IntPtr) As Integer
+    End Function
     'GetMenuItemID 函数 - 获取菜单项ID
     <DllImport("user32.dll")>
     Public Function GetMenuItemID(
@@ -106,6 +110,10 @@ Public Module WinAPI
     End Structure
     Public Const MIIM_BITMAP As Integer = &H80
     Public Const MIIM_TYPE As Integer = &H10
+    Public Const MIIM_FTYPE As Integer = &H100
+    Public Const MIIM_STRING As Integer = &H40
+    Public Const MIIM_ID As Integer = &H2
+    Public Const MFT_STRING As Integer = &H0
     '菜单常量
     Public Const MF_SEPARATOR = &H800 '分隔符
     Public Const MF_STRING = &H0 '字符串
@@ -124,6 +132,9 @@ Public Module WinAPI
     Public Const SC_MINIMIZE = &HF020 '最小化
     Public Const SC_MAXIMIZE = &HF030 '最大化
     Public Const SC_CLOSE = &HF060 '关闭
+    '菜单显示标识
+    Public Const TPM_LEFTALIGN As Integer = &H0
+    Public Const TPM_RETURNCMD As Integer = &H100
 
 #End Region
 
@@ -139,6 +150,10 @@ Public Module WinAPI
     <DllImport("user32.dll")>
     Public Function SendMessage(ByVal hWnd As IntPtr, ByVal Msg As Integer, ByVal wParam As IntPtr, ByVal lParam As IntPtr) As IntPtr
     End Function
+    'ReleaseCapture 函数 - 处理拖动事件
+    <DllImport("user32.dll")>
+    Public Function ReleaseCapture() As Boolean
+    End Function
     '消息常量
     Public Const WM_DROPFILES As Integer = &H233
     Public Const WM_COPYGLOBALDATA As Integer = &H49
@@ -153,6 +168,10 @@ Public Module WinAPI
     Public Const WM_COMMAND = &H111 '窗体选择菜单项
     Public Const WM_SYSCOMMAND = &H112 '窗体选择系统菜单项
     Public Const WM_DWMCOLORIZATIONCOLORCHANGED = &H320 '窗体主题色被更改(深色同样有效)
+    Public Const WM_SYSMENU As Integer = &H313 '系统菜单常量
+    Public Const WM_NCLBUTTONDOWN As Integer = &HA1
+    '其他常量
+    Public Const HTCAPTION As Integer = 2
 #End Region
 
 #Region "主题"

@@ -14,7 +14,7 @@ Public Class MainForm
     Private _currentPrintImages As List(Of String) = Nothing '当前要打印的图片文件路径
     Private _currentPrintIndex As Integer = 0 '当前要打印的图片序号
     Private _artworkCount As Integer = 0 '当前实例稿件总数
-    '图片窗口
+    '图片
     Private _imageList As New List(Of Artwork) '图片列表
     Public Event LibraryClosed As EventHandler '定义库关闭事件
     Private _openViewForms As New List(Of ViewForm) '跟踪打开的图片窗口
@@ -326,6 +326,7 @@ Public Class MainForm
     ''' </summary>
     Private Sub SysMenuInit()
         Dim menuHandle = GetSystemMenu(Handle, False) '获取菜单句柄
+        '添加新菜单
         InsertMenu(menuHandle, 0, MF_BYPOSITION Or MF_STRING, 1, "窗口置顶(&T)")
         InsertMenu(menuHandle, 1, MF_BYPOSITION Or MF_SEPARATOR, 0, Nothing)
         InsertMenu(menuHandle, 8, MF_BYPOSITION Or MF_STRING, 2, "新建稿件(&N)...")
@@ -333,59 +334,20 @@ Public Class MainForm
         InsertMenu(menuHandle, 10, MF_BYPOSITION Or MF_STRING, 4, "幻灯片放映(&P)")
         InsertMenu(menuHandle, 11, MF_BYPOSITION Or MF_SEPARATOR, 0, Nothing)
         InsertMenu(menuHandle, 12, MF_BYPOSITION Or MF_STRING, 5, "选项(&O)...")
-        InsertMenu(menuHandle, 13, MF_BYPOSITION Or MF_STRING, 6, "统计信息(&T)...")
+        InsertMenu(menuHandle, 13, MF_BYPOSITION Or MF_STRING, 6, "统计信息(&I)...")
         InsertMenu(menuHandle, 14, MF_BYPOSITION Or MF_STRING, 7, "关于(&A)...")
         InsertMenu(menuHandle, 15, MF_BYPOSITION Or MF_SEPARATOR, 0, Nothing)
+        '设置菜单快捷键
+        SetMenuItemWithShortcut(menuHandle, 0, 1, "窗口置顶(&T)", "Alt+T")
+        SetMenuItemWithShortcut(menuHandle, 8, 2, "新建稿件(&N)...", "Ctrl+N")
+        SetMenuItemWithShortcut(menuHandle, 9, 3, "刷新(&R)", "F5")
+        SetMenuItemWithShortcut(menuHandle, 10, 4, "幻灯片放映(&P)", "Ctrl+F5")
+        SetMenuItemWithShortcut(menuHandle, 12, 5, "选项(&O)...", "Ctrl+K")
+        SetMenuItemWithShortcut(menuHandle, 13, 6, "统计信息(&I)...", "Alt+I")
+        SetMenuItemWithShortcut(menuHandle, 14, 7, "关于(&A)...", "Ctrl+F1")
         EnableMenuItem(menuHandle, 2, MF_GRAYED)
         EnableMenuItem(menuHandle, 4, MF_GRAYED)
         EnableMenuItem(menuHandle, 6, MF_GRAYED)
-    End Sub
-    ''' <summary>
-    ''' 为指定的菜单项设置图标, 并处理透明度背景模拟
-    ''' </summary>
-    ''' <param name="hMenu">菜单句柄(hMenu)</param>
-    ''' <param name="wParam">菜单项标识符(wParam)</param>
-    ''' <param name="icon">原始图标资源</param>
-    ''' <param name="isDarkMode">是否为深色模式</param>
-    Public Sub ApplyMenuIcon(hMenu As IntPtr, wParam As Integer, icon As Bitmap, Optional isDarkMode As Boolean = False)
-        '释放旧的位图句柄
-        Dim mii As New MENUITEMINFO With {
-            .cbSize = Marshal.SizeOf(Of MENUITEMINFO)(),
-            .fMask = MIIM_BITMAP
-        }
-        If GetMenuItemInfo(hMenu, wParam, False, mii) Then
-            If mii.hbmpItem <> IntPtr.Zero Then
-                DeleteObject(mii.hbmpItem)
-            End If
-        End If
-        '创建新位图并设置
-        Dim size As Integer = 18 '图标尺寸
-        Using resizedBmp As New Bitmap(size, size, PixelFormat.Format24bppRgb)
-            Using g As Graphics = Graphics.FromImage(resizedBmp) '设置高质量缩放参数
-                g.InterpolationMode = InterpolationMode.HighQualityBicubic
-                g.SmoothingMode = SmoothingMode.HighQuality
-                g.PixelOffsetMode = PixelOffsetMode.HighQuality
-                g.CompositingQuality = CompositingQuality.HighQuality
-                '清空背景, 并按照主题填充
-                If isDarkMode Then
-                    g.Clear(Color.FromArgb(43, 43, 43))
-                Else
-                    g.Clear(SystemColors.Menu)
-                End If
-                '计算保持宽高比的绘制区域
-                Dim srcWidth As Integer = icon.Width
-                Dim srcHeight As Integer = icon.Height
-                '计算缩放比例
-                Dim ratio As Double = Math.Min(size / srcWidth, size / srcHeight)
-                Dim newWidth As Integer = CInt(srcWidth * ratio)
-                Dim newHeight As Integer = CInt(srcHeight * ratio)
-                Dim x As Integer = (size - newWidth) \ 2
-                Dim y As Integer = (size - newHeight) \ 2
-                g.DrawImage(icon, New Rectangle(x, y, newWidth, newHeight), 0, 0, srcWidth, srcHeight, GraphicsUnit.Pixel)
-            End Using '绘制缩放后的图像
-            Dim hBitmap = resizedBmp.GetHbitmap()
-            SetMenuItemBitmaps(hMenu, wParam, MF_BYCOMMAND, hBitmap, Nothing)
-        End Using
     End Sub
 
     ''' <summary>
@@ -595,7 +557,7 @@ Public Class MainForm
                 .Enabled = False
             }
             MnuLibList.DropDownItems.Add(artworkMenuItem)
-            Exit Sub
+            Return
         End If
         Dim menuCount As Integer = 0
         For Each foldername In libraryFolders '将稿件库文件夹添加到'当前库'菜单中
@@ -682,7 +644,7 @@ Public Class MainForm
                 Try
                     FileIO.FileSystem.CopyDirectory(_libraryManager.GetCurrentLibrary.LibraryPath, newPath, FileIO.UIOption.AllDialogs)
                 Catch ex As OperationCanceledException
-                    Exit Sub '操作被取消, 忽略即可
+                    Return '操作被取消, 忽略即可
                 End Try
                 _libraryManager.AddLibrary(newLib)
                 _libraryManager.SwitchLibrary(newLib)
@@ -1000,7 +962,7 @@ Public Class MainForm
             Dim result = MessageBox.Show(
                             $"您将同时打开{artworkPaths.Count}个文件夹, 确定要继续吗?",
                             "Furry Art Studio", MessageBoxButtons.YesNo, MessageBoxIcon.Warning)
-            If result = DialogResult.No Then Exit Sub
+            If result = DialogResult.No Then Return
         End If
         For Each artworkPath In artworkPaths
             Shell($"explorer {artworkPath}", 1)
@@ -1209,6 +1171,7 @@ Public Class MainForm
         _openViewForms.Clear()
     End Sub
 #End Region
+
     '添加一个缩略图编辑器，比较难
     'Shift，方向键支持
     '幻灯片放映支持

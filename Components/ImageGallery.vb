@@ -445,7 +445,7 @@ Public Class ImageGallery
         Dim logicalPoint As New Point(
             e.X - scrollOffset.X,
             e.Y - scrollOffset.Y
-        ) '获得正确的坐标
+        ) '修正坐标偏移
 
         Dim isShiftPressed As Boolean = My.Computer.Keyboard.ShiftKeyDown
         Dim isCtrlPressed As Boolean = My.Computer.Keyboard.CtrlKeyDown
@@ -465,14 +465,14 @@ Public Class ImageGallery
                 Invalidate()
                 'RaiseEvent SelectionChanged(_selectedImages.AsReadOnly()) '选中稿件
                 RaiseEvent SelectionChanged(Me, New SelectionChangedEventArgs(_selectedImages.AsReadOnly()))
-                Exit Sub
+                Return
             End If
         Next
 
         For Each kv In _pageRects
             If kv.Value.Contains(logicalPoint) Then
                 SetPage(kv.Key)
-                Exit Sub
+                Return
             End If
         Next
 
@@ -483,11 +483,15 @@ Public Class ImageGallery
     ''' </summary>
     Protected Overrides Sub OnMouseDoubleClick(e As MouseEventArgs)
         MyBase.OnMouseDoubleClick(e)
-
+        Dim scrollOffset As Point = Me.AutoScrollPosition
+        Dim logicalPoint As New Point(
+            e.X - scrollOffset.X,
+            e.Y - scrollOffset.Y
+        ) '修正坐标偏移
         For Each item In _layoutItems
-            If item.Bounds.Contains(e.Location) Then
+            If item.Bounds.Contains(logicalPoint) Then
                 RaiseEvent ImageDoubleClicked(item.Image)
-                Exit Sub
+                Return
             End If
         Next
     End Sub
@@ -511,6 +515,8 @@ Public Class ImageGallery
             Case Keys.PageDown
                 CancelSelect()
                 SetPage(_currentPage + 1)
+            Case Keys.Enter
+                RaiseEvent ImageDoubleClicked(_layoutItems(0).Image)
             Case Else
                 Exit Select
         End Select
