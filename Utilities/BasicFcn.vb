@@ -1,13 +1,24 @@
-﻿Imports System.IO
+﻿Imports System.Drawing.Drawing2D
+Imports System.IO
 Imports System.Runtime.InteropServices
+Imports System.Security.Principal
 
 ''' <summary>
 ''' 基本函数
 ''' </summary>
 Module BasicFcn
+    '分割线
     Public ReadOnly SeparatorEqual As New String("="c, 30)
     Public ReadOnly SeparatorStar As New String("*"c, 30)
     Public ReadOnly SeparatorDash As New String("-"c, 30)
+    '主题
+    Public ReadOnly FrColorLight As Color = Color.Black
+    Public ReadOnly BgColorLight As Color = Color.White
+    Public ReadOnly FrColorDark As Color = Color.FromArgb(220, 220, 220)
+    Public ReadOnly BgColorDark As Color = Color.FromArgb(32, 32, 32)
+    Public ReadOnly IconColorLight As Color = Color.FromArgb(58, 162, 143)
+    Public ReadOnly IconColorDark As Color = Color.FromArgb(87, 226, 180)
+    '#e84141 是红色
     ''' <summary>
     ''' 初始化日志记录器实例
     ''' </summary>
@@ -252,4 +263,94 @@ Module BasicFcn
             MessageBox.Show("设置标题栏颜色失败: " & ex.Message)
         End Try
     End Sub
+    ''' <summary>
+    ''' 创建圆角矩形图标
+    ''' </summary>
+    ''' <param name="isDarkMode">是否为深色模式</param>
+    ''' <param name="bitmap">要绘制在图标上的位图</param>
+    ''' <returns>32x32的Icon对象</returns>
+    Public Function CreateRoundedRectangleIcon(isDarkMode As Boolean, bitmap As Bitmap) As Icon
+        Dim bmp As New Bitmap(32, 32)
+        Using g As Graphics = Graphics.FromImage(bmp)
+            g.SmoothingMode = SmoothingMode.AntiAlias
+            g.InterpolationMode = InterpolationMode.HighQualityBicubic
+            Dim backColor As Color = If(isDarkMode, Color.Black, Color.White)
+            Dim rect As New Rectangle(0, 0, 32, 32) ' 31确保在32x32内
+            Dim radius As Integer = 8 ' 圆角半径
+            Dim path As GraphicsPath = GetRoundedRectanglePath(rect, radius)
+            '填充圆角矩形
+            Using brush As New SolidBrush(backColor)
+                g.FillPath(brush, path)
+            End Using
+            '绘制传入的位图（调整大小以适应圆角矩形）
+            If bitmap IsNot Nothing Then
+                '在圆角矩形内绘制位图，留出2像素边距
+                Dim imgRect As New Rectangle(2, 2, 28, 28)
+                g.DrawImage(bitmap, imgRect)
+            End If
+        End Using
+        '从位图创建图标
+        Return Icon.FromHandle(bmp.GetHicon())
+    End Function
+
+    ''' <summary>
+    ''' 创建圆形图标
+    ''' </summary>
+    ''' <param name="isDarkMode">是否为深色模式</param>
+    ''' <param name="bitmap">要绘制在图标上的位图</param>
+    ''' <returns>32x32的Icon对象</returns>
+    Public Function CreateCircleIcon(isDarkMode As Boolean, bitmap As Bitmap) As Icon
+        Dim bmp As New Bitmap(32, 32)
+        Using g As Graphics = Graphics.FromImage(bmp)
+            g.SmoothingMode = SmoothingMode.AntiAlias
+            g.InterpolationMode = InterpolationMode.HighQualityBicubic
+            '设置背景颜色
+            Dim backColor As Color = If(isDarkMode, Color.Black, Color.White)
+            '创建圆形路径
+            Dim rect As New Rectangle(0, 0, 32, 32) ' 31确保在32x32内
+            Dim path As GraphicsPath = GetCirclePath(rect)
+            Using brush As New SolidBrush(backColor) '填充圆形
+                g.FillPath(brush, path)
+            End Using
+            '绘制传入的位图
+            If bitmap IsNot Nothing Then
+                '在圆形内绘制位图
+                Dim imgRect As New Rectangle(2, 2, 28, 28)
+                '创建圆形裁剪区域
+                Dim circleClip As New GraphicsPath()
+                circleClip.AddEllipse(New Rectangle(2, 2, 28, 28))
+                g.SetClip(circleClip)
+                g.DrawImage(bitmap, imgRect)
+                g.ResetClip() '重置裁剪区域
+            End If
+        End Using
+        Return Icon.FromHandle(bmp.GetHicon())
+    End Function
+    '获取圆形路径
+    Private Function GetCirclePath(rect As Rectangle) As GraphicsPath
+        Dim path As New GraphicsPath()
+        path.AddEllipse(rect)
+        Return path
+    End Function
+    '获取圆角矩形路径
+    Private Function GetRoundedRectanglePath(rect As Rectangle, radius As Integer) As GraphicsPath
+        Dim path As New GraphicsPath()
+        '确保半径不超过矩形尺寸的一半
+        radius = Math.Min(radius, Math.Min(rect.Width, rect.Height) \ 2)
+        '创建四个圆弧和四条直线组成的圆角矩形
+        path.AddArc(rect.X, rect.Y, radius * 2, radius * 2, 180, 90) ' 左上角
+        path.AddArc(rect.Right - radius * 2, rect.Y, radius * 2, radius * 2, 270, 90) ' 右上角
+        path.AddArc(rect.Right - radius * 2, rect.Bottom - radius * 2, radius * 2, radius * 2, 0, 90) ' 右下角
+        path.AddArc(rect.X, rect.Bottom - radius * 2, radius * 2, radius * 2, 90, 90) ' 左下角
+        path.CloseFigure()
+        Return path
+    End Function
+    ''' <summary>
+    ''' 判断当前是否以管理员权限运行
+    ''' </summary>
+    Public Function IsAdmin() As Boolean
+        Dim identity As WindowsIdentity = WindowsIdentity.GetCurrent()
+        Dim principal As New WindowsPrincipal(identity)
+        Return principal.IsInRole(WindowsBuiltInRole.Administrator)
+    End Function
 End Module

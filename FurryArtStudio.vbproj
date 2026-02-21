@@ -323,12 +323,17 @@
     <Content Include="Resources\Darkmode-Icons\github.png" />
     <Content Include="Resources\Darkmode-Icons\image-play.png" />
     <Content Include="Resources\Darkmode-Icons\info.png" />
+    <Content Include="Resources\Darkmode-Icons\pencil-line.png" />
     <Content Include="Resources\Darkmode-Icons\pencil.png" />
     <Content Include="Resources\Darkmode-Icons\pin.png" />
     <Content Include="Resources\Darkmode-Icons\printer.png" />
     <Content Include="Resources\Darkmode-Icons\search.png" />
     <Content Include="Resources\Darkmode-Icons\settings.png" />
+    <Content Include="Resources\Darkmode-Icons\shield.png" />
+    <Content Include="Resources\Darkmode-Icons\star.png" />
+    <Content Include="Resources\Darkmode-Icons\terminal.png" />
     <Content Include="Resources\Darkmode-Icons\trash-2.png" />
+    <Content Include="Resources\Darkmode-Icons\wallpaper.png" />
     <Content Include="Resources\Darkmode-Icons\x.png" />
     <Content Include="Resources\Lightmode-Icons\arrow-big-right-dash.png" />
     <Content Include="Resources\Lightmode-Icons\arrow-big-right.png" />
@@ -355,14 +360,18 @@
     <Content Include="Resources\Lightmode-Icons\github.png" />
     <Content Include="Resources\Lightmode-Icons\image-play.png" />
     <Content Include="Resources\Lightmode-Icons\info.png" />
+    <Content Include="Resources\Lightmode-Icons\pencil-line.png" />
     <Content Include="Resources\Lightmode-Icons\pencil.png" />
     <Content Include="Resources\Lightmode-Icons\pin.png" />
     <Content Include="Resources\Lightmode-Icons\printer.png" />
-    <Content Include="Resources\Lightmode-Icons\refresh-ccw.png" />
     <Content Include="Resources\Lightmode-Icons\refresh-cw.png" />
     <Content Include="Resources\Lightmode-Icons\search.png" />
     <Content Include="Resources\Lightmode-Icons\settings.png" />
+    <Content Include="Resources\Lightmode-Icons\shield.png" />
+    <Content Include="Resources\Lightmode-Icons\star.png" />
+    <Content Include="Resources\Lightmode-Icons\terminal.png" />
     <Content Include="Resources\Lightmode-Icons\trash-2.png" />
+    <Content Include="Resources\Lightmode-Icons\wallpaper.png" />
     <Content Include="Resources\Lightmode-Icons\x.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />

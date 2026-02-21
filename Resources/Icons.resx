@@ -382,4 +382,42 @@
     <value>Darkmode-Icons\copy-plus.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
     <comment>克隆 - 深色模式</comment>
   </data>
+  <data name="MenuStarDark" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Darkmode-Icons\star.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <comment>新功能 - 深色模式</comment>
+  </data>
+  <data name="MenuEditLineDark" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Darkmode-Icons\pencil-line.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="MenuTerminalDark" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Darkmode-Icons\terminal.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <comment>终端 - 深色模式</comment>
+  </data>
+  <data name="MenuWallpaperDark" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Darkmode-Icons\wallpaper.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <comment>设为壁纸 - 深色模式</comment>
+  </data>
+  <data name="MenuEditLineLight" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Lightmode-Icons\pencil-line.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="MenuStarLight" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Lightmode-Icons\star.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <comment>新功能 - 浅色模式</comment>
+  </data>
+  <data name="MenuTerminalLight" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Lightmode-Icons\terminal.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <comment>终端 - 浅色模式</comment>
+  </data>
+  <data name="MenuWallpaperLight" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Lightmode-Icons\wallpaper.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <comment>设为壁纸 - 浅色模式</comment>
+  </data>
+  <data name="MenuShieldLight" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Lightmode-Icons\shield.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <comment>以管理员身份运行 - 浅色模式</comment>
+  </data>
+  <data name="MenuShieldDark" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Darkmode-Icons\shield.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <comment>以管理员身份运行 - 深色模式</comment>
+  </data>
 </root>

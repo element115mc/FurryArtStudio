@@ -1,4 +1,5 @@
-﻿Imports System.Drawing.Drawing2D
+﻿Imports System.ComponentModel
+Imports System.Drawing.Drawing2D
 Imports System.Drawing.Imaging
 Imports System.Drawing.Printing
 Imports System.IO
@@ -27,6 +28,7 @@ Public Class MainForm
         SysMenuInit() '设置系统菜单
         Dim titleFont As New Font(LblTitle.Font, FontStyle.Bold)
         LblTitle.Font = titleFont
+        If IsAdmin() Then MnuRunAsElevated.Enabled = False
 #If DEBUG Then
         MnuDevTools.Visible = True '显示并启用开发者工具选项
         MnuDevTools.Enabled = True
@@ -145,18 +147,20 @@ Public Class MainForm
         Using regKey = Microsoft.Win32.Registry.CurrentUser.OpenSubKey("SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize", True)
             Dim isDarkMode As Boolean = (regKey.GetValue("AppsUseLightTheme", "1") = 0) '判断是否为深色主题
             '颜色常量
-            Dim bgColor As Color = Color.FromArgb(32, 33, 36)
-            Dim frColor As Color = Color.FromArgb(218, 220, 224)
+            Dim bgColor As Color
+            Dim frColor As Color
             '获取控件集合
             Dim controlList As List(Of Control) = GetAllControls(Me)
             '判断颜色
             If isDarkMode Then
+                bgColor = BgColorDark
+                frColor = FrColorDark
                 ImageGalleryMain.DisplayMode = GalleryDisplayMode.Dark '设置图片墙主题
                 KryptonMgrMain.GlobalPaletteMode = PaletteMode.MaterialDark '设置菜单栏主题
                 InitializeMenuImages(True) '设置菜单图标主题
             Else
-                bgColor = Color.FromArgb(255, 255, 255)
-                frColor = Color.FromArgb(0, 0, 0)
+                bgColor = BgColorLight
+                frColor = FrColorLight
                 ImageGalleryMain.DisplayMode = GalleryDisplayMode.Normal
                 KryptonMgrMain.GlobalPaletteMode = PaletteMode.MaterialLight
                 InitializeMenuImages()
@@ -180,6 +184,8 @@ Public Class MainForm
     {
         (MnuOnTop, "MenuPin"),
         (MnuDevTools, "MenuDevTools"),
+        (MnuRunAsElevated, "MenuShield"),
+        (MnuRunTerminal, "MenuTerminal"),
         (MnuProperties, "MenuSettings"),
         (MnuExit, "MenuClose"),
         (MnuLibList, "MenuFolders"),
@@ -210,7 +216,8 @@ Public Class MainForm
         (MnuPageDown, "MenuNext"),
         (MnuHelpTutorial, "MenuTutorial"),
         (MnuHelpGithub, "MenuGithub"),
-        (MnuHelpAbout, "MenuInfo")
+        (MnuHelpAbout, "MenuInfo"),
+        (MnuHelpWhatsNew, "MenuStar")
     }
         For Each setting In menuIcons
             Dim resourceName = setting.BaseName & If(isDarkMode, "Dark", "Light")
@@ -520,6 +527,38 @@ Public Class MainForm
     End Sub
     Private Sub MnuDevTools_Click(sender As Object, e As EventArgs) Handles MnuDevTools.Click
         DevToolsForm.Show()
+    End Sub
+    Private Sub MnuRunAsElevated_Click(sender As Object, e As EventArgs) Handles MnuRunAsElevated.Click
+        Dim startInfo As New ProcessStartInfo With {
+            .UseShellExecute = True, '必须设置为True才能使用Verb
+            .Verb = "runas", '请求管理员权限
+            .FileName = Application.ExecutablePath
+        }
+        Try
+            Process.Start(startInfo)
+            Me.Close()
+        Catch ex As Win32Exception
+            MessageBox.Show($"权限提升失败。{vbCrLf}操作被用户取消。", "Furry Art Studio", MessageBoxButtons.OK, MessageBoxIcon.Information)
+        End Try
+    End Sub
+    Private Sub MnuRunTerminal_Click(sender As Object, e As EventArgs) Handles MnuRunTerminal.Click
+        Dim startPath As String
+        Try
+            If _libraryManager.GetCurrentLibrary IsNot Nothing Then
+                startPath = _libraryManager.GetCurrentLibrary.LibraryPath
+            Else
+                startPath = Application.StartupPath
+            End If
+            Dim psi As New ProcessStartInfo With {
+                .FileName = "cmd.exe",
+                .Arguments = $"/K cd /D {startPath}",
+                .UseShellExecute = False,
+                .CreateNoWindow = False
+            }
+            Process.Start(psi)
+        Catch ex As Exception
+            MessageBox.Show($"命令提示符启动失败: {ex.Message}", "Furry Art Studio", MessageBoxButtons.OK, MessageBoxIcon.Information)
+        End Try
     End Sub
     Private Sub MnuProperties_Click(sender As Object, e As EventArgs) Handles MnuProperties.Click
         StatusLabel.Text = "设置首选项"
@@ -1124,8 +1163,9 @@ Public Class MainForm
     Private Sub MnuCheckUpdate_Click(sender As Object, e As EventArgs) Handles MnuCheckUpdate.Click
 
     End Sub
+    Private Sub MnuHelpWhatsNew_Click(sender As Object, e As EventArgs) Handles MnuHelpWhatsNew.Click
 
-
+    End Sub
 #End Region
     '添加一个缩略图编辑器，比较难
     'Shift，方向键支持

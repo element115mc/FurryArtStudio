@@ -1,5 +1,6 @@
 ﻿Imports System.Drawing.Printing
 Imports System.Runtime.InteropServices
+Imports Krypton.Toolkit
 Public Class PrintForm
     '打印设置变量
     Private _printSettings As PrinterSettings
@@ -33,8 +34,7 @@ Public Class PrintForm
         txtRight.Text = "25"
         rbHorizonal.Checked = True
         '绑定事件
-        AddHandler btnPrint.Click, AddressOf btnPrint_Click
-        AddHandler btnCancel.Click, AddressOf btnCancel_Click
+        AddHandler btnPrint.Click, AddressOf BtnPrint_Click
     End Sub
 
 #Region "打印机与纸张设置"
@@ -139,26 +139,34 @@ Public Class PrintForm
         RemoveMenu(MnuHandle, SC_MINIMIZE, MF_BYCOMMAND) '去除最小化菜单
     End Sub
     Private Sub SystemThemeChange()
-        Dim Darkmode As Boolean
-        Dim dKey = Microsoft.Win32.Registry.CurrentUser.OpenSubKey("SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize", True).GetValue("AppsUseLightTheme", "0") '判断是否为深色主题
-        If dKey = 0 Then '如果是深色模式
-            BackColor = Color.FromArgb(32, 33, 36)
-            For Each Ctls In Me.Controls '获取控件集合
-                Ctls.ForeColor = Color.FromArgb(218, 220, 224)
-                Ctls.BackColor = Color.FromArgb(32, 33, 36)
+        Using regKey = Microsoft.Win32.Registry.CurrentUser.OpenSubKey("SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize", True)
+            Dim isDarkMode As Boolean = (regKey.GetValue("AppsUseLightTheme", "1") = 0) '判断是否为深色主题
+            '颜色常量
+            Dim bgColor As Color
+            Dim frColor As Color
+            '获取控件集合
+            Dim controlList As List(Of Control) = GetAllControls(Me)
+            '判断颜色
+            If isDarkMode Then
+                bgColor = BgColorDark
+                frColor = FrColorDark
+                Icon = CreateRoundedRectangleIcon(True, My.Resources.Icons.MenuPrintDark)
+            Else
+                bgColor = BgColorLight
+                frColor = FrColorLight
+                Icon = CreateRoundedRectangleIcon(False, My.Resources.Icons.MenuPrintLight)
+            End If
+            For Each control In controlList
+                control.ForeColor = frColor
+                control.BackColor = bgColor
             Next
-            Darkmode = True
-        Else
-            BackColor = Color.FromArgb(255, 255, 255)
-            For Each Ctls In Me.Controls '获取控件集合
-                Ctls.ForeColor = Color.FromArgb(0, 0, 0)
-                Ctls.BackColor = Color.FromArgb(255, 255, 255)
-            Next
-            Darkmode = False
-        End If
-        DwmSetWindowAttribute(Handle, DwmWindowAttribute.UseImmersiveDarkMode, Darkmode, Marshal.SizeOf(Of Integer))
-        SetPreferredAppMode(PreferredAppMode.AllowDark)
-        FlushMenuThemes()
+            ForeColor = frColor
+            BackColor = bgColor
+            'WinAPI
+            DwmSetWindowAttribute(Handle, DwmWindowAttribute.UseImmersiveDarkMode, isDarkMode, Marshal.SizeOf(Of Integer))
+            SetPreferredAppMode(PreferredAppMode.AllowDark)
+            FlushMenuThemes()
+        End Using
     End Sub
     Private Sub BtnPrinterSetup_Click(sender As Object, e As EventArgs) Handles btnPrinterSetup.Click
         Dim isShiftPressed As Boolean = My.Computer.Keyboard.ShiftKeyDown
