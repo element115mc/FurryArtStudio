@@ -30,6 +30,7 @@ Partial Class AboutForm
         Me.LlblLicense = New System.Windows.Forms.LinkLabel()
         Me.TxtBox = New System.Windows.Forms.RichTextBox()
         Me.LlblPrivacy = New System.Windows.Forms.LinkLabel()
+        Me.LlblUserAgreement = New System.Windows.Forms.LinkLabel()
         Me.SuspendLayout()
         '
         'BtnOK
@@ -108,12 +109,23 @@ Partial Class AboutForm
         Me.LlblPrivacy.Text = "隐私政策"
         Me.LlblPrivacy.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
         '
+        'LlblUserAgreement
+        '
+        Me.LlblUserAgreement.Location = New System.Drawing.Point(481, 121)
+        Me.LlblUserAgreement.Name = "LlblUserAgreement"
+        Me.LlblUserAgreement.Size = New System.Drawing.Size(129, 23)
+        Me.LlblUserAgreement.TabIndex = 8
+        Me.LlblUserAgreement.TabStop = True
+        Me.LlblUserAgreement.Text = "用户协议"
+        Me.LlblUserAgreement.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
+        '
         'AboutForm
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 15.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.CancelButton = Me.BtnOK
         Me.ClientSize = New System.Drawing.Size(622, 273)
+        Me.Controls.Add(Me.LlblUserAgreement)
         Me.Controls.Add(Me.LlblPrivacy)
         Me.Controls.Add(Me.TxtBox)
         Me.Controls.Add(Me.LlblLicense)
@@ -141,4 +153,5 @@ Partial Class AboutForm
     Friend WithEvents LlblLicense As LinkLabel
     Friend WithEvents TxtBox As RichTextBox
     Friend WithEvents LlblPrivacy As LinkLabel
+    Friend WithEvents LlblUserAgreement As LinkLabel
 End Class

@@ -27,6 +27,7 @@ Partial Class MainForm
         Me.MnuStrip = New System.Windows.Forms.MenuStrip()
         Me.MnuFile = New System.Windows.Forms.ToolStripMenuItem()
         Me.MnuOnTop = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ToolStripSeparator9 = New System.Windows.Forms.ToolStripSeparator()
         Me.MnuDevTools = New System.Windows.Forms.ToolStripMenuItem()
         Me.MnuRunAsElevated = New System.Windows.Forms.ToolStripMenuItem()
         Me.MnuRunTerminal = New System.Windows.Forms.ToolStripMenuItem()
@@ -113,8 +114,8 @@ Partial Class MainForm
         Me.StorageStatusLabel = New System.Windows.Forms.ToolStripStatusLabel()
         Me.TSSep5 = New System.Windows.Forms.ToolStripStatusLabel()
         Me.KryptonMgrMain = New Krypton.Toolkit.KryptonManager(Me.components)
-        Me.ToolStripSeparator9 = New System.Windows.Forms.ToolStripSeparator()
         Me.ImageGalleryMain = New FurryArtStudio.ImageGallery()
+        Me.MnuUserAgreement = New System.Windows.Forms.ToolStripMenuItem()
         Me.MnuStrip.SuspendLayout()
         CType(Me.ArtworkListSplitContainer, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.ArtworkListSplitContainer.Panel1.SuspendLayout()
@@ -149,6 +150,11 @@ Partial Class MainForm
         Me.MnuOnTop.ShortcutKeys = CType((System.Windows.Forms.Keys.Alt Or System.Windows.Forms.Keys.T), System.Windows.Forms.Keys)
         Me.MnuOnTop.Size = New System.Drawing.Size(235, 26)
         Me.MnuOnTop.Text = "窗口置顶(&T)"
+        '
+        'ToolStripSeparator9
+        '
+        Me.ToolStripSeparator9.Name = "ToolStripSeparator9"
+        Me.ToolStripSeparator9.Size = New System.Drawing.Size(232, 6)
         '
         'MnuDevTools
         '
@@ -503,7 +509,7 @@ Partial Class MainForm
         '
         'MnuHelp
         '
-        Me.MnuHelp.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.MnuHelpTutorial, Me.ToolStripSeparator8, Me.MnuHelpWebsite, Me.MnuHelpGithub, Me.MnuHelpWhatsNew, Me.MnuCheckUpdate, Me.ToolStripSeparator10, Me.MnuHelpLicense, Me.MnuHelpPrivacy, Me.MnuHelpAbout})
+        Me.MnuHelp.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.MnuHelpTutorial, Me.ToolStripSeparator8, Me.MnuHelpWebsite, Me.MnuHelpGithub, Me.MnuHelpWhatsNew, Me.MnuCheckUpdate, Me.ToolStripSeparator10, Me.MnuHelpLicense, Me.MnuHelpPrivacy, Me.MnuUserAgreement, Me.MnuHelpAbout})
         Me.MnuHelp.Name = "MnuHelp"
         Me.MnuHelp.Size = New System.Drawing.Size(75, 24)
         Me.MnuHelp.Text = "帮助(&H)"
@@ -780,11 +786,6 @@ Partial Class MainForm
         Me.KryptonMgrMain.ToolkitStrings.MessageBoxStrings.LessDetails = "L&ess Details..."
         Me.KryptonMgrMain.ToolkitStrings.MessageBoxStrings.MoreDetails = "&More Details..."
         '
-        'ToolStripSeparator9
-        '
-        Me.ToolStripSeparator9.Name = "ToolStripSeparator9"
-        Me.ToolStripSeparator9.Size = New System.Drawing.Size(232, 6)
-        '
         'ImageGalleryMain
         '
         Me.ImageGalleryMain.AutoScroll = True
@@ -797,6 +798,12 @@ Partial Class MainForm
         Me.ImageGalleryMain.PageSize = 100
         Me.ImageGalleryMain.Size = New System.Drawing.Size(744, 498)
         Me.ImageGalleryMain.TabIndex = 3
+        '
+        'MnuUserAgreement
+        '
+        Me.MnuUserAgreement.Name = "MnuUserAgreement"
+        Me.MnuUserAgreement.Size = New System.Drawing.Size(224, 26)
+        Me.MnuUserAgreement.Text = "用户协议(&A)"
         '
         'MainForm
         '
@@ -915,4 +922,5 @@ Partial Class MainForm
     Friend WithEvents MnuRunAsElevated As ToolStripMenuItem
     Friend WithEvents MnuRunTerminal As ToolStripMenuItem
     Friend WithEvents ToolStripSeparator9 As ToolStripSeparator
+    Friend WithEvents MnuUserAgreement As ToolStripMenuItem
 End Class

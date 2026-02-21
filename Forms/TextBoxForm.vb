@@ -12,6 +12,8 @@
 ' WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 ' See the License for the specific language governing permissions and
 ' limitations under the License.
+Imports System.Runtime.InteropServices
+
 Public Class TextBoxForm
     Public Sub New(text As String, title As String)
         InitializeComponent()
@@ -21,5 +23,32 @@ Public Class TextBoxForm
     Private Sub TextBoxForm_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         TxtBox.ReadOnly = True
         TxtBox.Dock = DockStyle.Fill
+        SystemThemeChange()
+    End Sub
+    Private Sub SystemThemeChange()
+        Using regKey = Microsoft.Win32.Registry.CurrentUser.OpenSubKey("SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize", True)
+            Dim isDarkMode As Boolean = (regKey.GetValue("AppsUseLightTheme", "1") = 0) '判断是否为深色主题
+            '颜色常量
+            Dim bgColor As Color
+            Dim frColor As Color
+            '获取控件集合
+            Dim controlList As List(Of Control) = GetAllControls(Me)
+            '判断颜色
+            If isDarkMode Then
+                bgColor = BgColorDark
+                frColor = FrColorDark
+            Else
+                bgColor = BgColorLight
+                frColor = FrColorLight
+            End If
+            For Each control In controlList
+                control.ForeColor = frColor
+                control.BackColor = bgColor
+            Next
+            'WinAPI
+            DwmSetWindowAttribute(Handle, DwmWindowAttribute.UseImmersiveDarkMode, isDarkMode, Marshal.SizeOf(Of Integer))
+            SetPreferredAppMode(PreferredAppMode.AllowDark)
+            FlushMenuThemes()
+        End Using
     End Sub
 End Class
