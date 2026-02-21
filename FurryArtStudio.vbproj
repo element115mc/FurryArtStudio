@@ -209,6 +209,12 @@
     <Compile Include="Components\ImageGallery.vb">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Forms\TextBoxForm.Designer.vb">
+      <DependentUpon>TextBoxForm.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\TextBoxForm.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Forms\ViewForm.Designer.vb">
       <DependentUpon>ViewForm.vb</DependentUpon>
     </Compile>
@@ -261,6 +267,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\PrintForm.resx">
       <DependentUpon>PrintForm.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\TextBoxForm.resx">
+      <DependentUpon>TextBoxForm.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\ViewForm.resx">
       <DependentUpon>ViewForm.vb</DependentUpon>

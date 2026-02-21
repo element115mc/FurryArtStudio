@@ -1,4 +1,19 @@
-﻿Imports System.ComponentModel
+﻿' Furry Art Studio - 本地稿件管理工具
+' Copyright 2026 xionglongztz
+'
+' Licensed under the Apache License, Version 2.0 (the "License");
+' you may not use this file except in compliance with the License.
+' You may obtain a copy of the License at
+'
+'     http://www.apache.org/licenses/LICENSE-2.0
+'
+' Unless required by applicable law or agreed to in writing, software
+' distributed under the License is distributed on an "AS IS" BASIS,
+' WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+' See the License for the specific language governing permissions and
+' limitations under the License.
+
+Imports System.ComponentModel
 Imports System.Drawing.Drawing2D
 Imports System.Drawing.Imaging
 Imports System.Drawing.Printing
@@ -1171,9 +1186,5 @@ Public Class MainForm
         _openViewForms.Clear()
     End Sub
 #End Region
-
-    '添加一个缩略图编辑器，比较难
-    'Shift，方向键支持
-    '幻灯片放映支持
 
 End Class
