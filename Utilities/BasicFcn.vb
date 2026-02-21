@@ -353,4 +353,13 @@ Module BasicFcn
         Dim principal As New WindowsPrincipal(identity)
         Return principal.IsInRole(WindowsBuiltInRole.Administrator)
     End Function
+    ''' <summary>
+    ''' 判断一个文件是否为图片
+    ''' </summary>
+    ''' <param name="filePath">文件路径</param>
+    Public Function IsImageFile(filePath As String) As Boolean
+        Dim imageExtensions As String() = {".jpg", ".jpeg", ".png", ".gif", ".bmp", ".tiff", ".ico", ".webp"}
+        Dim ext As String = Path.GetExtension(filePath).ToLower()
+        Return imageExtensions.Contains(ext)
+    End Function
 End Module

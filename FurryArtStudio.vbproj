@@ -209,6 +209,12 @@
     <Compile Include="Components\ImageGallery.vb">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Forms\ViewForm.Designer.vb">
+      <DependentUpon>ViewForm.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\ViewForm.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Resources\Icons.Designer.vb">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -255,6 +261,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\PrintForm.resx">
       <DependentUpon>PrintForm.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ViewForm.resx">
+      <DependentUpon>ViewForm.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\Icons.resx">
       <CustomToolNamespace>My.Resources</CustomToolNamespace>
@@ -322,6 +331,7 @@
     <Content Include="Resources\Darkmode-Icons\folders.png" />
     <Content Include="Resources\Darkmode-Icons\github.png" />
     <Content Include="Resources\Darkmode-Icons\image-play.png" />
+    <Content Include="Resources\Darkmode-Icons\image.png" />
     <Content Include="Resources\Darkmode-Icons\info.png" />
     <Content Include="Resources\Darkmode-Icons\pencil-line.png" />
     <Content Include="Resources\Darkmode-Icons\pencil.png" />
@@ -359,6 +369,7 @@
     <Content Include="Resources\Lightmode-Icons\folders.png" />
     <Content Include="Resources\Lightmode-Icons\github.png" />
     <Content Include="Resources\Lightmode-Icons\image-play.png" />
+    <Content Include="Resources\Lightmode-Icons\image.png" />
     <Content Include="Resources\Lightmode-Icons\info.png" />
     <Content Include="Resources\Lightmode-Icons\pencil-line.png" />
     <Content Include="Resources\Lightmode-Icons\pencil.png" />

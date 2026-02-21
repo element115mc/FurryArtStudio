@@ -8,10 +8,16 @@ Imports System.Text
 Imports Krypton.Toolkit
 
 Public Class MainForm
+    '库
     Private _libraryManager As LibraryManager '当前稿件库管理器实例
+    '打印
     Private _currentPrintImages As List(Of String) = Nothing '当前要打印的图片文件路径
     Private _currentPrintIndex As Integer = 0 '当前要打印的图片序号
     Private _artworkCount As Integer = 0 '当前实例稿件总数
+    '图片窗口
+    Private _imageList As New List(Of Artwork) '图片列表
+    Public Event LibraryClosed As EventHandler '定义库关闭事件
+    Private _openViewForms As New List(Of ViewForm) '跟踪打开的图片窗口
 #Region "窗体事件处理"
 
 #Region "生命周期事件"
@@ -44,6 +50,7 @@ Public Class MainForm
     ''' 关闭时释放资源
     ''' </summary>
     Private Sub MainForm_Closing(sender As Object, e As ComponentModel.CancelEventArgs) Handles Me.Closing
+        CloseLibrary()
         LibraryManager.CloseAllLibrary() '关闭时释放资源
     End Sub
 
@@ -287,6 +294,7 @@ Public Class MainForm
         MnuSearch.Enabled = False
         RefreshLibListMenu()
         ImageGalleryMain.ClearImages() '清空所有图片
+        If _imageList.Count <> 0 Then _imageList.Clear()
         PicboxThumb.Image = Nothing
         LblTitle.Text = ""
         LblAuthor.Text = ""
@@ -428,8 +436,10 @@ Public Class MainForm
         Dim libraryPath = _libraryManager.GetCurrentLibrary.LibraryPath
         SetGallery(artworks, libraryPath) '载入稿件
         _artworkCount = artworks.Count
-        Dim result = GetFolderInfo(libraryPath)
+        _imageList = artworks '用作预览器参数
+        _imageList.Reverse() '反转顺序
         '设置状态栏
+        Dim result = GetFolderInfo(libraryPath)
         StorageStatusLabel.Text = $"存储: {result.sizeString} ({result.fileCount:N0}个文件)"
         Dim page As Integer = Math.Ceiling(_artworkCount / ImageGalleryMain.PageSize)
         MnuPageDown.Enabled = page > 1
@@ -693,6 +703,7 @@ Public Class MainForm
     End Sub
     Private Sub MnuLibClose_Click(sender As Object, e As EventArgs) Handles MnuLibClose.Click
         StatusLabel.Text = "正在关闭稿件库..."
+        CloseLibrary()
         _libraryManager.CloseLibrary(_libraryManager.GetCurrentLibrary.LibraryName)
         MenuInit()
     End Sub
@@ -736,6 +747,7 @@ Public Class MainForm
                                                   FileIO.RecycleOption.SendToRecycleBin)
             End If
             MenuInit()
+            CloseLibrary()
         Catch ex As OperationCanceledException '操作被取消, 回滚操作
             _libraryManager.AddLibrary(nowLib)
             _libraryManager.SwitchLibrary(nowLib)
@@ -787,7 +799,7 @@ Public Class MainForm
 
     End Sub
     Private Sub MnuMsView_Click(sender As Object, e As EventArgs) Handles MnuMsView.Click
-
+        ViewImage(Guid.Parse(ImageGalleryMain.SelectedImages(0).UUID))
     End Sub
     Private Sub MnuMsEdit_Click(sender As Object, e As EventArgs) Handles MnuMsEdit.Click
         StatusLabel.Text = "正在编辑稿件..."
@@ -1000,7 +1012,6 @@ Public Class MainForm
             Dim artworkObject As New DataObject()
             Dim artworkInfo As New StringBuilder
             artworkInfo.Append($"## 稿件信息:{vbCrLf}")
-            artworkInfo.Append($"当前时间: {Now:yyyy-MM-dd HH:mm:ss}{vbCrLf}")
             artworkInfo.Append($"{SeparatorDash}{vbCrLf}")
             Dim count As Integer = 0
             For Each selectedItem As GalleryImage In ImageGalleryMain.SelectedImages
@@ -1008,15 +1019,17 @@ Public Class MainForm
                 Dim artwork As Artwork = _libraryManager.GetCurrentLibrary.GetArtworkByUUID(Guid.Parse(selectedItem.UUID))
                 If count > 1 Then artworkInfo.Append($"{SeparatorDash}{vbCrLf}") '当多个稿件时添加分割线
                 artworkInfo.Append($"### 标题: {artwork.Title} - {artwork.Author}{vbCrLf}")
-                artworkInfo.Append($" - 标识符: {artwork.UUID}{vbCrLf}")
+                artworkInfo.Append($" - UUID: {artwork.UUID}{vbCrLf}")
                 artworkInfo.Append($" - 更新时间: {artwork.UpdateTime:yyyy-MM-dd HH:mm:ss}{vbCrLf}")
                 artworkInfo.Append($" - 入库时间: {artwork.ImportTime:yyyy-MM-dd HH:mm:ss}{vbCrLf}")
                 artworkInfo.Append($" - 创作时间: {artwork.CreateTime:yyyy-MM-dd HH:mm:ss}{vbCrLf}")
                 artworkInfo.Append($" - 标签: {FormatArrayWithEllipsis(artwork.Tags)}{vbCrLf}")
                 artworkInfo.Append($" - 角色: {FormatArrayWithEllipsis(artwork.Characters)}{vbCrLf}")
+                artworkInfo.Append($" - 备注: {artwork.Notes}{vbCrLf}")
             Next
             artworkInfo.Append($"{SeparatorDash}{vbCrLf}")
             artworkInfo.Append($"总计{count}个稿件{vbCrLf}")
+            artworkInfo.Append($"当前时间: {Now:yyyy-MM-dd HH:mm:ss}{vbCrLf}")
             artworkInfo.Append($"*由 Furry Art Studio 提供技术支持*")
             artworkObject.SetData(DataFormats.Text, artworkInfo) '复制信息文本
             CopyDirectoryToClipboard(artworkPaths.ToArray(), artworkObject) '同时复制稿件
@@ -1072,6 +1085,33 @@ Public Class MainForm
         Else
             MnuPageDown.Enabled = True
         End If
+    End Sub
+#End Region
+
+#Region "关于菜单项"
+    Private Sub MnuHelpAbout_Click(sender As Object, e As EventArgs) Handles MnuHelpAbout.Click
+        AboutForm.ShowDialog()
+    End Sub
+    Private Sub MnuHelpGithub_Click(sender As Object, e As EventArgs) Handles MnuHelpGithub.Click
+        Process.Start("https://github.com/xionglongztz/FurryArtStudio")
+    End Sub
+    Private Sub MnuHelpWebsite_Click(sender As Object, e As EventArgs) Handles MnuHelpWebsite.Click
+
+    End Sub
+    Private Sub MnuHelpLicense_Click(sender As Object, e As EventArgs) Handles MnuHelpLicense.Click
+
+    End Sub
+    Private Sub MnuHelpPrivacy_Click(sender As Object, e As EventArgs) Handles MnuHelpPrivacy.Click
+
+    End Sub
+    Private Sub MnuHelpTutorial_Click(sender As Object, e As EventArgs) Handles MnuHelpTutorial.Click
+
+    End Sub
+    Private Sub MnuCheckUpdate_Click(sender As Object, e As EventArgs) Handles MnuCheckUpdate.Click
+
+    End Sub
+    Private Sub MnuHelpWhatsNew_Click(sender As Object, e As EventArgs) Handles MnuHelpWhatsNew.Click
+
     End Sub
 #End Region
 
@@ -1138,37 +1178,39 @@ Public Class MainForm
         PageStatusLabel.Text = $"页码: {page}/{ImageGalleryMain.GetTotalPages}"
         UpdatePageMenu()
     End Sub
-
+    Private Sub ImageGalleryMain_ImageDoubleClicked(image As GalleryImage) Handles ImageGalleryMain.ImageDoubleClicked
+        ViewImage(Guid.Parse(image.UUID))
+    End Sub
 #End Region
 
-#Region "关于菜单项"
-    Private Sub MnuHelpAbout_Click(sender As Object, e As EventArgs) Handles MnuHelpAbout.Click
-        AboutForm.ShowDialog()
+#Region "图片浏览器"
+    Private Sub ViewImage(uuid As Guid)
+        Try
+            Dim currentArtwork As Artwork = _libraryManager.GetCurrentLibrary.GetArtworkByUUID(uuid) '获取当前选中的稿件
+            Dim allArtworks As List(Of Artwork) = _imageList '获取所有稿件列表
+            If currentArtwork.FilePaths Is Nothing OrElse'检查当前稿件是否有图片
+            currentArtwork.FilePaths.Length = 0 OrElse
+            Not currentArtwork.FilePaths.Any(Function(p) IsImageFile(p)) Then
+                MessageBox.Show("当前稿件没有图片文件", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information)
+                Return
+            End If
+            Dim viewForm As New ViewForm(currentArtwork, allArtworks)
+            _openViewForms.Add(viewForm)
+            AddHandler viewForm.FormClosed, Sub(sender, e)
+                                                _openViewForms.Remove(viewForm)
+                                            End Sub '订阅窗口关闭事件
+            viewForm.Show() '创建并显示图片窗口
+        Catch ex As Exception
+            MessageBox.Show($"打开图片窗口时出错: {ex.Message}", "Furry Art Studio", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        End Try
     End Sub
-    Private Sub MnuHelpGithub_Click(sender As Object, e As EventArgs) Handles MnuHelpGithub.Click
-        Process.Start("https://github.com/xionglongztz/FurryArtStudio")
-    End Sub
-    Private Sub MnuHelpWebsite_Click(sender As Object, e As EventArgs) Handles MnuHelpWebsite.Click
-
-    End Sub
-    Private Sub MnuHelpLicense_Click(sender As Object, e As EventArgs) Handles MnuHelpLicense.Click
-
-    End Sub
-    Private Sub MnuHelpPrivacy_Click(sender As Object, e As EventArgs) Handles MnuHelpPrivacy.Click
-
-    End Sub
-    Private Sub MnuHelpTutorial_Click(sender As Object, e As EventArgs) Handles MnuHelpTutorial.Click
-
-    End Sub
-    Private Sub MnuCheckUpdate_Click(sender As Object, e As EventArgs) Handles MnuCheckUpdate.Click
-
-    End Sub
-    Private Sub MnuHelpWhatsNew_Click(sender As Object, e As EventArgs) Handles MnuHelpWhatsNew.Click
-
+    Public Sub CloseLibrary()
+        RaiseEvent LibraryClosed(Me, EventArgs.Empty) '触发库关闭事件, 通知所有图片窗口
+        _openViewForms.Clear()
     End Sub
 #End Region
     '添加一个缩略图编辑器，比较难
     'Shift，方向键支持
-    '幻灯片放映/预览支持
+    '幻灯片放映支持
 
 End Class

@@ -88,11 +88,11 @@ Public Class InputDialogForm
             If isDarkMode Then
                 bgColor = BgColorDark
                 frColor = FrColorDark
-                Icon = CreateRoundedRectangleIcon(True, My.Resources.Icons.MenuEditDark)
+                Icon = CreateRoundedRectangleIcon(True, My.Resources.Icons.MenuEditLineDark)
             Else
                 bgColor = BgColorLight
                 frColor = FrColorLight
-                Icon = CreateRoundedRectangleIcon(False, My.Resources.Icons.MenuEditLight)
+                Icon = CreateRoundedRectangleIcon(False, My.Resources.Icons.MenuEditLineLight)
             End If
             For Each control In controlList
                 control.ForeColor = frColor

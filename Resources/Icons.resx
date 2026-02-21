@@ -420,4 +420,12 @@
     <value>Darkmode-Icons\shield.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
     <comment>以管理员身份运行 - 深色模式</comment>
   </data>
+  <data name="FormImageDark" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Darkmode-Icons\image.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <comment>图片 - 深色模式</comment>
+  </data>
+  <data name="FormImageLight" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Lightmode-Icons\image.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <comment>图片 - 浅色模式</comment>
+  </data>
 </root>
