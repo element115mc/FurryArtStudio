@@ -23,6 +23,8 @@ Imports System.Text
 Imports Krypton.Toolkit
 
 Public Class MainForm
+
+#Region "变量与常量"
     '库
     Private _libraryManager As LibraryManager '当前稿件库管理器实例
     '打印
@@ -33,9 +35,17 @@ Public Class MainForm
     Private _imageList As New List(Of Artwork) '图片列表
     Public Event LibraryClosed As EventHandler '定义库关闭事件
     Private _openViewForms As New List(Of ViewForm) '跟踪打开的图片窗口
-#Region "窗体事件处理"
+    '菜单
+    Private Const SC_ALWAYSONTOP = 1 '置顶
+    Private Const SC_NEWMANUSCRIPT = 2 '新建稿件
+    Private Const SC_REFRESH = 3 '刷新
+    Private Const SC_PLAY = 4 '幻灯片放映
+    Private Const SC_SETTINGS = 5 '选项
+    Private Const SC_PROPERTIES = 6 '统计信息
+    Private Const SC_ABOUT = 7 '关于
+#End Region
 
-#Region "生命周期事件"
+#Region "窗体事件处理"
 
     ''' <summary>
     ''' 程序启动时调用
@@ -45,7 +55,6 @@ Public Class MainForm
         _libraryManager = LibraryManager.Instance '启动稿件库管理器实例
         MenuInit() '初始化菜单
         ResizeControl() '调整组件尺寸
-        SystemThemeChange() '设置主题
         SysMenuInit() '设置系统菜单
         Dim titleFont As New Font(LblTitle.Font, FontStyle.Bold)
         LblTitle.Font = titleFont
@@ -57,8 +66,8 @@ Public Class MainForm
         MnuDevTools.Enabled = False
 #End If
         StatusLabel.Text = "就绪"
-        SystemThemeChange()
-        GC.Collect()
+        SystemThemeChange() '设置主题
+        'GC.Collect()
     End Sub
 
     ''' <summary>
@@ -77,7 +86,7 @@ Public Class MainForm
         If m.Msg = WM_SYSCOMMAND Then '窗体响应菜单
             Dim hMenu = GetSystemMenu(Handle, False)
             Select Case m.WParam.ToInt32'对应菜单标号
-                Case 1 '窗口置顶
+                Case SC_ALWAYSONTOP '窗口置顶
                     If TopMost = False Then
                         TopMost = True
                         CheckMenuItem(hMenu, 1, MF_CHECKED) '窗口置顶
@@ -87,37 +96,29 @@ Public Class MainForm
                         CheckMenuItem(hMenu, 1, MF_UNCHECKED) '取消置顶
                         MnuOnTop.Checked = False
                     End If
-                Case 2
+                Case SC_NEWMANUSCRIPT
                     NewManuscript()
-                Case 3
+                Case SC_REFRESH
                     RefreshLib()
-                Case 4
+                Case SC_PLAY
                     '待开发
-                Case 5
+                Case SC_SETTINGS
                     StatusLabel.Text = "设置首选项"
                     PropertiesForm.ShowDialog()
                     StatusLabel.Text = "就绪"
-                Case 6
+                Case SC_PROPERTIES
                     ShowLibProperties()
-                Case 7
+                Case SC_ABOUT
                     AboutForm.ShowDialog()
             End Select
         End If
-        If m.Msg = WM_DWMCOLORIZATIONCOLORCHANGED Then SystemThemeChange() '更新程序主题
+        If m.Msg = WM_DWMCOLORIZATIONCOLORCHANGED Then
+            BeginInvoke(New MethodInvoker(Sub()
+                                              SystemThemeChange()
+                                          End Sub))
+            'SystemThemeChange() '更新程序主题
+        End If
         MyBase.WndProc(m) '循环监听消息
-    End Sub
-
-#End Region
-
-#Region "尺寸调整事件"
-
-    ''' <summary>
-    ''' 窗口大小改变时触发, 用来调整元素位置
-    ''' </summary>
-    Private Sub MainForm_Resize(sender As Object, e As EventArgs) Handles Me.Resize
-        ArtworkListSplitContainer.Width = Width - 18
-        ArtworkListSplitContainer.Height = Height - 80
-        ResizeControl()
     End Sub
 
     ''' <summary>
@@ -132,14 +133,7 @@ Public Class MainForm
     ''' </summary>
     Private Sub ResizeControl()
         Dim p2Width = ArtworkListSplitContainer.Panel2.Width - 10
-        Dim p2Height = ArtworkListSplitContainer.Panel2.Height - 100
-        SearchTextBox.Width = ArtworkListSplitContainer.Panel1.Width - 5
-        ImageGalleryMain.Width = ArtworkListSplitContainer.Panel1.Width - 5
-        If FormBorderStyle = FormBorderStyle.Sizable Then
-            ImageGalleryMain.Height = ArtworkListSplitContainer.Panel1.Height - 55
-        End If
-        PicboxThumb.Width = p2Width
-        PicboxThumb.Height = p2Width
+        PicboxThumb.Height = PicboxThumb.Width '保持为方形
         LblTitle.Width = p2Width
         LblTitle.Top = p2Width + 10
         LblAuthor.Width = p2Width
@@ -150,12 +144,6 @@ Public Class MainForm
         LblTags.Top = p2Width + 70
         LblNotes.Width = p2Width
         LblNotes.Top = p2Width + 90
-
-        BtnView.Top = LblNotes.Top + 130
-        BtnView.Width = (p2Width - 10) / 2
-        BtnEdit.Top = LblNotes.Top + 130
-        BtnEdit.Width = (p2Width - 10) / 2
-        BtnEdit.Left = BtnView.Left + BtnView.Width + 10
     End Sub
 
 #End Region
@@ -191,6 +179,8 @@ Public Class MainForm
                 control.ForeColor = frColor
                 control.BackColor = bgColor
             Next
+            ForeColor = frColor
+            BackColor = bgColor
             'WinAPI
             DwmSetWindowAttribute(Handle, DwmWindowAttribute.UseImmersiveDarkMode, isDarkMode, Marshal.SizeOf(Of Integer))
             SetPreferredAppMode(PreferredAppMode.AllowDark)
@@ -245,15 +235,17 @@ Public Class MainForm
             Dim resourceName = setting.BaseName & If(isDarkMode, "Dark", "Light")
             Using img As Image = DirectCast(My.Resources.Icons.ResourceManager.GetObject(resourceName), Image)
                 Dim size As Integer = 32 '图标尺寸
-                Dim thumb As New Bitmap(size, size)
-                Using g = Graphics.FromImage(thumb)
-                    g.InterpolationMode = InterpolationMode.HighQualityBicubic
-                    g.SmoothingMode = SmoothingMode.HighQuality
-                    g.PixelOffsetMode = PixelOffsetMode.HighQuality
-                    g.CompositingQuality = CompositingQuality.HighQuality
-                    g.DrawImage(img, 0, 0, size, size)
+                Using thumb As New Bitmap(size, size)
+                    Using g = Graphics.FromImage(thumb)
+                        g.InterpolationMode = InterpolationMode.HighQualityBicubic
+                        g.SmoothingMode = SmoothingMode.HighQuality
+                        g.PixelOffsetMode = PixelOffsetMode.HighQuality
+                        g.CompositingQuality = CompositingQuality.HighQuality
+                        g.DrawImage(img, 0, 0, size, size)
+                    End Using
+                    setting.MenuItem.Image = thumb.Clone '使用高质量缩略图
                 End Using
-                setting.MenuItem.Image = thumb '使用高质量缩略图
+
             End Using
         Next
         Dim menuHandle = GetSystemMenu(Handle, False) '设置窗体菜单
@@ -330,9 +322,9 @@ Public Class MainForm
         SearchStatusLabel.Visible = False
         MnuLibExportCSV.Enabled = False
         Dim menuHandle = GetSystemMenu(Handle, False) '获取菜单句柄
-        EnableMenuItem(menuHandle, 2, MF_GRAYED)
-        EnableMenuItem(menuHandle, 4, MF_GRAYED)
-        EnableMenuItem(menuHandle, 6, MF_GRAYED)
+        EnableMenuItem(menuHandle, SC_NEWMANUSCRIPT, MF_GRAYED)
+        EnableMenuItem(menuHandle, SC_PLAY, MF_GRAYED)
+        EnableMenuItem(menuHandle, SC_PROPERTIES, MF_GRAYED)
         GC.Collect()
     End Sub
 
@@ -342,27 +334,27 @@ Public Class MainForm
     Private Sub SysMenuInit()
         Dim menuHandle = GetSystemMenu(Handle, False) '获取菜单句柄
         '添加新菜单
-        InsertMenu(menuHandle, 0, MF_BYPOSITION Or MF_STRING, 1, "窗口置顶(&T)")
+        InsertMenu(menuHandle, 0, MF_BYPOSITION Or MF_STRING, SC_ALWAYSONTOP, "窗口置顶(&T)")
         InsertMenu(menuHandle, 1, MF_BYPOSITION Or MF_SEPARATOR, 0, Nothing)
-        InsertMenu(menuHandle, 8, MF_BYPOSITION Or MF_STRING, 2, "新建稿件(&N)...")
-        InsertMenu(menuHandle, 9, MF_BYPOSITION Or MF_STRING, 3, "刷新(&R)")
-        InsertMenu(menuHandle, 10, MF_BYPOSITION Or MF_STRING, 4, "幻灯片放映(&P)")
+        InsertMenu(menuHandle, 8, MF_BYPOSITION Or MF_STRING, SC_NEWMANUSCRIPT, "新建稿件(&N)...")
+        InsertMenu(menuHandle, 9, MF_BYPOSITION Or MF_STRING, SC_REFRESH, "刷新(&R)")
+        InsertMenu(menuHandle, 10, MF_BYPOSITION Or MF_STRING, SC_PLAY, "幻灯片放映(&P)")
         InsertMenu(menuHandle, 11, MF_BYPOSITION Or MF_SEPARATOR, 0, Nothing)
-        InsertMenu(menuHandle, 12, MF_BYPOSITION Or MF_STRING, 5, "选项(&O)...")
-        InsertMenu(menuHandle, 13, MF_BYPOSITION Or MF_STRING, 6, "统计信息(&I)...")
-        InsertMenu(menuHandle, 14, MF_BYPOSITION Or MF_STRING, 7, "关于(&A)...")
+        InsertMenu(menuHandle, 12, MF_BYPOSITION Or MF_STRING, SC_SETTINGS, "选项(&O)...")
+        InsertMenu(menuHandle, 13, MF_BYPOSITION Or MF_STRING, SC_PROPERTIES, "统计信息(&I)...")
+        InsertMenu(menuHandle, 14, MF_BYPOSITION Or MF_STRING, SC_ABOUT, "关于(&A)...")
         InsertMenu(menuHandle, 15, MF_BYPOSITION Or MF_SEPARATOR, 0, Nothing)
         '设置菜单快捷键
-        SetMenuItemWithShortcut(menuHandle, 0, 1, "窗口置顶(&T)", "Alt+T")
-        SetMenuItemWithShortcut(menuHandle, 8, 2, "新建稿件(&N)...", "Ctrl+N")
-        SetMenuItemWithShortcut(menuHandle, 9, 3, "刷新(&R)", "F5")
-        SetMenuItemWithShortcut(menuHandle, 10, 4, "幻灯片放映(&P)", "Ctrl+F5")
-        SetMenuItemWithShortcut(menuHandle, 12, 5, "选项(&O)...", "Ctrl+K")
-        SetMenuItemWithShortcut(menuHandle, 13, 6, "统计信息(&I)...", "Alt+I")
-        SetMenuItemWithShortcut(menuHandle, 14, 7, "关于(&A)...", "Ctrl+F1")
-        EnableMenuItem(menuHandle, 2, MF_GRAYED)
-        EnableMenuItem(menuHandle, 4, MF_GRAYED)
-        EnableMenuItem(menuHandle, 6, MF_GRAYED)
+        SetMenuItemWithShortcut(menuHandle, 0, SC_ALWAYSONTOP, "窗口置顶(&T)", "Alt+T")
+        SetMenuItemWithShortcut(menuHandle, 8, SC_NEWMANUSCRIPT, "新建稿件(&N)...", "Ctrl+N")
+        SetMenuItemWithShortcut(menuHandle, 9, SC_REFRESH, "刷新(&R)", "F5")
+        SetMenuItemWithShortcut(menuHandle, 10, SC_PLAY, "幻灯片放映(&P)", "Ctrl+F5")
+        SetMenuItemWithShortcut(menuHandle, 12, SC_SETTINGS, "选项(&O)...", "Ctrl+K")
+        SetMenuItemWithShortcut(menuHandle, 13, SC_PROPERTIES, "统计信息(&I)...", "Alt+I")
+        SetMenuItemWithShortcut(menuHandle, 14, SC_ABOUT, "关于(&A)...", "Ctrl+F1")
+        EnableMenuItem(menuHandle, SC_NEWMANUSCRIPT, MF_GRAYED)
+        EnableMenuItem(menuHandle, SC_PLAY, MF_GRAYED)
+        EnableMenuItem(menuHandle, SC_PROPERTIES, MF_GRAYED)
     End Sub
 
     ''' <summary>
@@ -393,9 +385,9 @@ Public Class MainForm
         MnuLibExportCSV.Enabled = True
         MnuSearch.Enabled = True
         Dim menuHandle = GetSystemMenu(Handle, False) '获取菜单句柄
-        EnableMenuItem(menuHandle, 2, MF_ENABLED)
-        EnableMenuItem(menuHandle, 4, MF_ENABLED)
-        EnableMenuItem(menuHandle, 6, MF_ENABLED)
+        EnableMenuItem(menuHandle, SC_NEWMANUSCRIPT, MF_ENABLED)
+        EnableMenuItem(menuHandle, SC_PLAY, MF_ENABLED)
+        EnableMenuItem(menuHandle, SC_PROPERTIES, MF_ENABLED)
         '设置UI
         LblTitle.Text = "请选择一个项目"
         LblAuthor.Text = ""
@@ -455,9 +447,6 @@ Public Class MainForm
             ImageGalleryMain.AddImage(gi)
         Next
     End Sub
-#End Region
-
-#Region "其他"
     ''' <summary>
     ''' 查看属性信息
     ''' </summary>
@@ -494,8 +483,6 @@ Public Class MainForm
         End If
         StatusLabel.Text = "就绪"
     End Sub
-#End Region
-
 #End Region
 
 #Region "文件菜单项"
@@ -1191,6 +1178,7 @@ Public Class MainForm
         RaiseEvent LibraryClosed(Me, EventArgs.Empty) '触发库关闭事件, 通知所有图片窗口
         _openViewForms.Clear()
     End Sub
+
 #End Region
 
 End Class

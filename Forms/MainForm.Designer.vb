@@ -91,12 +91,7 @@ Partial Class MainForm
         Me.MnuHelpAbout = New System.Windows.Forms.ToolStripMenuItem()
         Me.SearchTextBox = New System.Windows.Forms.TextBox()
         Me.ArtworkListSplitContainer = New System.Windows.Forms.SplitContainer()
-        Me.ImageGalleryMain = New FurryArtStudio.ImageGallery()
-        Me.BtnPrev = New System.Windows.Forms.Button()
-        Me.BtnNext = New System.Windows.Forms.Button()
         Me.LblNotes = New System.Windows.Forms.Label()
-        Me.BtnEdit = New System.Windows.Forms.Button()
-        Me.BtnView = New System.Windows.Forms.Button()
         Me.LblTags = New System.Windows.Forms.Label()
         Me.LblCharacters = New System.Windows.Forms.Label()
         Me.LblAuthor = New System.Windows.Forms.Label()
@@ -116,6 +111,7 @@ Partial Class MainForm
         Me.StorageStatusLabel = New System.Windows.Forms.ToolStripStatusLabel()
         Me.TSSep5 = New System.Windows.Forms.ToolStripStatusLabel()
         Me.KryptonMgrMain = New Krypton.Toolkit.KryptonManager(Me.components)
+        Me.ImageGalleryMain = New FurryArtStudio.ImageGallery()
         Me.MnuStrip.SuspendLayout()
         CType(Me.ArtworkListSplitContainer, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.ArtworkListSplitContainer.Panel1.SuspendLayout()
@@ -132,7 +128,7 @@ Partial Class MainForm
         Me.MnuStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.MnuFile, Me.MnuLibrary, Me.MnuManuscript, Me.MnuViews, Me.MnuHelp})
         Me.MnuStrip.Location = New System.Drawing.Point(0, 0)
         Me.MnuStrip.Name = "MnuStrip"
-        Me.MnuStrip.Size = New System.Drawing.Size(961, 28)
+        Me.MnuStrip.Size = New System.Drawing.Size(962, 28)
         Me.MnuStrip.TabIndex = 4
         Me.MnuStrip.Text = "MenuStrip1"
         '
@@ -519,61 +515,61 @@ Partial Class MainForm
         Me.MnuHelpTutorial.Image = CType(resources.GetObject("MnuHelpTutorial.Image"), System.Drawing.Image)
         Me.MnuHelpTutorial.Name = "MnuHelpTutorial"
         Me.MnuHelpTutorial.ShortcutKeys = System.Windows.Forms.Keys.F1
-        Me.MnuHelpTutorial.Size = New System.Drawing.Size(224, 26)
+        Me.MnuHelpTutorial.Size = New System.Drawing.Size(218, 26)
         Me.MnuHelpTutorial.Text = "快速入门(&T)"
         '
         'ToolStripSeparator8
         '
         Me.ToolStripSeparator8.Name = "ToolStripSeparator8"
-        Me.ToolStripSeparator8.Size = New System.Drawing.Size(221, 6)
+        Me.ToolStripSeparator8.Size = New System.Drawing.Size(215, 6)
         '
         'MnuHelpWebsite
         '
         Me.MnuHelpWebsite.Name = "MnuHelpWebsite"
-        Me.MnuHelpWebsite.Size = New System.Drawing.Size(224, 26)
+        Me.MnuHelpWebsite.Size = New System.Drawing.Size(218, 26)
         Me.MnuHelpWebsite.Text = "官网(&W)"
         '
         'MnuHelpGithub
         '
         Me.MnuHelpGithub.Image = CType(resources.GetObject("MnuHelpGithub.Image"), System.Drawing.Image)
         Me.MnuHelpGithub.Name = "MnuHelpGithub"
-        Me.MnuHelpGithub.Size = New System.Drawing.Size(224, 26)
+        Me.MnuHelpGithub.Size = New System.Drawing.Size(218, 26)
         Me.MnuHelpGithub.Text = "&GitHub"
         '
         'MnuHelpWhatsNew
         '
         Me.MnuHelpWhatsNew.Image = CType(resources.GetObject("MnuHelpWhatsNew.Image"), System.Drawing.Image)
         Me.MnuHelpWhatsNew.Name = "MnuHelpWhatsNew"
-        Me.MnuHelpWhatsNew.Size = New System.Drawing.Size(224, 26)
+        Me.MnuHelpWhatsNew.Size = New System.Drawing.Size(218, 26)
         Me.MnuHelpWhatsNew.Text = "新增功能(&H)"
         '
         'MnuCheckUpdate
         '
         Me.MnuCheckUpdate.Name = "MnuCheckUpdate"
-        Me.MnuCheckUpdate.Size = New System.Drawing.Size(224, 26)
+        Me.MnuCheckUpdate.Size = New System.Drawing.Size(218, 26)
         Me.MnuCheckUpdate.Text = "检查更新(&U)"
         '
         'ToolStripSeparator10
         '
         Me.ToolStripSeparator10.Name = "ToolStripSeparator10"
-        Me.ToolStripSeparator10.Size = New System.Drawing.Size(221, 6)
+        Me.ToolStripSeparator10.Size = New System.Drawing.Size(215, 6)
         '
         'MnuHelpLicense
         '
         Me.MnuHelpLicense.Name = "MnuHelpLicense"
-        Me.MnuHelpLicense.Size = New System.Drawing.Size(224, 26)
+        Me.MnuHelpLicense.Size = New System.Drawing.Size(218, 26)
         Me.MnuHelpLicense.Text = "许可证(&L)..."
         '
         'MnuHelpPrivacy
         '
         Me.MnuHelpPrivacy.Name = "MnuHelpPrivacy"
-        Me.MnuHelpPrivacy.Size = New System.Drawing.Size(224, 26)
+        Me.MnuHelpPrivacy.Size = New System.Drawing.Size(218, 26)
         Me.MnuHelpPrivacy.Text = "隐私政策(&P)..."
         '
         'MnuTerms
         '
         Me.MnuTerms.Name = "MnuTerms"
-        Me.MnuTerms.Size = New System.Drawing.Size(224, 26)
+        Me.MnuTerms.Size = New System.Drawing.Size(218, 26)
         Me.MnuTerms.Text = "用户协议(&A)"
         '
         'MnuHelpAbout
@@ -581,18 +577,20 @@ Partial Class MainForm
         Me.MnuHelpAbout.Image = CType(resources.GetObject("MnuHelpAbout.Image"), System.Drawing.Image)
         Me.MnuHelpAbout.Name = "MnuHelpAbout"
         Me.MnuHelpAbout.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.F1), System.Windows.Forms.Keys)
-        Me.MnuHelpAbout.Size = New System.Drawing.Size(224, 26)
+        Me.MnuHelpAbout.Size = New System.Drawing.Size(218, 26)
         Me.MnuHelpAbout.Text = "关于(&A)..."
         '
         'SearchTextBox
         '
-        Me.SearchTextBox.Location = New System.Drawing.Point(3, 3)
+        Me.SearchTextBox.Dock = System.Windows.Forms.DockStyle.Top
+        Me.SearchTextBox.Location = New System.Drawing.Point(0, 0)
         Me.SearchTextBox.Name = "SearchTextBox"
-        Me.SearchTextBox.Size = New System.Drawing.Size(744, 25)
+        Me.SearchTextBox.Size = New System.Drawing.Size(730, 25)
         Me.SearchTextBox.TabIndex = 1
         '
         'ArtworkListSplitContainer
         '
+        Me.ArtworkListSplitContainer.Dock = System.Windows.Forms.DockStyle.Fill
         Me.ArtworkListSplitContainer.FixedPanel = System.Windows.Forms.FixedPanel.Panel2
         Me.ArtworkListSplitContainer.Location = New System.Drawing.Point(0, 28)
         Me.ArtworkListSplitContainer.Name = "ArtworkListSplitContainer"
@@ -605,113 +603,59 @@ Partial Class MainForm
         '
         'ArtworkListSplitContainer.Panel2
         '
-        Me.ArtworkListSplitContainer.Panel2.Controls.Add(Me.BtnPrev)
-        Me.ArtworkListSplitContainer.Panel2.Controls.Add(Me.BtnNext)
         Me.ArtworkListSplitContainer.Panel2.Controls.Add(Me.LblNotes)
-        Me.ArtworkListSplitContainer.Panel2.Controls.Add(Me.BtnEdit)
-        Me.ArtworkListSplitContainer.Panel2.Controls.Add(Me.BtnView)
         Me.ArtworkListSplitContainer.Panel2.Controls.Add(Me.LblTags)
         Me.ArtworkListSplitContainer.Panel2.Controls.Add(Me.LblCharacters)
         Me.ArtworkListSplitContainer.Panel2.Controls.Add(Me.LblAuthor)
         Me.ArtworkListSplitContainer.Panel2.Controls.Add(Me.LblTitle)
         Me.ArtworkListSplitContainer.Panel2.Controls.Add(Me.PicboxThumb)
         Me.ArtworkListSplitContainer.Panel2MinSize = 220
-        Me.ArtworkListSplitContainer.Size = New System.Drawing.Size(982, 535)
-        Me.ArtworkListSplitContainer.SplitterDistance = 750
+        Me.ArtworkListSplitContainer.Size = New System.Drawing.Size(962, 539)
+        Me.ArtworkListSplitContainer.SplitterDistance = 730
         Me.ArtworkListSplitContainer.TabIndex = 3
-        '
-        'ImageGalleryMain
-        '
-        Me.ImageGalleryMain.AutoScroll = True
-        Me.ImageGalleryMain.BackColor = System.Drawing.Color.White
-        Me.ImageGalleryMain.DisplayMode = FurryArtStudio.GalleryDisplayMode.Normal
-        Me.ImageGalleryMain.Location = New System.Drawing.Point(3, 34)
-        Me.ImageGalleryMain.MaxItemSize = 240
-        Me.ImageGalleryMain.MinItemSize = 120
-        Me.ImageGalleryMain.Name = "ImageGalleryMain"
-        Me.ImageGalleryMain.PageSize = 100
-        Me.ImageGalleryMain.Size = New System.Drawing.Size(744, 498)
-        Me.ImageGalleryMain.TabIndex = 3
-        '
-        'BtnPrev
-        '
-        Me.BtnPrev.Location = New System.Drawing.Point(6, 440)
-        Me.BtnPrev.Name = "BtnPrev"
-        Me.BtnPrev.Size = New System.Drawing.Size(40, 25)
-        Me.BtnPrev.TabIndex = 4
-        Me.BtnPrev.Text = "<<"
-        Me.BtnPrev.UseVisualStyleBackColor = True
-        Me.BtnPrev.Visible = False
-        '
-        'BtnNext
-        '
-        Me.BtnNext.Location = New System.Drawing.Point(163, 440)
-        Me.BtnNext.Name = "BtnNext"
-        Me.BtnNext.Size = New System.Drawing.Size(40, 25)
-        Me.BtnNext.TabIndex = 5
-        Me.BtnNext.Text = ">>"
-        Me.BtnNext.UseVisualStyleBackColor = True
-        Me.BtnNext.Visible = False
         '
         'LblNotes
         '
-        Me.LblNotes.Location = New System.Drawing.Point(3, 321)
+        Me.LblNotes.Location = New System.Drawing.Point(3, 344)
         Me.LblNotes.Name = "LblNotes"
-        Me.LblNotes.Size = New System.Drawing.Size(197, 116)
+        Me.LblNotes.Size = New System.Drawing.Size(220, 116)
         Me.LblNotes.TabIndex = 7
-        '
-        'BtnEdit
-        '
-        Me.BtnEdit.Location = New System.Drawing.Point(110, 475)
-        Me.BtnEdit.Name = "BtnEdit"
-        Me.BtnEdit.Size = New System.Drawing.Size(93, 44)
-        Me.BtnEdit.TabIndex = 6
-        Me.BtnEdit.Text = "编辑(&E)"
-        Me.BtnEdit.UseVisualStyleBackColor = True
-        '
-        'BtnView
-        '
-        Me.BtnView.Location = New System.Drawing.Point(6, 475)
-        Me.BtnView.Name = "BtnView"
-        Me.BtnView.Size = New System.Drawing.Size(93, 44)
-        Me.BtnView.TabIndex = 5
-        Me.BtnView.Text = "预览(&V)"
-        Me.BtnView.UseVisualStyleBackColor = True
         '
         'LblTags
         '
-        Me.LblTags.Location = New System.Drawing.Point(3, 296)
+        Me.LblTags.Location = New System.Drawing.Point(3, 319)
         Me.LblTags.Name = "LblTags"
-        Me.LblTags.Size = New System.Drawing.Size(197, 20)
+        Me.LblTags.Size = New System.Drawing.Size(220, 20)
         Me.LblTags.TabIndex = 4
         '
         'LblCharacters
         '
-        Me.LblCharacters.Location = New System.Drawing.Point(3, 271)
+        Me.LblCharacters.Location = New System.Drawing.Point(3, 294)
         Me.LblCharacters.Name = "LblCharacters"
-        Me.LblCharacters.Size = New System.Drawing.Size(197, 20)
+        Me.LblCharacters.Size = New System.Drawing.Size(220, 20)
         Me.LblCharacters.TabIndex = 3
         '
         'LblAuthor
         '
-        Me.LblAuthor.Location = New System.Drawing.Point(3, 231)
+        Me.LblAuthor.Location = New System.Drawing.Point(3, 254)
         Me.LblAuthor.Name = "LblAuthor"
-        Me.LblAuthor.Size = New System.Drawing.Size(197, 20)
+        Me.LblAuthor.Size = New System.Drawing.Size(220, 20)
         Me.LblAuthor.TabIndex = 2
         '
         'LblTitle
         '
-        Me.LblTitle.Location = New System.Drawing.Point(3, 206)
+        Me.LblTitle.Location = New System.Drawing.Point(3, 229)
         Me.LblTitle.Name = "LblTitle"
-        Me.LblTitle.Size = New System.Drawing.Size(197, 20)
+        Me.LblTitle.Size = New System.Drawing.Size(220, 20)
         Me.LblTitle.TabIndex = 1
         '
         'PicboxThumb
         '
         Me.PicboxThumb.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
-        Me.PicboxThumb.Location = New System.Drawing.Point(3, 3)
+        Me.PicboxThumb.Dock = System.Windows.Forms.DockStyle.Top
+        Me.PicboxThumb.Location = New System.Drawing.Point(0, 0)
         Me.PicboxThumb.Name = "PicboxThumb"
-        Me.PicboxThumb.Size = New System.Drawing.Size(200, 200)
+        Me.PicboxThumb.Size = New System.Drawing.Size(228, 220)
         Me.PicboxThumb.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom
         Me.PicboxThumb.TabIndex = 0
         Me.PicboxThumb.TabStop = False
@@ -722,7 +666,7 @@ Partial Class MainForm
         Me.StaStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.StatusLabel, Me.TSSep1, Me.SearchStatusLabel, Me.TSspace, Me.PageStatusLabel, Me.TSSep2, Me.ArtworkStatusLabel, Me.TSSep3, Me.SelectStatusLabel, Me.TSSep4, Me.StorageStatusLabel, Me.TSSep5})
         Me.StaStrip.Location = New System.Drawing.Point(0, 567)
         Me.StaStrip.Name = "StaStrip"
-        Me.StaStrip.Size = New System.Drawing.Size(961, 26)
+        Me.StaStrip.Size = New System.Drawing.Size(962, 26)
         Me.StaStrip.TabIndex = 8
         Me.StaStrip.Text = "StatusStrip1"
         '
@@ -747,7 +691,7 @@ Partial Class MainForm
         'TSspace
         '
         Me.TSspace.Name = "TSspace"
-        Me.TSspace.Size = New System.Drawing.Size(348, 20)
+        Me.TSspace.Size = New System.Drawing.Size(349, 20)
         Me.TSspace.Spring = True
         Me.TSspace.Text = " "
         '
@@ -805,14 +749,28 @@ Partial Class MainForm
         Me.KryptonMgrMain.ToolkitStrings.MessageBoxStrings.LessDetails = "L&ess Details..."
         Me.KryptonMgrMain.ToolkitStrings.MessageBoxStrings.MoreDetails = "&More Details..."
         '
+        'ImageGalleryMain
+        '
+        Me.ImageGalleryMain.AutoScroll = True
+        Me.ImageGalleryMain.BackColor = System.Drawing.Color.White
+        Me.ImageGalleryMain.DisplayMode = FurryArtStudio.GalleryDisplayMode.Normal
+        Me.ImageGalleryMain.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.ImageGalleryMain.Location = New System.Drawing.Point(0, 25)
+        Me.ImageGalleryMain.MaxItemSize = 240
+        Me.ImageGalleryMain.MinItemSize = 120
+        Me.ImageGalleryMain.Name = "ImageGalleryMain"
+        Me.ImageGalleryMain.PageSize = 100
+        Me.ImageGalleryMain.Size = New System.Drawing.Size(730, 514)
+        Me.ImageGalleryMain.TabIndex = 3
+        '
         'MainForm
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 15.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(961, 593)
-        Me.Controls.Add(Me.StaStrip)
+        Me.ClientSize = New System.Drawing.Size(962, 593)
         Me.Controls.Add(Me.ArtworkListSplitContainer)
         Me.Controls.Add(Me.MnuStrip)
+        Me.Controls.Add(Me.StaStrip)
         Me.MainMenuStrip = Me.MnuStrip
         Me.MinimumSize = New System.Drawing.Size(400, 250)
         Me.Name = "MainForm"
@@ -885,16 +843,12 @@ Partial Class MainForm
     Friend WithEvents TSSep3 As ToolStripStatusLabel
     Friend WithEvents TSSep4 As ToolStripStatusLabel
     Friend WithEvents ImageGalleryMain As ImageGallery
-    Friend WithEvents BtnNext As Button
-    Friend WithEvents BtnPrev As Button
     Friend WithEvents PicboxThumb As PictureBox
     Friend WithEvents PageStatusLabel As ToolStripStatusLabel
     Friend WithEvents TSSep1 As ToolStripStatusLabel
     Friend WithEvents LblTitle As Label
     Friend WithEvents LblAuthor As Label
     Friend WithEvents LblNotes As Label
-    Friend WithEvents BtnEdit As Button
-    Friend WithEvents BtnView As Button
     Friend WithEvents LblTags As Label
     Friend WithEvents LblCharacters As Label
     Friend WithEvents MnuViews As ToolStripMenuItem

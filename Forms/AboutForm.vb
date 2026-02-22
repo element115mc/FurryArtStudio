@@ -24,6 +24,7 @@ Public Class AboutForm
         RemoveMenu(MnuHandle, SC_MINIMIZE, MF_BYCOMMAND) '去除最小化菜单
         SystemThemeChange()
         TxtBox.Text = My.Resources.Licenses.AboutText
+        LblVersion.Text = $"Version: {Application.ProductVersion}"
     End Sub
     Private Sub SystemThemeChange()
         Using regKey = Microsoft.Win32.Registry.CurrentUser.OpenSubKey("SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize", True)

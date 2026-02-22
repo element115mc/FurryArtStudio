@@ -37,14 +37,14 @@ Public Class TextBoxForm
             If isDarkMode Then
                 bgColor = BgColorDark
                 frColor = FrColorDark
+                Icon = CreateRoundedRectangleIcon(True, My.Resources.Icons.FormFileDark)
             Else
                 bgColor = BgColorLight
                 frColor = FrColorLight
+                Icon = CreateRoundedRectangleIcon(True, My.Resources.Icons.FormFileLight)
             End If
-            For Each control In controlList
-                control.ForeColor = frColor
-                control.BackColor = bgColor
-            Next
+            TxtBox.ForeColor = frColor
+            TxtBox.BackColor = bgColor
             'WinAPI
             DwmSetWindowAttribute(Handle, DwmWindowAttribute.UseImmersiveDarkMode, isDarkMode, Marshal.SizeOf(Of Integer))
             SetPreferredAppMode(PreferredAppMode.AllowDark)

@@ -446,4 +446,12 @@
     <value>Darkmode-Icons\fullscreen.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
     <comment>全屏 - 深色模式</comment>
   </data>
+  <data name="FormFileDark" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Darkmode-Icons\file.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <comment>文件 - 深色模式</comment>
+  </data>
+  <data name="FormFileLight" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Lightmode-Icons\file.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <comment>文件 - 浅色模式</comment>
+  </data>
 </root>

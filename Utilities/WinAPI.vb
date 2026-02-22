@@ -184,6 +184,8 @@ Public Module WinAPI
     Public Const WM_DWMCOLORIZATIONCOLORCHANGED = &H320 '窗体主题色被更改(深色同样有效)
     Public Const WM_SYSMENU As Integer = &H313 '系统菜单常量
     Public Const WM_NCLBUTTONDOWN As Integer = &HA1
+    Public Const WM_THEMECHANGED As Integer = &H31A
+    Public Const WM_SETREDRAW As Integer = &HB
     '其他常量
     Public Const HTCAPTION As Integer = 2
 #End Region
@@ -247,6 +249,16 @@ Public Module WinAPI
         SystemBackdropType
         Last
     End Enum
+    'InvalidateRect 函数 - 强制重绘整个窗口
+    <DllImport("user32.dll")>
+    Public Function InvalidateRect(hWnd As IntPtr, lpRect As IntPtr, bErase As Boolean) As Boolean
+    End Function
 #End Region
 
+#Region "文本"
+    'StrCmpLogicalW 函数 - 进行人类/自然排序
+    <DllImport("shlwapi.dll", CharSet:=CharSet.Unicode, ExactSpelling:=True)>
+    Public Function StrCmpLogicalW(x As String, y As String) As Integer
+    End Function
+#End Region
 End Module

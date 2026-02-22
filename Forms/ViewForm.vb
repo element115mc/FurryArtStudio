@@ -18,6 +18,8 @@ Imports System.Text.RegularExpressions
 Imports System.Threading
 
 Public Class ViewForm
+
+#Region "私有字段"
     '稿件
     Private _currentArtwork As Artwork '当前稿件
     Private _allArtworks As List(Of Artwork) '全部稿件列表
@@ -33,6 +35,8 @@ Public Class ViewForm
     Private _mainForm As Form '保存主窗口引用
     '扩展名
     Private ReadOnly _imageExtensions As String() = {".jpg", ".jpeg", ".png", ".gif", ".bmp", ".tiff", ".ico", ".webp"}
+#End Region
+
 #Region "窗体相关"
     ''' <summary>
     ''' 构造函数 - 接收当前稿件和所有稿件列表
@@ -217,7 +221,8 @@ Public Class ViewForm
             End If
         Next
         '按文件名排序
-        result = result.OrderBy(Function(p) p, New NaturalStringComparer()).ToList()
+        'result = result.OrderBy(Function(p) p, New NaturalStringComparer()).ToList()
+        result.Sort(Function(a, b) StrCmpLogicalW(Path.GetFileName(a), Path.GetFileName(b)))
         Return result
     End Function
 #Region "自然字符串排序比较器"
@@ -228,28 +233,34 @@ Public Class ViewForm
             Return CompareNatural(x, y)
         End Function
         Private Shared Function CompareNatural(x As String, y As String) As Integer
-            ' 提取文件名（不含路径）
+            '提取文件名
             Dim xFile = Path.GetFileNameWithoutExtension(x)
             Dim yFile = Path.GetFileNameWithoutExtension(y)
             Dim xMatches = _regex.Matches(xFile)
             Dim yMatches = _regex.Matches(yFile)
-            '如果没有数字，使用普通字符串比较
+            '如果没有数字, 使用普通字符串比较
             If xMatches.Count = 0 OrElse yMatches.Count = 0 Then
                 Return String.Compare(xFile, yFile, StringComparison.OrdinalIgnoreCase)
             End If
             '逐个比较数字部分
             Dim i As Integer = 0
             While i < Math.Min(xMatches.Count, yMatches.Count)
-                Dim xNum = Integer.Parse(xMatches(i).Value)
-                Dim yNum = Integer.Parse(yMatches(i).Value)
+                Dim xNum As Integer
+                Dim yNum As Integer
+                Dim xOk = Integer.TryParse(xMatches(i).Value, xNum)
+                Dim yOk = Integer.TryParse(yMatches(i).Value, yNum)
+
+                '如果解析失败, 回退到字符串比较
+                If Not xOk OrElse Not yOk Then
+                    Return String.Compare(xFile, yFile, StringComparison.OrdinalIgnoreCase)
+                End If
 
                 If xNum <> yNum Then
                     Return xNum.CompareTo(yNum)
                 End If
-
                 i += 1
             End While
-            '如果数字部分都相同，比较长度
+            '如果数字部分都相同, 比较数字段的数量
             Return xMatches.Count.CompareTo(yMatches.Count)
         End Function
     End Class

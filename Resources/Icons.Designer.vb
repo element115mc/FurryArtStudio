@@ -67,6 +67,26 @@ Namespace My.Resources
         '''<summary>
         '''  查找 System.Drawing.Bitmap 类型的本地化资源。
         '''</summary>
+        Public Shared ReadOnly Property FormFileDark() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("FormFileDark", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找 System.Drawing.Bitmap 类型的本地化资源。
+        '''</summary>
+        Public Shared ReadOnly Property FormFileLight() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("FormFileLight", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找 System.Drawing.Bitmap 类型的本地化资源。
+        '''</summary>
         Public Shared ReadOnly Property FormImageDark() As System.Drawing.Bitmap
             Get
                 Dim obj As Object = ResourceManager.GetObject("FormImageDark", resourceCulture)

@@ -337,6 +337,7 @@
     <Content Include="Resources\Darkmode-Icons\file-output.png" />
     <Content Include="Resources\Darkmode-Icons\file-plus.png" />
     <Content Include="Resources\Darkmode-Icons\file-spreadsheet.png" />
+    <Content Include="Resources\Darkmode-Icons\file.png" />
     <Content Include="Resources\Darkmode-Icons\folder-input.png" />
     <Content Include="Resources\Darkmode-Icons\folder-minus.png" />
     <Content Include="Resources\Darkmode-Icons\folder-open.png" />
@@ -377,6 +378,7 @@
     <Content Include="Resources\Lightmode-Icons\file-output.png" />
     <Content Include="Resources\Lightmode-Icons\file-plus.png" />
     <Content Include="Resources\Lightmode-Icons\file-spreadsheet.png" />
+    <Content Include="Resources\Lightmode-Icons\file.png" />
     <Content Include="Resources\Lightmode-Icons\folder-input.png" />
     <Content Include="Resources\Lightmode-Icons\folder-minus.png" />
     <Content Include="Resources\Lightmode-Icons\folder-open.png" />
