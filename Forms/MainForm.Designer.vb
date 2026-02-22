@@ -87,9 +87,11 @@ Partial Class MainForm
         Me.ToolStripSeparator10 = New System.Windows.Forms.ToolStripSeparator()
         Me.MnuHelpLicense = New System.Windows.Forms.ToolStripMenuItem()
         Me.MnuHelpPrivacy = New System.Windows.Forms.ToolStripMenuItem()
+        Me.MnuTerms = New System.Windows.Forms.ToolStripMenuItem()
         Me.MnuHelpAbout = New System.Windows.Forms.ToolStripMenuItem()
         Me.SearchTextBox = New System.Windows.Forms.TextBox()
         Me.ArtworkListSplitContainer = New System.Windows.Forms.SplitContainer()
+        Me.ImageGalleryMain = New FurryArtStudio.ImageGallery()
         Me.BtnPrev = New System.Windows.Forms.Button()
         Me.BtnNext = New System.Windows.Forms.Button()
         Me.LblNotes = New System.Windows.Forms.Label()
@@ -114,8 +116,6 @@ Partial Class MainForm
         Me.StorageStatusLabel = New System.Windows.Forms.ToolStripStatusLabel()
         Me.TSSep5 = New System.Windows.Forms.ToolStripStatusLabel()
         Me.KryptonMgrMain = New Krypton.Toolkit.KryptonManager(Me.components)
-        Me.ImageGalleryMain = New FurryArtStudio.ImageGallery()
-        Me.MnuUserAgreement = New System.Windows.Forms.ToolStripMenuItem()
         Me.MnuStrip.SuspendLayout()
         CType(Me.ArtworkListSplitContainer, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.ArtworkListSplitContainer.Panel1.SuspendLayout()
@@ -509,7 +509,7 @@ Partial Class MainForm
         '
         'MnuHelp
         '
-        Me.MnuHelp.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.MnuHelpTutorial, Me.ToolStripSeparator8, Me.MnuHelpWebsite, Me.MnuHelpGithub, Me.MnuHelpWhatsNew, Me.MnuCheckUpdate, Me.ToolStripSeparator10, Me.MnuHelpLicense, Me.MnuHelpPrivacy, Me.MnuUserAgreement, Me.MnuHelpAbout})
+        Me.MnuHelp.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.MnuHelpTutorial, Me.ToolStripSeparator8, Me.MnuHelpWebsite, Me.MnuHelpGithub, Me.MnuHelpWhatsNew, Me.MnuCheckUpdate, Me.ToolStripSeparator10, Me.MnuHelpLicense, Me.MnuHelpPrivacy, Me.MnuTerms, Me.MnuHelpAbout})
         Me.MnuHelp.Name = "MnuHelp"
         Me.MnuHelp.Size = New System.Drawing.Size(75, 24)
         Me.MnuHelp.Text = "帮助(&H)"
@@ -570,6 +570,12 @@ Partial Class MainForm
         Me.MnuHelpPrivacy.Size = New System.Drawing.Size(224, 26)
         Me.MnuHelpPrivacy.Text = "隐私政策(&P)..."
         '
+        'MnuTerms
+        '
+        Me.MnuTerms.Name = "MnuTerms"
+        Me.MnuTerms.Size = New System.Drawing.Size(224, 26)
+        Me.MnuTerms.Text = "用户协议(&A)"
+        '
         'MnuHelpAbout
         '
         Me.MnuHelpAbout.Image = CType(resources.GetObject("MnuHelpAbout.Image"), System.Drawing.Image)
@@ -613,6 +619,19 @@ Partial Class MainForm
         Me.ArtworkListSplitContainer.Size = New System.Drawing.Size(982, 535)
         Me.ArtworkListSplitContainer.SplitterDistance = 750
         Me.ArtworkListSplitContainer.TabIndex = 3
+        '
+        'ImageGalleryMain
+        '
+        Me.ImageGalleryMain.AutoScroll = True
+        Me.ImageGalleryMain.BackColor = System.Drawing.Color.White
+        Me.ImageGalleryMain.DisplayMode = FurryArtStudio.GalleryDisplayMode.Normal
+        Me.ImageGalleryMain.Location = New System.Drawing.Point(3, 34)
+        Me.ImageGalleryMain.MaxItemSize = 240
+        Me.ImageGalleryMain.MinItemSize = 120
+        Me.ImageGalleryMain.Name = "ImageGalleryMain"
+        Me.ImageGalleryMain.PageSize = 100
+        Me.ImageGalleryMain.Size = New System.Drawing.Size(744, 498)
+        Me.ImageGalleryMain.TabIndex = 3
         '
         'BtnPrev
         '
@@ -786,25 +805,6 @@ Partial Class MainForm
         Me.KryptonMgrMain.ToolkitStrings.MessageBoxStrings.LessDetails = "L&ess Details..."
         Me.KryptonMgrMain.ToolkitStrings.MessageBoxStrings.MoreDetails = "&More Details..."
         '
-        'ImageGalleryMain
-        '
-        Me.ImageGalleryMain.AutoScroll = True
-        Me.ImageGalleryMain.BackColor = System.Drawing.Color.White
-        Me.ImageGalleryMain.DisplayMode = FurryArtStudio.GalleryDisplayMode.Normal
-        Me.ImageGalleryMain.Location = New System.Drawing.Point(3, 34)
-        Me.ImageGalleryMain.MaxItemSize = 240
-        Me.ImageGalleryMain.MinItemSize = 120
-        Me.ImageGalleryMain.Name = "ImageGalleryMain"
-        Me.ImageGalleryMain.PageSize = 100
-        Me.ImageGalleryMain.Size = New System.Drawing.Size(744, 498)
-        Me.ImageGalleryMain.TabIndex = 3
-        '
-        'MnuUserAgreement
-        '
-        Me.MnuUserAgreement.Name = "MnuUserAgreement"
-        Me.MnuUserAgreement.Size = New System.Drawing.Size(224, 26)
-        Me.MnuUserAgreement.Text = "用户协议(&A)"
-        '
         'MainForm
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 15.0!)
@@ -922,5 +922,5 @@ Partial Class MainForm
     Friend WithEvents MnuRunAsElevated As ToolStripMenuItem
     Friend WithEvents MnuRunTerminal As ToolStripMenuItem
     Friend WithEvents ToolStripSeparator9 As ToolStripSeparator
-    Friend WithEvents MnuUserAgreement As ToolStripMenuItem
+    Friend WithEvents MnuTerms As ToolStripMenuItem
 End Class

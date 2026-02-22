@@ -23,7 +23,7 @@ Public Class AboutForm
         RemoveMenu(MnuHandle, SC_SIZE, MF_BYCOMMAND) '去除大小菜单
         RemoveMenu(MnuHandle, SC_MINIMIZE, MF_BYCOMMAND) '去除最小化菜单
         SystemThemeChange()
-        TxtBox.Text = AboutText
+        TxtBox.Text = My.Resources.Licenses.AboutText
     End Sub
     Private Sub SystemThemeChange()
         Using regKey = Microsoft.Win32.Registry.CurrentUser.OpenSubKey("SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize", True)
@@ -47,9 +47,11 @@ Public Class AboutForm
                 LlblWebSite.VisitedLinkColor = IconColorLight
                 LlblUserAgreement.LinkColor = IconColorDark
                 LlblUserAgreement.VisitedLinkColor = IconColorLight
+                Icon = CreateRoundedRectangleIcon(True, My.Resources.Icons.MenuInfoDark)
             Else
                 bgColor = BgColorLight
                 frColor = FrColorLight
+                Icon = CreateRoundedRectangleIcon(False, My.Resources.Icons.MenuInfoLight)
             End If
             For Each control In controlList
                 control.ForeColor = frColor
@@ -69,17 +71,17 @@ Public Class AboutForm
     End Sub
     '许可证
     Private Sub LlblLicense_LinkClicked(sender As Object, e As LinkLabelLinkClickedEventArgs) Handles LlblLicense.LinkClicked
-        Dim txt As New TextBoxForm(LicenseText, "Apache License 2.0")
+        Dim txt As New TextBoxForm(My.Resources.Licenses.LicenseText, "Apache License 2.0")
         txt.Show()
     End Sub
     '隐私政策
     Private Sub LlblPrivacy_LinkClicked(sender As Object, e As LinkLabelLinkClickedEventArgs) Handles LlblPrivacy.LinkClicked
-        Dim txt As New TextBoxForm(PrivacyText, "隐私政策")
+        Dim txt As New TextBoxForm(My.Resources.Licenses.PrivacyText, "隐私政策")
         txt.Show()
     End Sub
     '用户协议
     Private Sub LlblUserAgreement_LinkClicked(sender As Object, e As LinkLabelLinkClickedEventArgs) Handles LlblUserAgreement.LinkClicked
-        Dim txt As New TextBoxForm(UserAgreementText, "用户协议")
+        Dim txt As New TextBoxForm(My.Resources.Licenses.TermsText, "用户协议")
         txt.Show()
     End Sub
     '官网

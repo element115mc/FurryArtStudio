@@ -1076,10 +1076,12 @@ Public Class MainForm
 
     End Sub
     Private Sub MnuHelpLicense_Click(sender As Object, e As EventArgs) Handles MnuHelpLicense.Click
-
+        Dim txt As New TextBoxForm(My.Resources.Licenses.LicenseText, "Apache License 2.0")
+        txt.Show()
     End Sub
     Private Sub MnuHelpPrivacy_Click(sender As Object, e As EventArgs) Handles MnuHelpPrivacy.Click
-
+        Dim txt As New TextBoxForm(My.Resources.Licenses.PrivacyText, "隐私政策")
+        txt.Show()
     End Sub
     Private Sub MnuHelpTutorial_Click(sender As Object, e As EventArgs) Handles MnuHelpTutorial.Click
 
@@ -1089,6 +1091,10 @@ Public Class MainForm
     End Sub
     Private Sub MnuHelpWhatsNew_Click(sender As Object, e As EventArgs) Handles MnuHelpWhatsNew.Click
 
+    End Sub
+    Private Sub MnuTerms_Click(sender As Object, e As EventArgs) Handles MnuTerms.Click
+        Dim txt As New TextBoxForm(My.Resources.Licenses.TermsText, "用户协议")
+        txt.Show()
     End Sub
 #End Region
 

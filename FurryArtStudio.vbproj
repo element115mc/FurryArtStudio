@@ -236,8 +236,12 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Compile Include="Resources\Licenses.Designer.vb">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Licenses.resx</DependentUpon>
+    </Compile>
     <Compile Include="Utilities\BasicFcn.vb" />
-    <Compile Include="Utilities\LicenseContents.vb" />
     <Compile Include="Utilities\Logger.vb" />
     <Compile Include="Utilities\WinAPI.vb" />
   </ItemGroup>
@@ -280,6 +284,11 @@
       <CustomToolNamespace>My.Resources</CustomToolNamespace>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Licenses.resx">
+      <CustomToolNamespace>My.Resources</CustomToolNamespace>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Licenses.Designer.vb</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <None Include="My Project\app.manifest" />
@@ -311,6 +320,8 @@
     <Folder Include="Tutorial\" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="ABOUT.txt" />
+    <Content Include="PRIVACY.txt" />
     <Content Include="Resources\Darkmode-Icons\arrow-big-left.png" />
     <Content Include="Resources\Darkmode-Icons\arrow-big-right-dash.png" />
     <Content Include="Resources\Darkmode-Icons\arrow-big-right.png" />
@@ -392,6 +403,7 @@
     <Content Include="Resources\Lightmode-Icons\trash-2.png" />
     <Content Include="Resources\Lightmode-Icons\wallpaper.png" />
     <Content Include="Resources\Lightmode-Icons\x.png" />
+    <Content Include="TERMS.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
   <Import Project="packages\System.ValueTuple.4.6.1\build\net471\System.ValueTuple.targets" Condition="Exists('packages\System.ValueTuple.4.6.1\build\net471\System.ValueTuple.targets')" />
