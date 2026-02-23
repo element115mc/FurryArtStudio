@@ -230,10 +230,10 @@ Module BasicFcn
                         '使用Graphics对象进行裁剪
                         Using g As Graphics = Graphics.FromImage(croppedImage)
                             '设置高质量绘制选项
-                            g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic
-                            g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality
-                            g.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality
-                            g.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality
+                            g.InterpolationMode = InterpolationMode.HighQualityBicubic
+                            g.SmoothingMode = SmoothingMode.HighQuality
+                            g.PixelOffsetMode = PixelOffsetMode.HighQuality
+                            g.CompositingQuality = CompositingQuality.HighQuality
                             '绘制裁剪部分
                             g.DrawImage(img,
                                     New Rectangle(0, 0, outputSize, outputSize),

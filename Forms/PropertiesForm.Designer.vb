@@ -25,6 +25,6 @@ Partial Class PropertiesForm
         components = New System.ComponentModel.Container
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(800, 450)
-        Me.Text = "frmProperties"
+        Me.Text = "Properties"
     End Sub
 End Class

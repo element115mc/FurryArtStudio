@@ -26,29 +26,19 @@ Public Class TextBoxForm
         SystemThemeChange()
     End Sub
     Private Sub SystemThemeChange()
-        Using regKey = Microsoft.Win32.Registry.CurrentUser.OpenSubKey("SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize", True)
-            Dim isDarkMode As Boolean = (regKey.GetValue("AppsUseLightTheme", "1") = 0) '判断是否为深色主题
-            '颜色常量
-            Dim bgColor As Color
-            Dim frColor As Color
-            '获取控件集合
-            Dim controlList As List(Of Control) = GetAllControls(Me)
-            '判断颜色
-            If isDarkMode Then
-                bgColor = BgColorDark
-                frColor = FrColorDark
-                Icon = CreateRoundedRectangleIcon(True, My.Resources.Icons.FormFileDark)
-            Else
-                bgColor = BgColorLight
-                frColor = FrColorLight
-                Icon = CreateRoundedRectangleIcon(True, My.Resources.Icons.FormFileLight)
-            End If
-            TxtBox.ForeColor = frColor
-            TxtBox.BackColor = bgColor
-            'WinAPI
-            DwmSetWindowAttribute(Handle, DwmWindowAttribute.UseImmersiveDarkMode, isDarkMode, Marshal.SizeOf(Of Integer))
-            SetPreferredAppMode(PreferredAppMode.AllowDark)
-            FlushMenuThemes()
-        End Using
+        '判断颜色
+        If IsDarkMode() Then
+            TxtBox.BackColor = BgColorDark
+            TxtBox.ForeColor = FrColorDark
+            Icon = CreateRoundedRectangleIcon(True, My.Resources.Icons.FormFileDark)
+        Else
+            TxtBox.BackColor = BgColorLight
+            TxtBox.ForeColor = FrColorLight
+            Icon = CreateRoundedRectangleIcon(True, My.Resources.Icons.FormFileLight)
+        End If
+        'WinAPI
+        DwmSetWindowAttribute(Handle, DwmWindowAttribute.UseImmersiveDarkMode, IsDarkMode(), Marshal.SizeOf(Of Integer))
+        SetPreferredAppMode(PreferredAppMode.AllowDark)
+        FlushMenuThemes()
     End Sub
 End Class

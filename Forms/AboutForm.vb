@@ -59,7 +59,7 @@ Public Class AboutForm
         ForeColor = frColor
         BackColor = bgColor
         'WinAPI
-        DwmSetWindowAttribute(Handle, DwmWindowAttribute.UseImmersiveDarkMode, isDarkMode, Marshal.SizeOf(Of Integer))
+        DwmSetWindowAttribute(Handle, DwmWindowAttribute.UseImmersiveDarkMode, IsDarkMode(), Marshal.SizeOf(Of Integer))
         SetPreferredAppMode(PreferredAppMode.AllowDark)
         FlushMenuThemes()
     End Sub

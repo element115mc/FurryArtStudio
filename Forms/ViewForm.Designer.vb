@@ -41,7 +41,7 @@ Partial Class ViewForm
         Me.ClientSize = New System.Drawing.Size(622, 433)
         Me.Controls.Add(Me.PictureBoxMain)
         Me.Name = "ViewForm"
-        Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent
+        Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
         Me.Text = "ViewForm"
         CType(Me.PictureBoxMain, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)

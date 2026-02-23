@@ -24,34 +24,31 @@ Public Class EditDialogForm
     Private _transaction As FileTransaction
 #Region "窗体相关"
     Private Sub SystemThemeChange()
-        Using regKey = Microsoft.Win32.Registry.CurrentUser.OpenSubKey("SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize", True)
-            Dim isDarkMode As Boolean = (regKey.GetValue("AppsUseLightTheme", "1") = 0) '判断是否为深色主题
-            '颜色常量
-            Dim bgColor As Color
-            Dim frColor As Color
-            '获取控件集合
-            Dim controlList As List(Of Control) = GetAllControls(Me)
-            '判断颜色
-            If isDarkMode Then
-                bgColor = BgColorDark
-                frColor = FrColorDark
-                Icon = CreateRoundedRectangleIcon(True, My.Resources.Icons.MenuEditDark)
-            Else
-                bgColor = BgColorLight
-                frColor = FrColorLight
-                Icon = CreateRoundedRectangleIcon(False, My.Resources.Icons.MenuEditLight)
-            End If
-            For Each control In controlList
-                control.ForeColor = frColor
-                control.BackColor = bgColor
-            Next
-            ForeColor = frColor
-            BackColor = bgColor
-            'WinAPI
-            DwmSetWindowAttribute(Handle, DwmWindowAttribute.UseImmersiveDarkMode, isDarkMode, Marshal.SizeOf(Of Integer))
-            SetPreferredAppMode(PreferredAppMode.AllowDark)
-            FlushMenuThemes()
-        End Using
+        '颜色常量
+        Dim bgColor As Color
+        Dim frColor As Color
+        '获取控件集合
+        Dim controlList As List(Of Control) = GetAllControls(Me)
+        '判断颜色
+        If IsDarkMode() Then
+            bgColor = BgColorDark
+            frColor = FrColorDark
+            Icon = CreateRoundedRectangleIcon(True, My.Resources.Icons.MenuEditDark)
+        Else
+            bgColor = BgColorLight
+            frColor = FrColorLight
+            Icon = CreateRoundedRectangleIcon(False, My.Resources.Icons.MenuEditLight)
+        End If
+        For Each control In controlList
+            control.ForeColor = frColor
+            control.BackColor = bgColor
+        Next
+        ForeColor = frColor
+        BackColor = bgColor
+        'WinAPI
+        DwmSetWindowAttribute(Handle, DwmWindowAttribute.UseImmersiveDarkMode, IsDarkMode(), Marshal.SizeOf(Of Integer))
+        SetPreferredAppMode(PreferredAppMode.AllowDark)
+        FlushMenuThemes()
     End Sub
     Private Sub EditDialogForm_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         SystemThemeChange()
@@ -138,7 +135,9 @@ Public Class EditDialogForm
                 If previewFiles.Length > 0 Then
                     '加载第一个预览图
                     Using stream As New FileStream(previewFiles(0), FileMode.Open, FileAccess.Read)
-                        PreviewPicturebox.Image = Image.FromStream(stream)
+                        Using tempImage As Image = Image.FromStream(stream) '创建独立副本, 解除对流的依赖
+                            PreviewPicturebox.Image = New Bitmap(tempImage)
+                        End Using
                     End Using
                     PreviewPicturebox.SizeMode = PictureBoxSizeMode.Zoom
                     Return
@@ -216,7 +215,8 @@ Public Class EditDialogForm
     End Sub
     Private Sub BtnSetPreview_Click(sender As Object, e As EventArgs) Handles BtnSetPreview.Click
         Dim selectedItem = CType(LstBox.SelectedItem, FileItemInfo)
-        CreateThumb(selectedItem.FullPath)
+        PreviewPicturebox.SizeMode = PictureBoxSizeMode.Zoom
+        PreviewPicturebox.Image = LoadImageFromFile(selectedItem.FullPath)
     End Sub
     Private Sub RefreshFileList()
         If _transaction Is Nothing Then
@@ -250,8 +250,7 @@ Public Class EditDialogForm
         End Select
         Using font As New Font(e.Font, fontStyle)
             '绘制文件名
-            e.Graphics.DrawString(item.FileName, font,
-                                 Brushes.White, e.Bounds)
+            e.Graphics.DrawString(item.FileName, font, If(IsDarkMode(), Brushes.White, Brushes.Black), e.Bounds)
         End Using
         '绘制焦点框
         e.DrawFocusRectangle()
@@ -261,6 +260,15 @@ Public Class EditDialogForm
             BtnSetPreview.Enabled = False
             BtnDel.Enabled = False
         Else
+            Dim selectedItem = CType(LstBox.SelectedItem, FileItemInfo)
+            Dim filePath As String = selectedItem.FullPath
+            SelectPictureBox.SizeMode = PictureBoxSizeMode.Zoom
+            SelectPictureBox.Image = Nothing
+            If File.Exists(filePath) Then
+                Using stream As New FileStream(filePath, FileMode.Open, FileAccess.Read)
+                    SelectPictureBox.Image = Image.FromStream(stream)
+                End Using
+            End If
             If _artwork.ID <> 0 Then
                 BtnSetPreview.Enabled = True
             End If
@@ -330,46 +338,13 @@ Public Class EditDialogForm
         _artwork.UpdateTime = Now
         _artwork.ImportTime = Now
         If Not CreateArtworkFolder() Then Return '创建/更新文件夹
-        Dim folderPath As String = Path.Combine(_libraryPath, _artwork.UUID.ToString())
         _transaction.Commit() '提交数据
-        If Directory.GetFiles(folderPath).Count > 0 Then
-            Try
-                CreateThumb() '创建缩略图
-            Catch ex As Exception
-                '忽略
-            End Try
-        End If
+        Dim previewPath As String = Path.Combine(_libraryPath, _artwork.UUID.ToString(), ".preview.jpg")
+        PreviewPicturebox.SizeMode = PictureBoxSizeMode.Zoom
+        PreviewPicturebox.Image?.Save(previewPath, ImageFormat.Jpeg) '图片不为空的时候, 保存图片
         '设置DialogResult为OK, 关闭窗体
         Me.DialogResult = DialogResult.OK
         Me.Close()
-    End Sub
-    ''' <summary>
-    ''' 创建缩略图
-    ''' </summary>
-    Private Sub CreateThumb()
-        Dim artworkPath As String = Path.Combine(_libraryPath, _artwork.UUID.ToString())
-        Dim previewPath As String = Path.Combine(artworkPath, ".preview.jpg")
-        If Not File.Exists(previewPath) Then '判断是否存在文件
-            PreviewPicturebox.Image = LoadImageFromFile(Directory.GetFiles(artworkPath)(0))
-            PreviewPicturebox.SizeMode = PictureBoxSizeMode.Zoom
-            PreviewPicturebox.Image.Save(previewPath, ImageFormat.Jpeg)
-        End If
-    End Sub
-    ''' <summary>
-    ''' 创建缩略图
-    ''' </summary>
-    ''' <param name="filepath">文件路径，覆盖之前的文件</param>
-    Private Sub CreateThumb(filepath As String)
-        Dim artworkPath As String = Path.Combine(_libraryPath, _artwork.UUID.ToString())
-        Dim previewPath As String = Path.Combine(artworkPath, ".preview.jpg")
-        If File.Exists(previewPath) Then
-            File.Delete(previewPath) '删除旧的预览图文件
-        End If
-        PreviewPicturebox.Image = LoadImageFromFile(filepath)
-        PreviewPicturebox.SizeMode = PictureBoxSizeMode.Zoom
-        If Directory.Exists(artworkPath) Then
-            PreviewPicturebox.Image.Save(previewPath, ImageFormat.Jpeg) '保存新的预览图
-        End If
     End Sub
     ''' <summary>
     ''' 清理字符串中的不可见字符

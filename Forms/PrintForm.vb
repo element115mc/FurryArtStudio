@@ -152,34 +152,31 @@ Public Class PrintForm
         RemoveMenu(MnuHandle, SC_MINIMIZE, MF_BYCOMMAND) '去除最小化菜单
     End Sub
     Private Sub SystemThemeChange()
-        Using regKey = Microsoft.Win32.Registry.CurrentUser.OpenSubKey("SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize", True)
-            Dim isDarkMode As Boolean = (regKey.GetValue("AppsUseLightTheme", "1") = 0) '判断是否为深色主题
-            '颜色常量
-            Dim bgColor As Color
-            Dim frColor As Color
-            '获取控件集合
-            Dim controlList As List(Of Control) = GetAllControls(Me)
-            '判断颜色
-            If isDarkMode Then
-                bgColor = BgColorDark
-                frColor = FrColorDark
-                Icon = CreateRoundedRectangleIcon(True, My.Resources.Icons.MenuPrintDark)
-            Else
-                bgColor = BgColorLight
-                frColor = FrColorLight
-                Icon = CreateRoundedRectangleIcon(False, My.Resources.Icons.MenuPrintLight)
-            End If
-            For Each control In controlList
-                control.ForeColor = frColor
-                control.BackColor = bgColor
-            Next
-            ForeColor = frColor
+        '颜色常量
+        Dim bgColor As Color
+        Dim frColor As Color
+        '获取控件集合
+        Dim controlList As List(Of Control) = GetAllControls(Me)
+        '判断颜色
+        If IsDarkMode() Then
+            bgColor = BgColorDark
+            frColor = FrColorDark
+            Icon = CreateRoundedRectangleIcon(True, My.Resources.Icons.MenuPrintDark)
+        Else
+            bgColor = BgColorLight
+            frColor = FrColorLight
+            Icon = CreateRoundedRectangleIcon(False, My.Resources.Icons.MenuPrintLight)
+        End If
+        For Each control In controlList
+            control.ForeColor = frColor
+            control.BackColor = bgColor
+        Next
+        ForeColor = frColor
             BackColor = bgColor
-            'WinAPI
-            DwmSetWindowAttribute(Handle, DwmWindowAttribute.UseImmersiveDarkMode, isDarkMode, Marshal.SizeOf(Of Integer))
-            SetPreferredAppMode(PreferredAppMode.AllowDark)
-            FlushMenuThemes()
-        End Using
+        'WinAPI
+        DwmSetWindowAttribute(Handle, DwmWindowAttribute.UseImmersiveDarkMode, IsDarkMode(), Marshal.SizeOf(Of Integer))
+        SetPreferredAppMode(PreferredAppMode.AllowDark)
+        FlushMenuThemes()
     End Sub
     Private Sub BtnPrinterSetup_Click(sender As Object, e As EventArgs) Handles btnPrinterSetup.Click
         Dim isShiftPressed As Boolean = My.Computer.Keyboard.ShiftKeyDown

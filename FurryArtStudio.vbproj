@@ -157,12 +157,6 @@
     <Compile Include="Forms\AboutForm.vb">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\DeleteConfirmForm.Designer.vb">
-      <DependentUpon>DeleteConfirmForm.vb</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\DeleteConfirmForm.vb">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="Forms\DevToolsForm.Designer.vb">
       <DependentUpon>DevToolsForm.vb</DependentUpon>
     </Compile>
@@ -194,14 +188,14 @@
     <Compile Include="Forms\PrintForm.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Components\ImageGallery.vb">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Forms\PropertiesForm.Designer.vb">
       <DependentUpon>PropertiesForm.vb</DependentUpon>
     </Compile>
     <Compile Include="Forms\PropertiesForm.vb">
       <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Components\ImageGallery.vb">
-      <SubType>Component</SubType>
     </Compile>
     <Compile Include="Forms\TextBoxForm.Designer.vb">
       <DependentUpon>TextBoxForm.vb</DependentUpon>
@@ -249,9 +243,6 @@
   <ItemGroup>
     <EmbeddedResource Include="Forms\AboutForm.resx">
       <DependentUpon>AboutForm.vb</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\DeleteConfirmForm.resx">
-      <DependentUpon>DeleteConfirmForm.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\DevToolsForm.resx">
       <DependentUpon>DevToolsForm.vb</DependentUpon>

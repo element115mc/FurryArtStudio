@@ -153,38 +153,35 @@ Public Class MainForm
     ''' 系统主题发生变化时调用以更新
     ''' </summary>
     Private Sub SystemThemeChange()
-        Using regKey = Microsoft.Win32.Registry.CurrentUser.OpenSubKey("SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize", True)
-            Dim isDarkMode As Boolean = (regKey.GetValue("AppsUseLightTheme", "1") = 0) '判断是否为深色主题
-            '颜色常量
-            Dim bgColor As Color
-            Dim frColor As Color
-            '获取控件集合
-            Dim controlList As List(Of Control) = GetAllControls(Me)
-            '判断颜色
-            If isDarkMode Then
-                bgColor = BgColorDark
-                frColor = FrColorDark
-                ImageGalleryMain.DisplayMode = GalleryDisplayMode.Dark '设置图片墙主题
-                KryptonMgrMain.GlobalPaletteMode = PaletteMode.MaterialDark '设置菜单栏主题
-                InitializeMenuImages(True) '设置菜单图标主题
-            Else
-                bgColor = BgColorLight
-                frColor = FrColorLight
-                ImageGalleryMain.DisplayMode = GalleryDisplayMode.Normal
-                KryptonMgrMain.GlobalPaletteMode = PaletteMode.MaterialLight
-                InitializeMenuImages()
-            End If
-            For Each control In controlList
-                control.ForeColor = frColor
-                control.BackColor = bgColor
-            Next
-            ForeColor = frColor
-            BackColor = bgColor
-            'WinAPI
-            DwmSetWindowAttribute(Handle, DwmWindowAttribute.UseImmersiveDarkMode, isDarkMode, Marshal.SizeOf(Of Integer))
-            SetPreferredAppMode(PreferredAppMode.AllowDark)
-            FlushMenuThemes()
-        End Using
+        '颜色常量
+        Dim bgColor As Color
+        Dim frColor As Color
+        '获取控件集合
+        Dim controlList As List(Of Control) = GetAllControls(Me)
+        '判断颜色
+        If IsDarkMode() Then
+            bgColor = BgColorDark
+            frColor = FrColorDark
+            ImageGalleryMain.DisplayMode = GalleryDisplayMode.Dark '设置图片墙主题
+            KryptonMgrMain.GlobalPaletteMode = PaletteMode.MaterialDark '设置菜单栏主题
+            InitializeMenuImages(True) '设置菜单图标主题
+        Else
+            bgColor = BgColorLight
+            frColor = FrColorLight
+            ImageGalleryMain.DisplayMode = GalleryDisplayMode.Normal
+            KryptonMgrMain.GlobalPaletteMode = PaletteMode.MaterialLight
+            InitializeMenuImages()
+        End If
+        For Each control In controlList
+            control.ForeColor = frColor
+            control.BackColor = bgColor
+        Next
+        ForeColor = frColor
+        BackColor = bgColor
+        'WinAPI
+        DwmSetWindowAttribute(Handle, DwmWindowAttribute.UseImmersiveDarkMode, IsDarkMode(), Marshal.SizeOf(Of Integer))
+        SetPreferredAppMode(PreferredAppMode.AllowDark)
+        FlushMenuThemes()
     End Sub
     ''' <summary>
     ''' 初始化菜单图标
@@ -438,13 +435,17 @@ Public Class MainForm
                 .Count = fileCount
             }
             If File.Exists(previewPath) Then
-                Using sourceImage As Image = Image.FromFile(previewPath)
-                    '创建独立于文件的新位图
-                    gi.Thumbnail = New Bitmap(sourceImage.Width, sourceImage.Height, sourceImage.PixelFormat)
-                    Using g As Graphics = Graphics.FromImage(gi.Thumbnail)
-                        g.DrawImage(sourceImage, 0, 0, sourceImage.Width, sourceImage.Height)
+                Try
+                    Using sourceImage As Image = Image.FromFile(previewPath)
+                        '创建独立于文件的新位图
+                        gi.Thumbnail = New Bitmap(sourceImage.Width, sourceImage.Height, sourceImage.PixelFormat)
+                        Using g As Graphics = Graphics.FromImage(gi.Thumbnail)
+                            g.DrawImage(sourceImage, 0, 0, sourceImage.Width, sourceImage.Height)
+                        End Using
                     End Using
-                End Using
+                Catch ex As Exception
+                    '忽略无法加载的缩略图
+                End Try
             End If
             ImageGalleryMain.AddImage(gi)
         Next

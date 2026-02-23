@@ -44,7 +44,9 @@ Partial Class EditDialogForm
         Me.LstBox = New System.Windows.Forms.ListBox()
         Me.BtnDel = New System.Windows.Forms.Button()
         Me.BtnSetPreview = New System.Windows.Forms.Button()
+        Me.SelectPictureBox = New System.Windows.Forms.PictureBox()
         CType(Me.PreviewPicturebox, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.SelectPictureBox, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'TxtboxTitle
@@ -215,7 +217,7 @@ Partial Class EditDialogForm
         Me.LstBox.ItemHeight = 15
         Me.LstBox.Location = New System.Drawing.Point(141, 270)
         Me.LstBox.Name = "LstBox"
-        Me.LstBox.Size = New System.Drawing.Size(393, 109)
+        Me.LstBox.Size = New System.Drawing.Size(278, 109)
         Me.LstBox.TabIndex = 19
         '
         'BtnDel
@@ -236,6 +238,15 @@ Partial Class EditDialogForm
         Me.BtnSetPreview.Text = "设为封面(&P)"
         Me.BtnSetPreview.UseVisualStyleBackColor = True
         '
+        'SelectPictureBox
+        '
+        Me.SelectPictureBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
+        Me.SelectPictureBox.Location = New System.Drawing.Point(424, 270)
+        Me.SelectPictureBox.Name = "SelectPictureBox"
+        Me.SelectPictureBox.Size = New System.Drawing.Size(110, 110)
+        Me.SelectPictureBox.TabIndex = 22
+        Me.SelectPictureBox.TabStop = False
+        '
         'EditDialogForm
         '
         Me.AcceptButton = Me.BtnModify
@@ -243,6 +254,7 @@ Partial Class EditDialogForm
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.CancelButton = Me.BtnCancel
         Me.ClientSize = New System.Drawing.Size(542, 443)
+        Me.Controls.Add(Me.SelectPictureBox)
         Me.Controls.Add(Me.BtnSetPreview)
         Me.Controls.Add(Me.BtnDel)
         Me.Controls.Add(Me.LstBox)
@@ -273,6 +285,7 @@ Partial Class EditDialogForm
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent
         Me.Text = "EditDialogForm"
         CType(Me.PreviewPicturebox, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.SelectPictureBox, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
@@ -300,4 +313,5 @@ Partial Class EditDialogForm
     Friend WithEvents LstBox As ListBox
     Friend WithEvents BtnDel As Button
     Friend WithEvents BtnSetPreview As Button
+    Friend WithEvents SelectPictureBox As PictureBox
 End Class
