@@ -91,6 +91,7 @@ Partial Class MainForm
         Me.MnuHelpAbout = New System.Windows.Forms.ToolStripMenuItem()
         Me.SearchTextBox = New System.Windows.Forms.TextBox()
         Me.ArtworkListSplitContainer = New System.Windows.Forms.SplitContainer()
+        Me.ImageGalleryMain = New FurryArtStudio.ImageGallery()
         Me.LblNotes = New System.Windows.Forms.Label()
         Me.LblTags = New System.Windows.Forms.Label()
         Me.LblCharacters = New System.Windows.Forms.Label()
@@ -111,7 +112,6 @@ Partial Class MainForm
         Me.StorageStatusLabel = New System.Windows.Forms.ToolStripStatusLabel()
         Me.TSSep5 = New System.Windows.Forms.ToolStripStatusLabel()
         Me.KryptonMgrMain = New Krypton.Toolkit.KryptonManager(Me.components)
-        Me.ImageGalleryMain = New FurryArtStudio.ImageGallery()
         Me.MnuStrip.SuspendLayout()
         CType(Me.ArtworkListSplitContainer, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.ArtworkListSplitContainer.Panel1.SuspendLayout()
@@ -167,6 +167,7 @@ Partial Class MainForm
         Me.MnuRunAsElevated.Name = "MnuRunAsElevated"
         Me.MnuRunAsElevated.Size = New System.Drawing.Size(235, 26)
         Me.MnuRunAsElevated.Text = "以管理员权限重启(&E)"
+        Me.MnuRunAsElevated.Visible = False
         '
         'MnuRunTerminal
         '
@@ -614,6 +615,20 @@ Partial Class MainForm
         Me.ArtworkListSplitContainer.SplitterDistance = 730
         Me.ArtworkListSplitContainer.TabIndex = 3
         '
+        'ImageGalleryMain
+        '
+        Me.ImageGalleryMain.AutoScroll = True
+        Me.ImageGalleryMain.BackColor = System.Drawing.Color.White
+        Me.ImageGalleryMain.DisplayMode = FurryArtStudio.GalleryDisplayMode.Normal
+        Me.ImageGalleryMain.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.ImageGalleryMain.Location = New System.Drawing.Point(0, 25)
+        Me.ImageGalleryMain.MaxItemSize = 240
+        Me.ImageGalleryMain.MinItemSize = 120
+        Me.ImageGalleryMain.Name = "ImageGalleryMain"
+        Me.ImageGalleryMain.PageSize = 100
+        Me.ImageGalleryMain.Size = New System.Drawing.Size(730, 514)
+        Me.ImageGalleryMain.TabIndex = 3
+        '
         'LblNotes
         '
         Me.LblNotes.Location = New System.Drawing.Point(3, 344)
@@ -748,20 +763,6 @@ Partial Class MainForm
         Me.KryptonMgrMain.GlobalPaletteMode = Krypton.Toolkit.PaletteMode.ProfessionalSystem
         Me.KryptonMgrMain.ToolkitStrings.MessageBoxStrings.LessDetails = "L&ess Details..."
         Me.KryptonMgrMain.ToolkitStrings.MessageBoxStrings.MoreDetails = "&More Details..."
-        '
-        'ImageGalleryMain
-        '
-        Me.ImageGalleryMain.AutoScroll = True
-        Me.ImageGalleryMain.BackColor = System.Drawing.Color.White
-        Me.ImageGalleryMain.DisplayMode = FurryArtStudio.GalleryDisplayMode.Normal
-        Me.ImageGalleryMain.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.ImageGalleryMain.Location = New System.Drawing.Point(0, 25)
-        Me.ImageGalleryMain.MaxItemSize = 240
-        Me.ImageGalleryMain.MinItemSize = 120
-        Me.ImageGalleryMain.Name = "ImageGalleryMain"
-        Me.ImageGalleryMain.PageSize = 100
-        Me.ImageGalleryMain.Size = New System.Drawing.Size(730, 514)
-        Me.ImageGalleryMain.TabIndex = 3
         '
         'MainForm
         '

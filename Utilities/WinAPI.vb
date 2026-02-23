@@ -160,6 +160,14 @@ Public Module WinAPI
         ByVal dwFlag As Integer
     ) As <MarshalAs(UnmanagedType.Bool)> Boolean
     End Function
+    'ChangeWindowMessageFilterEx 函数 - 窗口级别
+    <DllImport("user32.dll", SetLastError:=True)>
+    Public Function ChangeWindowMessageFilterEx(
+        ByVal hwnd As IntPtr,
+        ByVal message As Integer,
+        ByVal action As Integer,
+        ByRef pChangeFilterStruct As Integer) As Boolean
+    End Function
     'SendMessage 函数 - 发送特定消息
     <DllImport("user32.dll")>
     Public Function SendMessage(ByVal hWnd As IntPtr, ByVal Msg As Integer, ByVal wParam As IntPtr, ByVal lParam As IntPtr) As IntPtr
@@ -169,7 +177,7 @@ Public Module WinAPI
     Public Function ReleaseCapture() As Boolean
     End Function
     '消息常量
-    Public Const WM_DROPFILES As Integer = &H233
+    Public Const WM_DROPFILES As Integer = &H233 '拖拽文件
     Public Const WM_COPYGLOBALDATA As Integer = &H49
     Public Const WM_COPYDATA As Integer = &H4A
     Public Const MSGFLT_ALLOW As Integer = 1
@@ -261,4 +269,5 @@ Public Module WinAPI
     Public Function StrCmpLogicalW(x As String, y As String) As Integer
     End Function
 #End Region
+
 End Module
