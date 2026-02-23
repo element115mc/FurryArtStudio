@@ -119,6 +119,7 @@ Public Class EditDialogForm
         TxtboxNotes.Text = _artwork.Notes '备注
         TxtboxCreateTime.ForeColor = Color.Gray '设置创建时间文本框的提示
         '加载预览图
+        PreviewPicturebox.SizeMode = PictureBoxSizeMode.Zoom
         LoadPreviewImage()
     End Sub
 
@@ -139,7 +140,6 @@ Public Class EditDialogForm
                             PreviewPicturebox.Image = New Bitmap(tempImage)
                         End Using
                     End Using
-                    PreviewPicturebox.SizeMode = PictureBoxSizeMode.Zoom
                     Return
                 End If
                 '如果没有预览图, 尝试加载第一个图片文件
@@ -148,14 +148,13 @@ Public Class EditDialogForm
                                Dim ext = Path.GetExtension(f).ToLower()
                                Return ext = ".jpg" OrElse ext = ".jpeg" OrElse
                                       ext = ".png" OrElse ext = ".bmp" OrElse
-                                      ext = ".gif" OrElse ext = ".tiff"
+                                      ext = ".gif"
                            End Function) _
                     .ToArray()
                 If imageFiles.Length > 0 Then
                     Using stream As New FileStream(imageFiles(0), FileMode.Open, FileAccess.Read)
                         PreviewPicturebox.Image = Image.FromStream(stream)
                     End Using
-                    PreviewPicturebox.SizeMode = PictureBoxSizeMode.Zoom
                 End If
             End If
         Catch ex As Exception
@@ -172,6 +171,45 @@ Public Class EditDialogForm
             Return _artwork
         End Get
     End Property
+    Private Sub EditDialogForm_DragDrop(sender As Object, e As DragEventArgs) Handles Me.DragDrop
+        Try '支持拖放操作
+            Dim paths() As String = e.Data.GetData(DataFormats.FileDrop) '拖拽的路径数组
+            Dim imageFiles As New List(Of String) '图像文件列表
+            Dim imageExtensions As String() = {"*.jpg", "*.jpeg", "*.png", "*.gif", "*.bmp"} '扩展名
+            For Each path In paths
+                If Directory.Exists(path) Then
+                    '提取所有的图片文件
+                    For Each pattern In imageExtensions
+                        imageFiles.AddRange(Directory.GetFiles(path, pattern, SearchOption.AllDirectories))
+                    Next
+                ElseIf File.Exists(path) Then
+                    Dim extension As String = IO.Path.GetExtension(path).ToLower()
+                    If imageExtensions.Select(Function(ext) ext.Replace("*", "")).Contains(extension) Then
+                        imageFiles.Add(path)
+                    End If
+                End If
+            Next
+            imageFiles = imageFiles.Distinct().ToList() '去重
+            If imageFiles.Count > 0 Then
+                _transaction.AddFiles(imageFiles) '添加文件到处理类
+                PreviewPicturebox.Image = LoadImageFromFile(imageFiles(0)) '添加一个文件作为缩略图
+                RefreshFileList()
+            End If
+        Catch ex As Exception
+            '忽略错误
+        End Try
+    End Sub
+    Private Sub EditDialogForm_DragEnter(sender As Object, e As DragEventArgs) Handles Me.DragEnter
+        Try
+            If e.Data.GetDataPresent(DataFormats.FileDrop) Then
+                e.Effect = DragDropEffects.Copy
+            Else
+                e.Effect = DragDropEffects.None
+            End If
+        Catch ex As Exception
+            '忽略错误
+        End Try
+    End Sub
 #End Region
 
 #Region "列表编辑"
@@ -184,6 +222,7 @@ Public Class EditDialogForm
                 Try
                     _transaction.AddFiles(openFileDialog.FileNames) '添加文件到处理类
                     PreviewPicturebox.Image = LoadImageFromFile(openFileDialog.FileName) '添加一个文件作为缩略图
+                    PreviewPicturebox.Refresh()
                     RefreshFileList()
                 Catch ex As Exception
                     '不处理
@@ -215,7 +254,6 @@ Public Class EditDialogForm
     End Sub
     Private Sub BtnSetPreview_Click(sender As Object, e As EventArgs) Handles BtnSetPreview.Click
         Dim selectedItem = CType(LstBox.SelectedItem, FileItemInfo)
-        PreviewPicturebox.SizeMode = PictureBoxSizeMode.Zoom
         PreviewPicturebox.Image = LoadImageFromFile(selectedItem.FullPath)
     End Sub
     Private Sub RefreshFileList()
@@ -275,7 +313,6 @@ Public Class EditDialogForm
             BtnDel.Enabled = True
         End If
     End Sub
-
 #End Region
 
 #Region "其他功能"
@@ -340,7 +377,6 @@ Public Class EditDialogForm
         If Not CreateArtworkFolder() Then Return '创建/更新文件夹
         _transaction.Commit() '提交数据
         Dim previewPath As String = Path.Combine(_libraryPath, _artwork.UUID.ToString(), ".preview.jpg")
-        PreviewPicturebox.SizeMode = PictureBoxSizeMode.Zoom
         PreviewPicturebox.Image?.Save(previewPath, ImageFormat.Jpeg) '图片不为空的时候, 保存图片
         '设置DialogResult为OK, 关闭窗体
         Me.DialogResult = DialogResult.OK

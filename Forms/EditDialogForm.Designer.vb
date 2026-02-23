@@ -95,7 +95,7 @@ Partial Class EditDialogForm
         Me.BtnModify.Location = New System.Drawing.Point(310, 383)
         Me.BtnModify.Name = "BtnModify"
         Me.BtnModify.Size = New System.Drawing.Size(109, 49)
-        Me.BtnModify.TabIndex = 8
+        Me.BtnModify.TabIndex = 11
         Me.BtnModify.Text = "完成(&O)"
         Me.BtnModify.UseVisualStyleBackColor = True
         '
@@ -114,7 +114,7 @@ Partial Class EditDialogForm
         Me.BtnCancel.Location = New System.Drawing.Point(425, 383)
         Me.BtnCancel.Name = "BtnCancel"
         Me.BtnCancel.Size = New System.Drawing.Size(109, 49)
-        Me.BtnCancel.TabIndex = 9
+        Me.BtnCancel.TabIndex = 12
         Me.BtnCancel.Text = "取消(&C)"
         Me.BtnCancel.UseVisualStyleBackColor = True
         '
@@ -182,7 +182,7 @@ Partial Class EditDialogForm
         Me.TxtboxCreateTime.Location = New System.Drawing.Point(88, 218)
         Me.TxtboxCreateTime.Name = "TxtboxCreateTime"
         Me.TxtboxCreateTime.Size = New System.Drawing.Size(189, 25)
-        Me.TxtboxCreateTime.TabIndex = 7
+        Me.TxtboxCreateTime.TabIndex = 6
         '
         'TxtboxNotes
         '
@@ -207,8 +207,8 @@ Partial Class EditDialogForm
         Me.BtnAdd.Location = New System.Drawing.Point(12, 270)
         Me.BtnAdd.Name = "BtnAdd"
         Me.BtnAdd.Size = New System.Drawing.Size(129, 37)
-        Me.BtnAdd.TabIndex = 6
-        Me.BtnAdd.Text = "添加文件(&A)"
+        Me.BtnAdd.TabIndex = 7
+        Me.BtnAdd.Text = "添加(&A)..."
         Me.BtnAdd.UseVisualStyleBackColor = True
         '
         'LstBox
@@ -218,15 +218,15 @@ Partial Class EditDialogForm
         Me.LstBox.Location = New System.Drawing.Point(141, 270)
         Me.LstBox.Name = "LstBox"
         Me.LstBox.Size = New System.Drawing.Size(278, 109)
-        Me.LstBox.TabIndex = 19
+        Me.LstBox.TabIndex = 10
         '
         'BtnDel
         '
         Me.BtnDel.Location = New System.Drawing.Point(12, 304)
         Me.BtnDel.Name = "BtnDel"
         Me.BtnDel.Size = New System.Drawing.Size(129, 37)
-        Me.BtnDel.TabIndex = 20
-        Me.BtnDel.Text = "删除文件(&D)"
+        Me.BtnDel.TabIndex = 8
+        Me.BtnDel.Text = "删除(&D)..."
         Me.BtnDel.UseVisualStyleBackColor = True
         '
         'BtnSetPreview
@@ -234,7 +234,7 @@ Partial Class EditDialogForm
         Me.BtnSetPreview.Location = New System.Drawing.Point(12, 338)
         Me.BtnSetPreview.Name = "BtnSetPreview"
         Me.BtnSetPreview.Size = New System.Drawing.Size(129, 37)
-        Me.BtnSetPreview.TabIndex = 21
+        Me.BtnSetPreview.TabIndex = 9
         Me.BtnSetPreview.Text = "设为封面(&P)"
         Me.BtnSetPreview.UseVisualStyleBackColor = True
         '
@@ -250,6 +250,7 @@ Partial Class EditDialogForm
         'EditDialogForm
         '
         Me.AcceptButton = Me.BtnModify
+        Me.AllowDrop = True
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 15.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.CancelButton = Me.BtnCancel
