@@ -20,8 +20,8 @@ Public Class EditDialogForm
     '存储传入的稿件对象
     Private _artwork As Artwork
     Private _libraryPath As String
-    Private _filePaths As String() = Array.Empty(Of String)()
-
+    '文件事务管理类
+    Private _transaction As FileTransaction
 #Region "窗体相关"
     Private Sub SystemThemeChange()
         Using regKey = Microsoft.Win32.Registry.CurrentUser.OpenSubKey("SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize", True)
@@ -60,9 +60,15 @@ Public Class EditDialogForm
         RemoveMenu(MnuHandle, SC_MAXIMIZE, MF_BYCOMMAND) '去除最大化菜单
         RemoveMenu(MnuHandle, SC_SIZE, MF_BYCOMMAND) '去除大小菜单
         RemoveMenu(MnuHandle, SC_MINIMIZE, MF_BYCOMMAND) '去除最小化菜单
-        InsertMenu(MnuHandle, 1, MF_BYPOSITION Or MF_SEPARATOR, 0, Nothing)
-        InsertMenu(MnuHandle, 2, MF_BYPOSITION Or MF_STRING, 1, "添加图片(&A)")
-        InsertMenu(MnuHandle, 3, MF_BYPOSITION Or MF_STRING, 2, "保存(&S)")
+        LstBox.DisplayMember = "FileName"
+        LstBox.ValueMember = "FullPath" '初始化
+        If LstBox.SelectedItems.Count = 0 Then
+            BtnSetPreview.Enabled = False
+            BtnDel.Enabled = False
+        End If
+    End Sub
+    Private Sub EditDialogForm_FormClosing(sender As Object, e As FormClosingEventArgs) Handles Me.FormClosing
+        _transaction.Dispose()
     End Sub
 
     ''' <summary>
@@ -90,10 +96,13 @@ Public Class EditDialogForm
                         .Notes = String.Empty,
                         .FilePaths = Array.Empty(Of String)()
                     }
+            _transaction = New FileTransaction() '新建文件事务处理类
         Else '编辑已有稿件
             Me.Text = "编辑稿件"
             BtnModify.Text = "保存(&S)"
             _artwork = artwork
+            _transaction = New FileTransaction(Path.Combine(_libraryPath, _artwork.UUID.ToString))
+            RefreshFileList() '将文件添加到列表
         End If
         InitializeForm()
     End Sub
@@ -164,18 +173,99 @@ Public Class EditDialogForm
             Return _artwork
         End Get
     End Property
+#End Region
 
-    Protected Overrides Sub WndProc(ByRef m As Message) '窗体消息处理函数
-        If m.Msg = WM_SYSCOMMAND Then '窗体响应菜单
-            Dim hMenu = GetSystemMenu(Handle, False)
-            Select Case m.WParam.ToInt32'对应菜单标号
-                Case 1
-                    AddPictures()
-                Case 2
-                    ModifyArtwork()
-            End Select
+#Region "列表编辑"
+    Private Sub BtnAdd_Click(sender As Object, e As EventArgs) Handles BtnAdd.Click
+        Using openFileDialog As New OpenFileDialog()
+            openFileDialog.Filter = "图片文件(*.jpg;*.jpeg;*.png;*.bmp;*.gif)|*.jpg;*.jpeg;*.png;*.bmp;*.gif|所有文件(*.*)|*.*"
+            openFileDialog.Title = "选择要添加的图片"
+            openFileDialog.Multiselect = True
+            If openFileDialog.ShowDialog() = DialogResult.OK Then
+                Try
+                    _transaction.AddFiles(openFileDialog.FileNames) '添加文件到处理类
+                    PreviewPicturebox.Image = LoadImageFromFile(openFileDialog.FileName) '添加一个文件作为缩略图
+                    RefreshFileList()
+                Catch ex As Exception
+                    '不处理
+                End Try
+            End If
+        End Using
+    End Sub
+    Private Sub BtnDel_Click(sender As Object, e As EventArgs) Handles BtnDel.Click
+        If LstBox.SelectedItem Is Nothing Then
+            MessageBox.Show("请先选择要删除的文件", "Furry Art Studio",
+                          MessageBoxButtons.OK, MessageBoxIcon.Information)
+            Return
         End If
-        MyBase.WndProc(m) '循环监听消息
+        Dim selectedItem = CType(LstBox.SelectedItem, FileItemInfo)
+        Dim result = MessageBox.Show($"确定要删除文件 '{selectedItem.FileName}' 吗？",
+                                    "确认删除", MessageBoxButtons.YesNo,
+                                    MessageBoxIcon.Question)
+
+        If result = DialogResult.Yes Then
+            If _transaction.DeleteFile(selectedItem.FileName) Then
+                RefreshFileList() '更新文件列表
+                MessageBox.Show("文件已标记为删除", "Furry Art Studio",
+                              MessageBoxButtons.OK, MessageBoxIcon.Information)
+            Else
+                MessageBox.Show("删除失败，文件不存在", "Furry Art Studio",
+                              MessageBoxButtons.OK, MessageBoxIcon.Error)
+            End If
+        End If
+    End Sub
+    Private Sub BtnSetPreview_Click(sender As Object, e As EventArgs) Handles BtnSetPreview.Click
+        Dim selectedItem = CType(LstBox.SelectedItem, FileItemInfo)
+        CreateThumb(selectedItem.FullPath)
+    End Sub
+    Private Sub RefreshFileList()
+        If _transaction Is Nothing Then
+            LstBox.DataSource = Nothing
+            Return
+        End If
+        Dim files = _transaction.GetFileList()
+        LstBox.DataSource = files
+        '设置显示格式
+        LstBox.DrawMode = DrawMode.OwnerDrawFixed
+        LstBox.ItemHeight = 20
+    End Sub
+    ''' <summary>
+    ''' 自定义绘制ListBox项
+    ''' </summary>
+    Private Sub LstBox_DrawItem(sender As Object, e As DrawItemEventArgs) Handles LstBox.DrawItem
+        If e.Index < 0 Then Return
+        Dim lb = CType(sender, ListBox)
+        Dim item = CType(lb.Items(e.Index), FileItemInfo)
+        '绘制背景
+        e.DrawBackground()
+        '根据状态设置字体样式
+        Dim fontStyle As FontStyle = FontStyle.Regular
+        Select Case item.Status
+            Case FileStatus.Added
+                fontStyle = FontStyle.Bold
+            Case FileStatus.Deleted
+                fontStyle = FontStyle.Italic
+            Case FileStatus.Modified
+                fontStyle = FontStyle.Bold Or FontStyle.Italic
+        End Select
+        Using font As New Font(e.Font, fontStyle)
+            '绘制文件名
+            e.Graphics.DrawString(item.FileName, font,
+                                 Brushes.White, e.Bounds)
+        End Using
+        '绘制焦点框
+        e.DrawFocusRectangle()
+    End Sub
+    Private Sub LstBox_SelectedIndexChanged(sender As Object, e As EventArgs) Handles LstBox.SelectedIndexChanged
+        If LstBox.SelectedItems.Count = 0 Then
+            BtnSetPreview.Enabled = False
+            BtnDel.Enabled = False
+        Else
+            If _artwork.ID <> 0 Then
+                BtnSetPreview.Enabled = True
+            End If
+            BtnDel.Enabled = True
+        End If
     End Sub
 
 #End Region
@@ -189,6 +279,7 @@ Public Class EditDialogForm
             Dim folderPath As String = Path.Combine(_libraryPath, _artwork.UUID.ToString())
             If Not Directory.Exists(folderPath) Then
                 Directory.CreateDirectory(folderPath)
+                _transaction.SetTargetPath(folderPath) '设置目录
             End If
             Return True
         Catch ex As Exception
@@ -198,18 +289,6 @@ Public Class EditDialogForm
         End Try
     End Function
     Private Sub BtnModify_Click(sender As Object, e As EventArgs) Handles BtnModify.Click
-        ModifyArtwork()
-    End Sub
-    Private Sub CreateThumb()
-        Dim folderPath As String = Path.Combine(_libraryPath, _artwork.UUID.ToString())
-        Dim previewPath As String = Path.Combine(folderPath, ".preview.jpg")
-        If Not File.Exists(previewPath) Then '判断是否存在文件
-            PreviewPicturebox.Image = LoadImageFromFile(Directory.GetFiles(folderPath)(0))
-            PreviewPicturebox.SizeMode = PictureBoxSizeMode.Zoom
-            PreviewPicturebox.Image.Save(previewPath, ImageFormat.Jpeg)
-        End If
-    End Sub
-    Private Sub ModifyArtwork()
         If TxtboxTitle.Text = "" Then
             _artwork.Title = "无题"
         Else
@@ -252,42 +331,45 @@ Public Class EditDialogForm
         _artwork.ImportTime = Now
         If Not CreateArtworkFolder() Then Return '创建/更新文件夹
         Dim folderPath As String = Path.Combine(_libraryPath, _artwork.UUID.ToString())
-        If _filePaths.Length > 0 Then
+        _transaction.Commit() '提交数据
+        If Directory.GetFiles(folderPath).Count > 0 Then
             Try
-                For Each filepath In _filePaths
-                    Dim fileName = Path.GetFileName(filepath)
-                    File.Copy(filepath, Path.Combine(folderPath, fileName))
-                Next
                 CreateThumb() '创建缩略图
             Catch ex As Exception
-
+                '忽略
             End Try
         End If
         '设置DialogResult为OK, 关闭窗体
         Me.DialogResult = DialogResult.OK
         Me.Close()
     End Sub
-    Private Sub PreviewPicturebox_Click(sender As Object, e As EventArgs) Handles PreviewPicturebox.Click
-        AddPictures()
+    ''' <summary>
+    ''' 创建缩略图
+    ''' </summary>
+    Private Sub CreateThumb()
+        Dim artworkPath As String = Path.Combine(_libraryPath, _artwork.UUID.ToString())
+        Dim previewPath As String = Path.Combine(artworkPath, ".preview.jpg")
+        If Not File.Exists(previewPath) Then '判断是否存在文件
+            PreviewPicturebox.Image = LoadImageFromFile(Directory.GetFiles(artworkPath)(0))
+            PreviewPicturebox.SizeMode = PictureBoxSizeMode.Zoom
+            PreviewPicturebox.Image.Save(previewPath, ImageFormat.Jpeg)
+        End If
     End Sub
-    Private Sub BtnAdd_Click(sender As Object, e As EventArgs) Handles BtnAdd.Click
-        AddPictures()
-    End Sub
-    Private Sub AddPictures()
-        Using openFileDialog As New OpenFileDialog()
-            openFileDialog.Filter = "图片文件(*.jpg;*.jpeg;*.png;*.bmp;*.gif)|*.jpg;*.jpeg;*.png;*.bmp;*.gif|所有文件(*.*)|*.*"
-            openFileDialog.Title = "选择要添加的图片"
-            openFileDialog.Multiselect = True
-            If openFileDialog.ShowDialog() = DialogResult.OK Then
-                Try
-                    _filePaths = openFileDialog.FileNames
-                    PreviewPicturebox.Image = LoadImageFromFile(openFileDialog.FileName) '设置预览图
-                    PreviewPicturebox.SizeMode = PictureBoxSizeMode.Zoom
-                Catch ex As Exception
-                    '不处理
-                End Try
-            End If
-        End Using
+    ''' <summary>
+    ''' 创建缩略图
+    ''' </summary>
+    ''' <param name="filepath">文件路径，覆盖之前的文件</param>
+    Private Sub CreateThumb(filepath As String)
+        Dim artworkPath As String = Path.Combine(_libraryPath, _artwork.UUID.ToString())
+        Dim previewPath As String = Path.Combine(artworkPath, ".preview.jpg")
+        If File.Exists(previewPath) Then
+            File.Delete(previewPath) '删除旧的预览图文件
+        End If
+        PreviewPicturebox.Image = LoadImageFromFile(filepath)
+        PreviewPicturebox.SizeMode = PictureBoxSizeMode.Zoom
+        If Directory.Exists(artworkPath) Then
+            PreviewPicturebox.Image.Save(previewPath, ImageFormat.Jpeg) '保存新的预览图
+        End If
     End Sub
     ''' <summary>
     ''' 清理字符串中的不可见字符
@@ -295,7 +377,7 @@ Public Class EditDialogForm
     Private Function CleanInvisibleCharacters(input As String) As String
         If String.IsNullOrEmpty(input) Then Return input
         '移除各种不可见字符
-        Dim result As New System.Text.StringBuilder()
+        Dim result As New Text.StringBuilder()
         For Each c As Char In input
             '判断是否是可打印字符
             If Not Char.IsControl(c) AndAlso
@@ -319,7 +401,6 @@ Public Class EditDialogForm
         Next
         Return result.ToString().Trim()
     End Function
-
 #End Region
 
 End Class

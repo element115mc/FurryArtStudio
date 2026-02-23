@@ -22,6 +22,8 @@ Imports System.Security.Principal
 ''' 基本函数
 ''' </summary>
 Module BasicFcn
+
+#Region "常量字段"
     '分割线
     Public ReadOnly SeparatorEqual As New String("="c, 30)
     Public ReadOnly SeparatorStar As New String("*"c, 30)
@@ -33,7 +35,10 @@ Module BasicFcn
     Public ReadOnly BgColorDark As Color = Color.FromArgb(32, 32, 32)
     Public ReadOnly IconColorLight As Color = Color.FromArgb(58, 162, 143)
     Public ReadOnly IconColorDark As Color = Color.FromArgb(87, 226, 180)
-    '#e84141 是红色
+    Public ReadOnly IconRed As Color = Color.FromArgb(232, 65, 65)
+#End Region
+
+#Region "日志记录器"
     ''' <summary>
     ''' 初始化日志记录器实例
     ''' </summary>
@@ -56,7 +61,9 @@ Module BasicFcn
         }
         Logger.Initialize(logConfig) '初始化日志记录器
     End Sub
+#End Region
 
+#Region "时间转换"
     ''' <summary>
     ''' 将DateTime对象转换成64位时间戳
     ''' </summary>
@@ -74,7 +81,9 @@ Module BasicFcn
         Dim epoch As New DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)
         Return epoch.AddSeconds(unixTimestamp).ToLocalTime()
     End Function
+#End Region
 
+#Region "文件夹信息"
     ''' <summary>
     ''' 获得文件夹信息
     ''' </summary>
@@ -116,7 +125,9 @@ Module BasicFcn
 
         Return $"{size:N2}{units(unitIndex)}"
     End Function
+#End Region
 
+#Region "文本处理"
     ''' <summary>
     ''' 将数组转换成逗号分隔的形式
     ''' </summary>
@@ -180,7 +191,9 @@ Module BasicFcn
             Clipboard.SetDataObject(dataObject, True)
         End If
     End Sub
+#End Region
 
+#Region "图像处理"
     ''' <summary>
     ''' 从文件载入图片, 并裁剪为正方形的缩略图
     ''' </summary>
@@ -236,51 +249,6 @@ Module BasicFcn
             Return Nothing
         End Try
     End Function
-
-    ''' <summary>
-    ''' 获得特定控件的全部子控件
-    ''' </summary>
-    ''' <param name="container">父控件</param>
-    ''' <returns>子控件集合</returns>
-    Public Function GetAllControls(container As Control) As List(Of Control)
-        Dim controls As New List(Of Control)
-        GetAllControlsRecursive(container, controls)
-        Return controls
-    End Function
-    Private Sub GetAllControlsRecursive(container As Control, ByRef controlList As List(Of Control))
-        For Each control As Control In container.Controls
-            controlList.Add(control)
-            ' 递归获取子控件
-            If control.HasChildren Then
-                GetAllControlsRecursive(control, controlList)
-            End If
-        Next
-    End Sub
-
-    ''' <summary>
-    ''' 将 RGB 转换成 COLORREF 格式
-    ''' </summary>
-    Public Function RGBToCOLORREF(ByVal r As Byte, ByVal g As Byte, ByVal b As Byte) As Integer
-        'COLORREF 是 BGR 格式: 0x00BBGGRR
-        Return CInt(b) Or (CInt(g) << 8) Or (CInt(r) << 16)
-    End Function
-    Public Sub SetTitleBarColor(ByVal hwnd As IntPtr, ByVal r As Byte, ByVal g As Byte, ByVal b As Byte)
-        Try
-            Dim colorRef As Integer = RGBToCOLORREF(r, g, b)
-            '设置标题栏背景色
-            DwmSetWindowAttribute(hwnd, DwmWindowAttribute.CaptionColor, colorRef, Marshal.SizeOf(Of Integer)())
-            '根据背景亮度决定文字颜色
-            Dim brightness As Double = (0.299 * r + 0.587 * g + 0.114 * b)
-            Dim textColor As Integer = If(brightness > 128,
-                                          RGBToCOLORREF(0, 0, 0),      '深色背景用白色文字
-                                          RGBToCOLORREF(255, 255, 255)) '浅色背景用黑色文字
-            DwmSetWindowAttribute(hwnd, DwmWindowAttribute.TextColor, textColor, Marshal.SizeOf(Of Integer)())
-            DwmSetWindowAttribute(hwnd, DwmWindowAttribute.BorderColor, textColor, Marshal.SizeOf(Of Integer)())
-        Catch ex As Exception
-            MessageBox.Show("设置标题栏颜色失败: " & ex.Message)
-        End Try
-    End Sub
-
     ''' <summary>
     ''' 创建圆角矩形图标
     ''' </summary>
@@ -369,26 +337,54 @@ Module BasicFcn
         path.CloseFigure()
         Return path
     End Function
+#End Region
 
+#Region "主题相关"
     ''' <summary>
-    ''' 判断当前是否以管理员权限运行
+    ''' 获得特定控件的全部子控件
     ''' </summary>
-    Public Function IsAdmin() As Boolean
-        Dim identity As WindowsIdentity = WindowsIdentity.GetCurrent()
-        Dim principal As New WindowsPrincipal(identity)
-        Return principal.IsInRole(WindowsBuiltInRole.Administrator)
+    ''' <param name="container">父控件</param>
+    ''' <returns>子控件集合</returns>
+    Public Function GetAllControls(container As Control) As List(Of Control)
+        Dim controls As New List(Of Control)
+        GetAllControlsRecursive(container, controls)
+        Return controls
     End Function
-
+    Private Sub GetAllControlsRecursive(container As Control, ByRef controlList As List(Of Control))
+        For Each control As Control In container.Controls
+            controlList.Add(control)
+            ' 递归获取子控件
+            If control.HasChildren Then
+                GetAllControlsRecursive(control, controlList)
+            End If
+        Next
+    End Sub
     ''' <summary>
-    ''' 判断一个文件是否为图片
+    ''' 将 RGB 转换成 COLORREF 格式
     ''' </summary>
-    ''' <param name="filePath">文件路径</param>
-    Public Function IsImageFile(filePath As String) As Boolean
-        Dim imageExtensions As String() = {".jpg", ".jpeg", ".png", ".gif", ".bmp", ".tiff", ".ico", ".webp"}
-        Dim ext As String = Path.GetExtension(filePath).ToLower()
-        Return imageExtensions.Contains(ext)
+    Public Function RGBToCOLORREF(ByVal r As Byte, ByVal g As Byte, ByVal b As Byte) As Integer
+        'COLORREF 是 BGR 格式: 0x00BBGGRR
+        Return CInt(b) Or (CInt(g) << 8) Or (CInt(r) << 16)
     End Function
+    Public Sub SetTitleBarColor(ByVal hwnd As IntPtr, ByVal r As Byte, ByVal g As Byte, ByVal b As Byte)
+        Try
+            Dim colorRef As Integer = RGBToCOLORREF(r, g, b)
+            '设置标题栏背景色
+            DwmSetWindowAttribute(hwnd, DwmWindowAttribute.CaptionColor, colorRef, Marshal.SizeOf(Of Integer)())
+            '根据背景亮度决定文字颜色
+            Dim brightness As Double = (0.299 * r + 0.587 * g + 0.114 * b)
+            Dim textColor As Integer = If(brightness > 128,
+                                          RGBToCOLORREF(0, 0, 0),      '深色背景用白色文字
+                                          RGBToCOLORREF(255, 255, 255)) '浅色背景用黑色文字
+            DwmSetWindowAttribute(hwnd, DwmWindowAttribute.TextColor, textColor, Marshal.SizeOf(Of Integer)())
+            DwmSetWindowAttribute(hwnd, DwmWindowAttribute.BorderColor, textColor, Marshal.SizeOf(Of Integer)())
+        Catch ex As Exception
+            MessageBox.Show("设置标题栏颜色失败: " & ex.Message)
+        End Try
+    End Sub
+#End Region
 
+#Region "菜单处理"
     ''' <summary>
     ''' 为指定的菜单项设置图标, 并处理透明度背景模拟
     ''' </summary>
@@ -454,4 +450,36 @@ Module BasicFcn
         mii.cch = Len(mii.dwTypeData)
         SetMenuItemInfo(menuHandle, position, True, mii)
     End Sub
+
+#End Region
+
+#Region "杂项"
+    ''' <summary>
+    ''' 判断当前是否以管理员权限运行
+    ''' </summary>
+    Public Function IsAdmin() As Boolean
+        Dim identity As WindowsIdentity = WindowsIdentity.GetCurrent()
+        Dim principal As New WindowsPrincipal(identity)
+        Return principal.IsInRole(WindowsBuiltInRole.Administrator)
+    End Function
+
+    ''' <summary>
+    ''' 判断一个文件是否为图片
+    ''' </summary>
+    ''' <param name="filePath">文件路径</param>
+    Public Function IsImageFile(filePath As String) As Boolean
+        Dim imageExtensions As String() = {".jpg", ".jpeg", ".png", ".gif", ".bmp", ".tiff", ".ico", ".webp"}
+        Dim ext As String = Path.GetExtension(filePath).ToLower()
+        Return imageExtensions.Contains(ext)
+    End Function
+    ''' <summary>
+    ''' 判断当前系统主题是否为深色主题
+    ''' </summary>
+    Public Function IsDarkMode() As Boolean
+        Using regKey = Microsoft.Win32.Registry.CurrentUser.OpenSubKey("SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize", True)
+            Return regKey.GetValue("AppsUseLightTheme", "1") = 0
+        End Using
+    End Function
+#End Region
+
 End Module

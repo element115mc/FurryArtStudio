@@ -35,6 +35,17 @@ Public Class ViewForm
     Private _mainForm As Form '保存主窗口引用
     '扩展名
     Private ReadOnly _imageExtensions As String() = {".jpg", ".jpeg", ".png", ".gif", ".bmp", ".tiff", ".ico", ".webp"}
+    '菜单
+    Private Const SC_PREVIMG = 1
+    Private Const SC_NEXTIMG = 2
+    Private Const SC_PREVART = 3
+    Private Const SC_NEXTART = 4
+    Private Const SC_ALWAYSONTOP = 5
+    Private Const SC_COPY = 6
+    Private Const SC_INFO = 7
+    Private Const SC_PLAY = 8
+    Private Const SC_HELP = 9
+    Private Const SC_FULLSCREEN = 10
 #End Region
 
 #Region "窗体相关"
@@ -119,81 +130,81 @@ Public Class ViewForm
     ''' </summary>
     Private Sub SysMenuInit()
         Dim menuHandle = GetSystemMenu(Handle, False) '获取菜单句柄
-        InsertMenu(menuHandle, 0, MF_BYPOSITION Or MF_STRING, 1, "上一张(&P)")
-        InsertMenu(menuHandle, 1, MF_BYPOSITION Or MF_STRING, 2, "下一张(&N)")
+        InsertMenu(menuHandle, 0, MF_BYPOSITION Or MF_STRING, SC_PREVIMG, "上一张(&P)")
+        InsertMenu(menuHandle, 1, MF_BYPOSITION Or MF_STRING, SC_NEXTIMG, "下一张(&N)")
         InsertMenu(menuHandle, 2, MF_BYPOSITION Or MF_SEPARATOR, 0, Nothing)
-        InsertMenu(menuHandle, 3, MF_BYPOSITION Or MF_STRING, 3, "上一稿件(&R)")
-        InsertMenu(menuHandle, 4, MF_BYPOSITION Or MF_STRING, 4, "下一稿件(&E)")
+        InsertMenu(menuHandle, 3, MF_BYPOSITION Or MF_STRING, SC_PREVART, "上一稿件(&R)")
+        InsertMenu(menuHandle, 4, MF_BYPOSITION Or MF_STRING, SC_NEXTART, "下一稿件(&E)")
         InsertMenu(menuHandle, 5, MF_BYPOSITION Or MF_SEPARATOR, 0, Nothing)
-        InsertMenu(menuHandle, 6, MF_BYPOSITION Or MF_STRING, 5, "窗口置顶(&T)")
-        InsertMenu(menuHandle, 7, MF_BYPOSITION Or MF_STRING, 6, "复制(&C)")
+        InsertMenu(menuHandle, 6, MF_BYPOSITION Or MF_STRING, SC_ALWAYSONTOP, "窗口置顶(&T)")
+        InsertMenu(menuHandle, 7, MF_BYPOSITION Or MF_STRING, SC_COPY, "复制(&C)")
         InsertMenu(menuHandle, 8, MF_BYPOSITION Or MF_SEPARATOR, 0, Nothing)
-        InsertMenu(menuHandle, 9, MF_BYPOSITION Or MF_STRING, 7, "详情(&I)...")
-        InsertMenu(menuHandle, 10, MF_BYPOSITION Or MF_STRING, 8, "幻灯片放映(&P)")
-        InsertMenu(menuHandle, 11, MF_BYPOSITION Or MF_STRING, 9, "帮助(&H)...")
+        InsertMenu(menuHandle, 9, MF_BYPOSITION Or MF_STRING, SC_INFO, "详情(&I)...")
+        InsertMenu(menuHandle, 10, MF_BYPOSITION Or MF_STRING, SC_PLAY, "幻灯片放映(&P)")
+        InsertMenu(menuHandle, 11, MF_BYPOSITION Or MF_STRING, SC_HELP, "帮助(&H)...")
         InsertMenu(menuHandle, 12, MF_BYPOSITION Or MF_SEPARATOR, 0, Nothing)
-        InsertMenu(menuHandle, 13, MF_BYPOSITION Or MF_STRING, 10, "全屏(&F)")
+        InsertMenu(menuHandle, 13, MF_BYPOSITION Or MF_STRING, SC_FULLSCREEN, "全屏(&F)")
         '设置菜单项快捷键
-        SetMenuItemWithShortcut(menuHandle, 0, 1, "上一张(&P)", "PageUp")
-        SetMenuItemWithShortcut(menuHandle, 1, 2, "下一张(&N)", "PageDown")
-        SetMenuItemWithShortcut(menuHandle, 3, 3, "上一稿件(&R)", "Ctrl+Left")
-        SetMenuItemWithShortcut(menuHandle, 4, 4, "下一稿件(&E)", "Ctrl+Right")
-        SetMenuItemWithShortcut(menuHandle, 6, 5, "窗口置顶(&T)", "Alt+T")
-        SetMenuItemWithShortcut(menuHandle, 7, 6, "复制(&C)", "Ctrl+C")
-        SetMenuItemWithShortcut(menuHandle, 9, 7, "详情(&I)...", "I")
-        SetMenuItemWithShortcut(menuHandle, 10, 8, "幻灯片放映(&P)", "Ctrl+F5")
-        SetMenuItemWithShortcut(menuHandle, 11, 9, "帮助(&H)...", "F1")
-        SetMenuItemWithShortcut(menuHandle, 13, 10, "全屏(&F)", "F11")
+        SetMenuItemWithShortcut(menuHandle, 0, SC_PREVIMG, "上一张(&P)", "PageUp")
+        SetMenuItemWithShortcut(menuHandle, 1, SC_NEXTIMG, "下一张(&N)", "PageDown")
+        SetMenuItemWithShortcut(menuHandle, 3, SC_PREVART, "上一稿件(&R)", "Ctrl+Left")
+        SetMenuItemWithShortcut(menuHandle, 4, SC_NEXTART, "下一稿件(&E)", "Ctrl+Right")
+        SetMenuItemWithShortcut(menuHandle, 6, SC_ALWAYSONTOP, "窗口置顶(&T)", "Alt+T")
+        SetMenuItemWithShortcut(menuHandle, 7, SC_COPY, "复制(&C)", "Ctrl+C")
+        SetMenuItemWithShortcut(menuHandle, 9, SC_INFO, "详情(&I)...", "I")
+        SetMenuItemWithShortcut(menuHandle, 10, SC_PLAY, "幻灯片放映(&P)", "Ctrl+F5")
+        SetMenuItemWithShortcut(menuHandle, 11, SC_HELP, "帮助(&H)...", "F1")
+        SetMenuItemWithShortcut(menuHandle, 13, SC_FULLSCREEN, "全屏(&F)", "F11")
     End Sub
     Private Sub InitializeMenuImages(Optional isDarkMode As Boolean = False)
         Dim menuHandle = GetSystemMenu(Handle, False) '设置窗体菜单
         If isDarkMode Then
-            ApplyMenuIcon(menuHandle, 1, My.Resources.Icons.MenuPreviousDark, True)
-            ApplyMenuIcon(menuHandle, 2, My.Resources.Icons.MenuNextDark, True)
-            ApplyMenuIcon(menuHandle, 3, My.Resources.Icons.MenuLeftDark, True)
-            ApplyMenuIcon(menuHandle, 4, My.Resources.Icons.MenuRightDark, True)
-            ApplyMenuIcon(menuHandle, 5, My.Resources.Icons.MenuPinDark, True)
-            ApplyMenuIcon(menuHandle, 6, My.Resources.Icons.MenuCopyDark, True)
-            ApplyMenuIcon(menuHandle, 7, My.Resources.Icons.MenuInfoDark, True)
-            ApplyMenuIcon(menuHandle, 8, My.Resources.Icons.MenuImagePlayDark, True)
-            ApplyMenuIcon(menuHandle, 9, My.Resources.Icons.MenuTutorialDark, True)
-            ApplyMenuIcon(menuHandle, 10, My.Resources.Icons.MenuFullscreenDark, True)
+            ApplyMenuIcon(menuHandle, SC_PREVIMG, My.Resources.Icons.MenuPreviousDark, True)
+            ApplyMenuIcon(menuHandle, SC_NEXTIMG, My.Resources.Icons.MenuNextDark, True)
+            ApplyMenuIcon(menuHandle, SC_PREVART, My.Resources.Icons.MenuLeftDark, True)
+            ApplyMenuIcon(menuHandle, SC_NEXTART, My.Resources.Icons.MenuRightDark, True)
+            ApplyMenuIcon(menuHandle, SC_ALWAYSONTOP, My.Resources.Icons.MenuPinDark, True)
+            ApplyMenuIcon(menuHandle, SC_COPY, My.Resources.Icons.MenuCopyDark, True)
+            ApplyMenuIcon(menuHandle, SC_INFO, My.Resources.Icons.MenuInfoDark, True)
+            ApplyMenuIcon(menuHandle, SC_PLAY, My.Resources.Icons.MenuImagePlayDark, True)
+            ApplyMenuIcon(menuHandle, SC_HELP, My.Resources.Icons.MenuTutorialDark, True)
+            ApplyMenuIcon(menuHandle, SC_FULLSCREEN, My.Resources.Icons.MenuFullscreenDark, True)
         Else
-            ApplyMenuIcon(menuHandle, 1, My.Resources.Icons.MenuPreviousLight)
-            ApplyMenuIcon(menuHandle, 2, My.Resources.Icons.MenuNextLight)
-            ApplyMenuIcon(menuHandle, 3, My.Resources.Icons.MenuLeftLight)
-            ApplyMenuIcon(menuHandle, 4, My.Resources.Icons.MenuRightLight)
-            ApplyMenuIcon(menuHandle, 5, My.Resources.Icons.MenuPinLight)
-            ApplyMenuIcon(menuHandle, 6, My.Resources.Icons.MenuCopyLight)
-            ApplyMenuIcon(menuHandle, 7, My.Resources.Icons.MenuInfoLight)
-            ApplyMenuIcon(menuHandle, 8, My.Resources.Icons.MenuImagePlayLight)
-            ApplyMenuIcon(menuHandle, 9, My.Resources.Icons.MenuTutorialLight)
-            ApplyMenuIcon(menuHandle, 10, My.Resources.Icons.MenuFullscreenLight)
+            ApplyMenuIcon(menuHandle, SC_PREVIMG, My.Resources.Icons.MenuPreviousLight)
+            ApplyMenuIcon(menuHandle, SC_NEXTIMG, My.Resources.Icons.MenuNextLight)
+            ApplyMenuIcon(menuHandle, SC_PREVART, My.Resources.Icons.MenuLeftLight)
+            ApplyMenuIcon(menuHandle, SC_NEXTART, My.Resources.Icons.MenuRightLight)
+            ApplyMenuIcon(menuHandle, SC_ALWAYSONTOP, My.Resources.Icons.MenuPinLight)
+            ApplyMenuIcon(menuHandle, SC_COPY, My.Resources.Icons.MenuCopyLight)
+            ApplyMenuIcon(menuHandle, SC_INFO, My.Resources.Icons.MenuInfoLight)
+            ApplyMenuIcon(menuHandle, SC_PLAY, My.Resources.Icons.MenuImagePlayLight)
+            ApplyMenuIcon(menuHandle, SC_HELP, My.Resources.Icons.MenuTutorialLight)
+            ApplyMenuIcon(menuHandle, SC_FULLSCREEN, My.Resources.Icons.MenuFullscreenLight)
         End If
     End Sub
     Protected Overrides Sub WndProc(ByRef m As Message) '窗体消息处理函数
         If m.Msg = WM_SYSCOMMAND Then '窗体响应菜单
             Dim hMenu = GetSystemMenu(Handle, False)
             Select Case m.WParam.ToInt32'对应菜单标号
-                Case 1 '上一张
+                Case SC_PREVIMG '上一张
                     NavigatePrevious()
-                Case 2 '下一张
+                Case SC_NEXTIMG '下一张
                     NavigateNext()
-                Case 3 '上个稿件
+                Case SC_PREVART '上个稿件
                     NavigatePreviousArtwork()
-                Case 4 '下个稿件
+                Case SC_NEXTART '下个稿件
                     NavigateNextArtwork()
-                Case 5 '窗口置顶
+                Case SC_ALWAYSONTOP '窗口置顶
                     SetWindowOnTop()
-                Case 6 '复制
+                Case SC_COPY '复制
                     Clipboard.SetImage(PictureBoxMain.Image)
-                Case 7 '详情
+                Case SC_INFO '详情
                     ShowArtworkInfo()
-                Case 8'幻灯片放映
+                Case SC_PLAY'幻灯片放映
                     '待开发
-                Case 9 '帮助
+                Case SC_HELP '帮助
                     ShowHelp()
-                Case 10 '全屏
+                Case SC_FULLSCREEN '全屏
                     '待开发
             End Select
         End If
@@ -367,10 +378,10 @@ Public Class ViewForm
         Dim hMenu = GetSystemMenu(Handle, False)
         If TopMost = False Then
             TopMost = True
-            CheckMenuItem(hMenu, 5, MF_CHECKED) '窗口置顶
+            CheckMenuItem(hMenu, SC_ALWAYSONTOP, MF_CHECKED) '窗口置顶
         Else
             TopMost = False
-            CheckMenuItem(hMenu, 5, MF_UNCHECKED) '取消置顶
+            CheckMenuItem(hMenu, SC_ALWAYSONTOP, MF_UNCHECKED) '取消置顶
         End If
     End Sub
     ''' <summary>
@@ -395,10 +406,10 @@ Public Class ViewForm
                 If _isProcessing Then Return  '防止重复进入
                 _isProcessing = True
             End SyncLock
-            For i = 1 To 4
+            For Each i In {SC_PREVIMG, SC_NEXTIMG, SC_PREVART, SC_NEXTART}
                 EnableMenuItem(hMenu, i, MF_BYCOMMAND Or MF_GRAYED)
             Next
-            EnableMenuItem(hMenu, 6, MF_BYCOMMAND Or MF_GRAYED)
+            EnableMenuItem(hMenu, SC_COPY, MF_BYCOMMAND Or MF_GRAYED)
             '取消之前的加载任务
             _cancellationTokenSource?.Cancel()
             _cancellationTokenSource = New CancellationTokenSource()
@@ -719,24 +730,24 @@ Public Class ViewForm
         Dim isLastImage As Boolean = (_currentArtworkIndex = _allArtworks.Count - 1 AndAlso
                                   _currentFileIndex = currentImages.Count - 1) '最后一个稿件最后一个文件
         If Not isFirstImage Then '判断是否为第一个文件
-            EnableMenuItem(hMenu, 1, MF_BYCOMMAND Or MF_ENABLED)
+            EnableMenuItem(hMenu, SC_PREVIMG, MF_BYCOMMAND Or MF_ENABLED)
         Else
-            EnableMenuItem(hMenu, 1, MF_BYCOMMAND Or MF_GRAYED)
+            EnableMenuItem(hMenu, SC_PREVIMG, MF_BYCOMMAND Or MF_GRAYED)
         End If
         If Not isLastImage Then '判断是否为最后一个文件
-            EnableMenuItem(hMenu, 2, MF_BYCOMMAND Or MF_ENABLED)
+            EnableMenuItem(hMenu, SC_NEXTIMG, MF_BYCOMMAND Or MF_ENABLED)
         Else
-            EnableMenuItem(hMenu, 2, MF_BYCOMMAND Or MF_GRAYED)
+            EnableMenuItem(hMenu, SC_NEXTIMG, MF_BYCOMMAND Or MF_GRAYED)
         End If
         If HasPreviousArtwork() Then '判断是否为第一个稿件
-            EnableMenuItem(hMenu, 3, MF_BYCOMMAND Or MF_ENABLED)
+            EnableMenuItem(hMenu, SC_PREVART, MF_BYCOMMAND Or MF_ENABLED)
         Else
-            EnableMenuItem(hMenu, 3, MF_BYCOMMAND Or MF_GRAYED)
+            EnableMenuItem(hMenu, SC_PREVART, MF_BYCOMMAND Or MF_GRAYED)
         End If
         If HasNextArtwork() Then '判断是否为最后一个稿件
-            EnableMenuItem(hMenu, 4, MF_BYCOMMAND Or MF_ENABLED)
+            EnableMenuItem(hMenu, SC_NEXTART, MF_BYCOMMAND Or MF_ENABLED)
         Else
-            EnableMenuItem(hMenu, 4, MF_BYCOMMAND Or MF_GRAYED)
+            EnableMenuItem(hMenu, SC_NEXTART, MF_BYCOMMAND Or MF_GRAYED)
         End If
     End Sub
 

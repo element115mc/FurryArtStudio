@@ -242,6 +242,7 @@
       <DependentUpon>Licenses.resx</DependentUpon>
     </Compile>
     <Compile Include="Utilities\BasicFcn.vb" />
+    <Compile Include="Utilities\FileTransaction.vb" />
     <Compile Include="Utilities\Logger.vb" />
     <Compile Include="Utilities\WinAPI.vb" />
   </ItemGroup>

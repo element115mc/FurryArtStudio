@@ -12,7 +12,6 @@
 ' WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 ' See the License for the specific language governing permissions and
 ' limitations under the License.
-
 Imports System.ComponentModel
 Imports System.Drawing.Drawing2D
 Imports System.Drawing.Imaging
@@ -89,11 +88,11 @@ Public Class MainForm
                 Case SC_ALWAYSONTOP '窗口置顶
                     If TopMost = False Then
                         TopMost = True
-                        CheckMenuItem(hMenu, 1, MF_CHECKED) '窗口置顶
+                        CheckMenuItem(hMenu, SC_ALWAYSONTOP, MF_CHECKED) '窗口置顶
                         MnuOnTop.Checked = True
                     Else
                         TopMost = False
-                        CheckMenuItem(hMenu, 1, MF_UNCHECKED) '取消置顶
+                        CheckMenuItem(hMenu, SC_ALWAYSONTOP, MF_UNCHECKED) '取消置顶
                         MnuOnTop.Checked = False
                     End If
                 Case SC_NEWMANUSCRIPT
@@ -250,21 +249,21 @@ Public Class MainForm
         Next
         Dim menuHandle = GetSystemMenu(Handle, False) '设置窗体菜单
         If isDarkMode Then
-            ApplyMenuIcon(menuHandle, 1, My.Resources.Icons.MenuPinDark, True)
-            ApplyMenuIcon(menuHandle, 2, My.Resources.Icons.MenuFileNewDark, True)
-            ApplyMenuIcon(menuHandle, 3, My.Resources.Icons.MenuRefreshDark, True)
-            ApplyMenuIcon(menuHandle, 4, My.Resources.Icons.MenuImagePlayDark, True)
-            ApplyMenuIcon(menuHandle, 5, My.Resources.Icons.MenuSettingsDark, True)
-            ApplyMenuIcon(menuHandle, 6, My.Resources.Icons.MenuPropertiesDark, True)
-            ApplyMenuIcon(menuHandle, 7, My.Resources.Icons.MenuInfoDark, True)
+            ApplyMenuIcon(menuHandle, SC_ALWAYSONTOP, My.Resources.Icons.MenuPinDark, True)
+            ApplyMenuIcon(menuHandle, SC_NEWMANUSCRIPT, My.Resources.Icons.MenuFileNewDark, True)
+            ApplyMenuIcon(menuHandle, SC_REFRESH, My.Resources.Icons.MenuRefreshDark, True)
+            ApplyMenuIcon(menuHandle, SC_PLAY, My.Resources.Icons.MenuImagePlayDark, True)
+            ApplyMenuIcon(menuHandle, SC_SETTINGS, My.Resources.Icons.MenuSettingsDark, True)
+            ApplyMenuIcon(menuHandle, SC_PROPERTIES, My.Resources.Icons.MenuPropertiesDark, True)
+            ApplyMenuIcon(menuHandle, SC_ABOUT, My.Resources.Icons.MenuInfoDark, True)
         Else
-            ApplyMenuIcon(menuHandle, 1, My.Resources.Icons.MenuPinLight)
-            ApplyMenuIcon(menuHandle, 2, My.Resources.Icons.MenuFileNewLight)
-            ApplyMenuIcon(menuHandle, 3, My.Resources.Icons.MenuRefreshLight)
-            ApplyMenuIcon(menuHandle, 4, My.Resources.Icons.MenuImagePlayLight)
-            ApplyMenuIcon(menuHandle, 5, My.Resources.Icons.MenuSettingsLight)
-            ApplyMenuIcon(menuHandle, 6, My.Resources.Icons.MenuPropertiesLight)
-            ApplyMenuIcon(menuHandle, 7, My.Resources.Icons.MenuInfoLight)
+            ApplyMenuIcon(menuHandle, SC_ALWAYSONTOP, My.Resources.Icons.MenuPinLight)
+            ApplyMenuIcon(menuHandle, SC_NEWMANUSCRIPT, My.Resources.Icons.MenuFileNewLight)
+            ApplyMenuIcon(menuHandle, SC_REFRESH, My.Resources.Icons.MenuRefreshLight)
+            ApplyMenuIcon(menuHandle, SC_PLAY, My.Resources.Icons.MenuImagePlayLight)
+            ApplyMenuIcon(menuHandle, SC_SETTINGS, My.Resources.Icons.MenuSettingsLight)
+            ApplyMenuIcon(menuHandle, SC_PROPERTIES, My.Resources.Icons.MenuPropertiesLight)
+            ApplyMenuIcon(menuHandle, SC_ABOUT, My.Resources.Icons.MenuInfoLight)
         End If
     End Sub
 
@@ -429,11 +428,14 @@ Public Class MainForm
                 End Using
             End If
             Dim fileCount As Integer = artwork.FilePaths.Length
+            If File.Exists(previewPath) Then '去除缩略图
+                fileCount -= 1
+            End If
             Dim gi As New GalleryImage With {
                 .Title = artwork.Title,
                 .UUID = artwork.UUID.ToString,
                 .ID = artwork.ID,
-                .Count = fileCount - 1'去除缩略图
+                .Count = fileCount
             }
             If File.Exists(previewPath) Then
                 Using sourceImage As Image = Image.FromFile(previewPath)
@@ -630,6 +632,7 @@ Public Class MainForm
     ''' 刷新菜单列表, 并重新载入数据
     ''' </summary>
     Private Sub RefreshLib()
+        CloseLibrary() '为了避免编辑稿件后图片浏览器出现问题,所以必须关闭库重载
         RefreshLibListMenu()
         If _libraryManager.GetCurrentLibrary IsNot Nothing Then LoadArtworks()
         If SearchTextBox.Text <> "" Then SearchArtwork()
