@@ -466,6 +466,9 @@ Public Class ImageGallery
         Dim isCtrlPressed As Boolean = My.Computer.Keyboard.CtrlKeyDown
 
         For Each item In _layoutItems
+            If e.Button = MouseButtons.Right Then
+                RaiseEvent ImageRightClicked(item.Image) '鼠标右键
+            End If
             If item.Bounds.Contains(logicalPoint) Then
                 If isCtrlPressed Then
                     If _selectedImages.Contains(item.Image) Then
@@ -483,7 +486,6 @@ Public Class ImageGallery
                 Return
             End If
         Next
-
         For Each kv In _pageRects
             If kv.Value.Contains(logicalPoint) Then
                 SetPage(kv.Key)
@@ -532,6 +534,8 @@ Public Class ImageGallery
                 SetPage(_currentPage + 1)
             Case Keys.Enter
                 RaiseEvent ImageDoubleClicked(_layoutItems(0).Image)
+            Case Keys.Apps
+                RaiseEvent ImageRightClicked(_layoutItems(0).Image) '鼠标右键
             Case Else
                 Exit Select
         End Select

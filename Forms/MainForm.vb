@@ -226,7 +226,14 @@ Public Class MainForm
         (MnuHelpTutorial, "MenuTutorial"),
         (MnuHelpGithub, "MenuGithub"),
         (MnuHelpAbout, "MenuInfo"),
-        (MnuHelpWhatsNew, "MenuStar")
+        (MnuHelpWhatsNew, "MenuStar"),
+        (ConMnuMsView, "MenuView"),
+        (ConMnuMsEdit, "MenuEdit"),
+        (ConMnuMsExport, "MenuFileOutput"),
+        (ConMnuMsPrint, "MenuPrint"),
+        (ConMnuMsDelete, "MenuDelete"),
+        (ConMnuMsOpenFolder, "MenuFolderOpen"),
+        (ConMnuMsCopy, "MenuCopy")
     }
         For Each setting In menuIcons
             Dim resourceName = setting.BaseName & If(isDarkMode, "Dark", "Light")
@@ -296,6 +303,14 @@ Public Class MainForm
         MnuPageDown.Enabled = False
         MnuPageUp.Enabled = False
         MnuSearch.Enabled = False
+        ConMnuMsView.Enabled = False
+        ConMnuMsEdit.Enabled = False
+        ConMnuMsDelete.Enabled = False
+        ConMnuMsExport.Enabled = False
+        ConMnuMsPrint.Enabled = False
+        ConMnuMsOpenFolder.Enabled = False
+        ConMnuMsCopy.Enabled = False
+        ConMnuMsCopyPath.Enabled = False
         RefreshLibListMenu()
         ImageGalleryMain.ClearImages() '清空所有图片
         If _imageList.Count <> 0 Then _imageList.Clear()
@@ -1100,6 +1115,14 @@ Public Class MainForm
         MnuMsOpenFolder.Enabled = False
         MnuMsCopy.Enabled = False
         MnuMsCopyPath.Enabled = False
+        ConMnuMsView.Enabled = False
+        ConMnuMsEdit.Enabled = False
+        ConMnuMsDelete.Enabled = False
+        ConMnuMsExport.Enabled = False
+        ConMnuMsPrint.Enabled = False
+        ConMnuMsOpenFolder.Enabled = False
+        ConMnuMsCopy.Enabled = False
+        ConMnuMsCopyPath.Enabled = False
         SelectStatusLabel.Text = $"{_artworkCount}个稿件"
         LblTitle.Text = "请选择一个项目"
         LblAuthor.Text = ""
@@ -1124,6 +1147,14 @@ Public Class MainForm
             MnuMsCopy.Enabled = True
             MnuMsCopyPath.Enabled = True
             MnuMsDelete.Enabled = True
+            ConMnuMsView.Enabled = True
+            ConMnuMsEdit.Enabled = True
+            ConMnuMsDelete.Enabled = True
+            ConMnuMsExport.Enabled = True
+            ConMnuMsPrint.Enabled = True
+            ConMnuMsOpenFolder.Enabled = True
+            ConMnuMsCopy.Enabled = True
+            ConMnuMsCopyPath.Enabled = True
             SelectStatusLabel.Text = $"已选: 1/{_artworkCount}"
             PicboxThumb.Image = selectedImage.Thumbnail
             LblTitle.Text = $"{selectedArtwork.Title}"
@@ -1140,6 +1171,14 @@ Public Class MainForm
             MnuMsOpenFolder.Enabled = True
             MnuMsCopy.Enabled = True
             MnuMsCopyPath.Enabled = True
+            ConMnuMsView.Enabled = False
+            ConMnuMsEdit.Enabled = False
+            ConMnuMsDelete.Enabled = True
+            ConMnuMsExport.Enabled = True
+            ConMnuMsPrint.Enabled = False
+            ConMnuMsOpenFolder.Enabled = True
+            ConMnuMsCopy.Enabled = True
+            ConMnuMsCopyPath.Enabled = True
             SelectStatusLabel.Text = $"已选: {selectedCount}/{_artworkCount}"
             LblTitle.Text = $"已选择{selectedCount}个项目"
             LblAuthor.Text = ""
@@ -1155,6 +1194,9 @@ Public Class MainForm
     End Sub
     Private Sub ImageGalleryMain_ImageDoubleClicked(image As GalleryImage) Handles ImageGalleryMain.ImageDoubleClicked
         ViewImage(Guid.Parse(image.UUID))
+    End Sub
+    Private Sub ImageGalleryMain_ImageRightClicked(image As GalleryImage) Handles ImageGalleryMain.ImageRightClicked
+        ConMenu.Show(Control.MousePosition)
     End Sub
 #End Region
 
@@ -1183,7 +1225,33 @@ Public Class MainForm
         RaiseEvent LibraryClosed(Me, EventArgs.Empty) '触发库关闭事件, 通知所有图片窗口
         _openViewForms.Clear()
     End Sub
+#End Region
 
+#Region "弹出菜单"
+    Private Sub ConMnuMsView_Click(sender As Object, e As EventArgs) Handles ConMnuMsView.Click
+        MnuMsView.PerformClick()
+    End Sub
+    Private Sub ConMnuMsEdit_Click(sender As Object, e As EventArgs) Handles ConMnuMsEdit.Click
+        MnuMsEdit.PerformClick()
+    End Sub
+    Private Sub ConMnuMsExport_Click(sender As Object, e As EventArgs) Handles ConMnuMsExport.Click
+        MnuMsExport.PerformClick()
+    End Sub
+    Private Sub ConMnuMsPrint_Click(sender As Object, e As EventArgs) Handles ConMnuMsPrint.Click
+        MnuMsPrint.PerformClick()
+    End Sub
+    Private Sub ConMnuMsDelete_Click(sender As Object, e As EventArgs) Handles ConMnuMsDelete.Click
+        MnuMsDelete.PerformClick()
+    End Sub
+    Private Sub ConMnuMsOpenFolder_Click(sender As Object, e As EventArgs) Handles ConMnuMsOpenFolder.Click
+        MnuMsOpenFolder.PerformClick()
+    End Sub
+    Private Sub ConMnuMsCopy_Click(sender As Object, e As EventArgs) Handles ConMnuMsCopy.Click
+        MnuMsCopy.PerformClick()
+    End Sub
+    Private Sub ConMnuMsCopyPath_Click(sender As Object, e As EventArgs) Handles ConMnuMsCopyPath.Click
+        MnuMsCopyPath.PerformClick()
+    End Sub
 #End Region
 
 End Class

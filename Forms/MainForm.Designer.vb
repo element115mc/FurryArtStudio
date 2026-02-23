@@ -112,6 +112,16 @@ Partial Class MainForm
         Me.StorageStatusLabel = New System.Windows.Forms.ToolStripStatusLabel()
         Me.TSSep5 = New System.Windows.Forms.ToolStripStatusLabel()
         Me.KryptonMgrMain = New Krypton.Toolkit.KryptonManager(Me.components)
+        Me.ConMenu = New System.Windows.Forms.ContextMenuStrip(Me.components)
+        Me.ConMnuMsView = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ConMnuMsEdit = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ConMnuMsExport = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ConMnuMsPrint = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ConMnuMsDelete = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ToolStripSeparator14 = New System.Windows.Forms.ToolStripSeparator()
+        Me.ConMnuMsOpenFolder = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ConMnuMsCopy = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ConMnuMsCopyPath = New System.Windows.Forms.ToolStripMenuItem()
         Me.MnuStrip.SuspendLayout()
         CType(Me.ArtworkListSplitContainer, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.ArtworkListSplitContainer.Panel1.SuspendLayout()
@@ -119,6 +129,7 @@ Partial Class MainForm
         Me.ArtworkListSplitContainer.SuspendLayout()
         CType(Me.PicboxThumb, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.StaStrip.SuspendLayout()
+        Me.ConMenu.SuspendLayout()
         Me.SuspendLayout()
         '
         'MnuStrip
@@ -764,6 +775,74 @@ Partial Class MainForm
         Me.KryptonMgrMain.ToolkitStrings.MessageBoxStrings.LessDetails = "L&ess Details..."
         Me.KryptonMgrMain.ToolkitStrings.MessageBoxStrings.MoreDetails = "&More Details..."
         '
+        'ConMenu
+        '
+        Me.ConMenu.Font = New System.Drawing.Font("Microsoft YaHei UI", 15.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.World)
+        Me.ConMenu.ImageScalingSize = New System.Drawing.Size(20, 20)
+        Me.ConMenu.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.ConMnuMsView, Me.ConMnuMsEdit, Me.ConMnuMsExport, Me.ConMnuMsPrint, Me.ConMnuMsDelete, Me.ToolStripSeparator14, Me.ConMnuMsOpenFolder, Me.ConMnuMsCopy, Me.ConMnuMsCopyPath})
+        Me.ConMenu.Name = "ConMenu"
+        Me.ConMenu.Size = New System.Drawing.Size(230, 230)
+        '
+        'ConMnuMsView
+        '
+        Me.ConMnuMsView.Name = "ConMnuMsView"
+        Me.ConMnuMsView.ShortcutKeyDisplayString = "Enter"
+        Me.ConMnuMsView.Size = New System.Drawing.Size(229, 24)
+        Me.ConMnuMsView.Text = "预览(&V)"
+        '
+        'ConMnuMsEdit
+        '
+        Me.ConMnuMsEdit.Name = "ConMnuMsEdit"
+        Me.ConMnuMsEdit.ShortcutKeyDisplayString = "F2"
+        Me.ConMnuMsEdit.Size = New System.Drawing.Size(229, 24)
+        Me.ConMnuMsEdit.Text = "编辑(&E)..."
+        '
+        'ConMnuMsExport
+        '
+        Me.ConMnuMsExport.Name = "ConMnuMsExport"
+        Me.ConMnuMsExport.ShortcutKeyDisplayString = "Ctrl+E"
+        Me.ConMnuMsExport.Size = New System.Drawing.Size(229, 24)
+        Me.ConMnuMsExport.Text = "导出(&X)..."
+        '
+        'ConMnuMsPrint
+        '
+        Me.ConMnuMsPrint.Name = "ConMnuMsPrint"
+        Me.ConMnuMsPrint.ShortcutKeyDisplayString = "Ctrl+P"
+        Me.ConMnuMsPrint.Size = New System.Drawing.Size(229, 24)
+        Me.ConMnuMsPrint.Text = "打印(&P)..."
+        '
+        'ConMnuMsDelete
+        '
+        Me.ConMnuMsDelete.Name = "ConMnuMsDelete"
+        Me.ConMnuMsDelete.ShortcutKeyDisplayString = "Delete"
+        Me.ConMnuMsDelete.Size = New System.Drawing.Size(229, 24)
+        Me.ConMnuMsDelete.Text = "删除(&D)..."
+        '
+        'ToolStripSeparator14
+        '
+        Me.ToolStripSeparator14.Name = "ToolStripSeparator14"
+        Me.ToolStripSeparator14.Size = New System.Drawing.Size(226, 6)
+        '
+        'ConMnuMsOpenFolder
+        '
+        Me.ConMnuMsOpenFolder.Name = "ConMnuMsOpenFolder"
+        Me.ConMnuMsOpenFolder.ShortcutKeyDisplayString = "Ctrl+T"
+        Me.ConMnuMsOpenFolder.Size = New System.Drawing.Size(229, 24)
+        Me.ConMnuMsOpenFolder.Text = "打开目录(&A)"
+        '
+        'ConMnuMsCopy
+        '
+        Me.ConMnuMsCopy.Name = "ConMnuMsCopy"
+        Me.ConMnuMsCopy.ShortcutKeyDisplayString = "Ctrl+C"
+        Me.ConMnuMsCopy.Size = New System.Drawing.Size(229, 24)
+        Me.ConMnuMsCopy.Text = "复制文件夹(&C)"
+        '
+        'ConMnuMsCopyPath
+        '
+        Me.ConMnuMsCopyPath.Name = "ConMnuMsCopyPath"
+        Me.ConMnuMsCopyPath.Size = New System.Drawing.Size(229, 24)
+        Me.ConMnuMsCopyPath.Text = "复制目录路径(&T)"
+        '
         'MainForm
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 15.0!)
@@ -786,6 +865,7 @@ Partial Class MainForm
         CType(Me.PicboxThumb, System.ComponentModel.ISupportInitialize).EndInit()
         Me.StaStrip.ResumeLayout(False)
         Me.StaStrip.PerformLayout()
+        Me.ConMenu.ResumeLayout(False)
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
@@ -878,4 +958,14 @@ Partial Class MainForm
     Friend WithEvents MnuRunTerminal As ToolStripMenuItem
     Friend WithEvents ToolStripSeparator9 As ToolStripSeparator
     Friend WithEvents MnuTerms As ToolStripMenuItem
+    Friend WithEvents ConMenu As ContextMenuStrip
+    Friend WithEvents ConMnuMsView As ToolStripMenuItem
+    Friend WithEvents ConMnuMsEdit As ToolStripMenuItem
+    Friend WithEvents ConMnuMsExport As ToolStripMenuItem
+    Friend WithEvents ConMnuMsPrint As ToolStripMenuItem
+    Friend WithEvents ConMnuMsDelete As ToolStripMenuItem
+    Friend WithEvents ToolStripSeparator14 As ToolStripSeparator
+    Friend WithEvents ConMnuMsOpenFolder As ToolStripMenuItem
+    Friend WithEvents ConMnuMsCopy As ToolStripMenuItem
+    Friend WithEvents ConMnuMsCopyPath As ToolStripMenuItem
 End Class
