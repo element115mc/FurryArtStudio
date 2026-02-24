@@ -363,8 +363,8 @@ Module BasicFcn
     ''' 将 RGB 转换成 COLORREF 格式
     ''' </summary>
     Public Function RGBToCOLORREF(ByVal r As Byte, ByVal g As Byte, ByVal b As Byte) As Integer
-        'COLORREF 是 BGR 格式: 0x00BBGGRR
-        Return CInt(b) Or (CInt(g) << 8) Or (CInt(r) << 16)
+        '0x00BBGGRR
+        Return CInt(b) << 16 Or CInt(g) << 8 Or CInt(r)
     End Function
     Public Sub SetTitleBarColor(ByVal hwnd As IntPtr, ByVal r As Byte, ByVal g As Byte, ByVal b As Byte)
         Try
@@ -379,8 +379,11 @@ Module BasicFcn
             DwmSetWindowAttribute(hwnd, DwmWindowAttribute.TextColor, textColor, Marshal.SizeOf(Of Integer)())
             DwmSetWindowAttribute(hwnd, DwmWindowAttribute.BorderColor, textColor, Marshal.SizeOf(Of Integer)())
         Catch ex As Exception
-            MessageBox.Show("设置标题栏颜色失败: " & ex.Message)
+            '忽略错误
         End Try
+    End Sub
+    Public Sub SetTitleBarColor(ByVal hwnd As IntPtr, ByVal color As Color)
+        SetTitleBarColor(hwnd, color.R, color.G, color.B)
     End Sub
 #End Region
 
