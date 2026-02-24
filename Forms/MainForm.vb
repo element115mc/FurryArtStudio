@@ -22,7 +22,7 @@ Imports System.Text
 Imports Krypton.Toolkit
 
 Public Class MainForm
-
+    Implements IThemeChangeable
 #Region "变量与常量"
     '库
     Private _libraryManager As LibraryManager '当前稿件库管理器实例
@@ -42,6 +42,10 @@ Public Class MainForm
     Private Const SC_SETTINGS = 5 '选项
     Private Const SC_PROPERTIES = 6 '统计信息
     Private Const SC_ABOUT = 7 '关于
+    '用于主题消息变更消抖
+    Private WithEvents _themeDebounceTimer As New Timer With {
+    .Interval = 300
+}
 #End Region
 
 #Region "窗体事件处理"
@@ -67,6 +71,7 @@ Public Class MainForm
 #End If
         StatusLabel.Text = "就绪"
         SystemThemeChange() '设置主题
+
         SetTitleBarColor(Handle, IconColorLight) '修改标题栏颜色(win11生效)
     End Sub
 
@@ -113,12 +118,21 @@ Public Class MainForm
             End Select
         End If
         If m.Msg = WM_DWMCOLORIZATIONCOLORCHANGED Then
-            BeginInvoke(New MethodInvoker(Sub()
-                                              SystemThemeChange()
-                                          End Sub))
-            'SystemThemeChange() '更新程序主题
+            If AppTheme = Appearance.System Then
+                _themeDebounceTimer.Stop()
+                _themeDebounceTimer.Start() '消抖
+            End If
         End If
         MyBase.WndProc(m) '循环监听消息
+    End Sub
+    Private Sub _themeDebounceTimer_Tick() Handles _themeDebounceTimer.Tick
+        _themeDebounceTimer.Stop()
+        BeginInvoke(New MethodInvoker(Sub()
+                                          If AppTheme = Appearance.System Then
+                                              UpdateFormTheme() '当主题设置为跟随系统时,主题变更通过接口发送给全部窗体
+                                          End If
+                                      End Sub))
+        Debug.Print("主题变更")
     End Sub
 
     ''' <summary>
@@ -153,7 +167,7 @@ Public Class MainForm
     ''' <summary>
     ''' 系统主题发生变化时调用以更新
     ''' </summary>
-    Private Sub SystemThemeChange()
+    Public Sub SystemThemeChange() Implements IThemeChangeable.SystemThemeChange
         '颜色常量
         Dim bgColor As Color
         Dim frColor As Color
@@ -181,7 +195,7 @@ Public Class MainForm
         BackColor = bgColor
         'WinAPI
         DwmSetWindowAttribute(Handle, DwmWindowAttribute.UseImmersiveDarkMode, IsDarkMode(), Marshal.SizeOf(Of Integer))
-        SetPreferredAppMode(PreferredAppMode.AllowDark)
+        SetPreferredAppMode(If(IsDarkMode(), PreferredAppMode.AllowDark, PreferredAppMode.ForceLight))
         FlushMenuThemes()
     End Sub
     ''' <summary>

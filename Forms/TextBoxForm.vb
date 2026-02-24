@@ -15,6 +15,7 @@
 Imports System.Runtime.InteropServices
 
 Public Class TextBoxForm
+    Implements IThemeChangeable
     Public Sub New(text As String, title As String)
         InitializeComponent()
         TxtBox.Text = text
@@ -25,7 +26,7 @@ Public Class TextBoxForm
         TxtBox.Dock = DockStyle.Fill
         SystemThemeChange()
     End Sub
-    Private Sub SystemThemeChange()
+    Public Sub SystemThemeChange() Implements IThemeChangeable.SystemThemeChange
         '判断颜色
         If IsDarkMode() Then
             TxtBox.BackColor = BgColorDark
@@ -38,7 +39,7 @@ Public Class TextBoxForm
         End If
         'WinAPI
         DwmSetWindowAttribute(Handle, DwmWindowAttribute.UseImmersiveDarkMode, IsDarkMode(), Marshal.SizeOf(Of Integer))
-        SetPreferredAppMode(PreferredAppMode.AllowDark)
+        SetPreferredAppMode(If(IsDarkMode(), PreferredAppMode.AllowDark, PreferredAppMode.ForceLight))
         FlushMenuThemes()
     End Sub
 End Class

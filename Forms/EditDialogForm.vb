@@ -17,13 +17,14 @@ Imports System.IO
 Imports System.Runtime.InteropServices
 
 Public Class EditDialogForm
+    Implements IThemeChangeable
     '存储传入的稿件对象
     Private _artwork As Artwork
     Private _libraryPath As String
     '文件事务管理类
     Private _transaction As FileTransaction
 #Region "窗体相关"
-    Private Sub SystemThemeChange()
+    Public Sub SystemThemeChange() Implements IThemeChangeable.SystemThemeChange
         '颜色常量
         Dim bgColor As Color
         Dim frColor As Color
@@ -47,7 +48,7 @@ Public Class EditDialogForm
         BackColor = bgColor
         'WinAPI
         DwmSetWindowAttribute(Handle, DwmWindowAttribute.UseImmersiveDarkMode, IsDarkMode(), Marshal.SizeOf(Of Integer))
-        SetPreferredAppMode(PreferredAppMode.AllowDark)
+        SetPreferredAppMode(If(IsDarkMode(), PreferredAppMode.AllowDark, PreferredAppMode.ForceLight))
         FlushMenuThemes()
     End Sub
     Private Sub EditDialogForm_Load(sender As Object, e As EventArgs) Handles MyBase.Load

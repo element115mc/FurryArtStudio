@@ -17,6 +17,7 @@ Imports System.Runtime.InteropServices
 Imports System.Text.RegularExpressions
 
 Public Class InputDialogForm
+    Implements IThemeChangeable
     Public Property InputValue As String = ""
     Public Property IsCancelled As Boolean = True
 
@@ -90,7 +91,7 @@ Public Class InputDialogForm
         RemoveMenu(MnuHandle, SC_MINIMIZE, MF_BYCOMMAND) '去除最小化菜单
         InputTxtbox.Focus()
     End Sub
-    Private Sub SystemThemeChange()
+    Public Sub SystemThemeChange() Implements IThemeChangeable.SystemThemeChange
         '颜色常量
         Dim bgColor As Color
         Dim frColor As Color
@@ -114,7 +115,7 @@ Public Class InputDialogForm
         BackColor = bgColor
         'WinAPI
         DwmSetWindowAttribute(Handle, DwmWindowAttribute.UseImmersiveDarkMode, IsDarkMode(), Marshal.SizeOf(Of Integer))
-        SetPreferredAppMode(PreferredAppMode.AllowDark)
+        SetPreferredAppMode(If(IsDarkMode(), PreferredAppMode.AllowDark, PreferredAppMode.ForceLight))
         FlushMenuThemes()
     End Sub
 End Class

@@ -15,6 +15,7 @@
 Imports System.Drawing.Printing
 Imports System.Runtime.InteropServices
 Public Class PrintForm
+    Implements IThemeChangeable
     '打印设置变量
     Private _printSettings As PrinterSettings
     Private _pageSettings As PageSettings
@@ -151,7 +152,7 @@ Public Class PrintForm
         RemoveMenu(MnuHandle, SC_SIZE, MF_BYCOMMAND) '去除大小菜单
         RemoveMenu(MnuHandle, SC_MINIMIZE, MF_BYCOMMAND) '去除最小化菜单
     End Sub
-    Private Sub SystemThemeChange()
+    Public Sub SystemThemeChange() Implements IThemeChangeable.SystemThemeChange
         '颜色常量
         Dim bgColor As Color
         Dim frColor As Color
@@ -172,10 +173,10 @@ Public Class PrintForm
             control.BackColor = bgColor
         Next
         ForeColor = frColor
-            BackColor = bgColor
+        BackColor = bgColor
         'WinAPI
         DwmSetWindowAttribute(Handle, DwmWindowAttribute.UseImmersiveDarkMode, IsDarkMode(), Marshal.SizeOf(Of Integer))
-        SetPreferredAppMode(PreferredAppMode.AllowDark)
+        SetPreferredAppMode(If(IsDarkMode(), PreferredAppMode.AllowDark, PreferredAppMode.ForceLight))
         FlushMenuThemes()
     End Sub
     Private Sub BtnPrinterSetup_Click(sender As Object, e As EventArgs) Handles btnPrinterSetup.Click

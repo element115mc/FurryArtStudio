@@ -15,6 +15,7 @@
 Imports System.Runtime.InteropServices
 
 Public Class AboutForm
+    Implements IThemeChangeable
     Private Sub AboutForm_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         TxtBox.ReadOnly = True
         Dim MnuHandle = GetSystemMenu(Handle, False) '获取菜单句柄
@@ -26,7 +27,7 @@ Public Class AboutForm
         TxtBox.Text = My.Resources.Licenses.AboutText
         LblVersion.Text = $"Version: {Application.ProductVersion}"
     End Sub
-    Private Sub SystemThemeChange()
+    Public Sub SystemThemeChange() Implements IThemeChangeable.SystemThemeChange
         '颜色常量
         Dim bgColor As Color
         Dim frColor As Color
@@ -60,7 +61,7 @@ Public Class AboutForm
         BackColor = bgColor
         'WinAPI
         DwmSetWindowAttribute(Handle, DwmWindowAttribute.UseImmersiveDarkMode, IsDarkMode(), Marshal.SizeOf(Of Integer))
-        SetPreferredAppMode(PreferredAppMode.AllowDark)
+        SetPreferredAppMode(If(IsDarkMode(), PreferredAppMode.AllowDark, PreferredAppMode.ForceLight))
         FlushMenuThemes()
     End Sub
     'GitHub

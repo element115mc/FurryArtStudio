@@ -18,6 +18,7 @@ Imports System.Text.RegularExpressions
 Imports System.Threading
 
 Public Class ViewForm
+    Implements IThemeChangeable
 
 #Region "私有字段"
     '稿件
@@ -93,7 +94,7 @@ Public Class ViewForm
             PictureBoxMain.Image = Nothing
         End If
     End Sub
-    Private Sub SystemThemeChange()
+    Public Sub SystemThemeChange() Implements IThemeChangeable.SystemThemeChange
         If IsDarkMode() Then
             PictureBoxMain.BackColor = BgColorDark
             Icon = CreateRoundedRectangleIcon(True, My.Resources.Icons.FormImageDark)
@@ -105,7 +106,7 @@ Public Class ViewForm
         End If
         'WinAPI
         DwmSetWindowAttribute(Handle, DwmWindowAttribute.UseImmersiveDarkMode, IsDarkMode(), Marshal.SizeOf(Of Integer))
-        SetPreferredAppMode(PreferredAppMode.AllowDark)
+        SetPreferredAppMode(If(IsDarkMode(), PreferredAppMode.AllowDark, PreferredAppMode.ForceLight))
         FlushMenuThemes()
     End Sub
     ''' <summary>

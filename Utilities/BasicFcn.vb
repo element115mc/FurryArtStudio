@@ -36,6 +36,12 @@ Module BasicFcn
     Public ReadOnly IconColorLight As Color = Color.FromArgb(58, 162, 143)
     Public ReadOnly IconColorDark As Color = Color.FromArgb(87, 226, 180)
     Public ReadOnly IconRed As Color = Color.FromArgb(232, 65, 65)
+    Public AppTheme As Appearance = Appearance.System
+    Public Enum Appearance
+        System
+        Light
+        Dark
+    End Enum
 #End Region
 
 #Region "日志记录器"
@@ -385,6 +391,18 @@ Module BasicFcn
     Public Sub SetTitleBarColor(ByVal hwnd As IntPtr, ByVal color As Color)
         SetTitleBarColor(hwnd, color.R, color.G, color.B)
     End Sub
+    ''' <summary>
+    ''' 定义一个修改系统主题变更的接口
+    ''' </summary>
+    Public Interface IThemeChangeable
+        Sub SystemThemeChange()
+    End Interface
+    Public Sub UpdateFormTheme()
+        For Each frm As Form In Application.OpenForms
+            Dim themeable = TryCast(frm, IThemeChangeable)
+            themeable?.SystemThemeChange() '当不为空时更新主题
+        Next
+    End Sub
 #End Region
 
 #Region "菜单处理"
@@ -456,7 +474,7 @@ Module BasicFcn
 
 #End Region
 
-#Region "杂项"
+#Region "环境判断"
     ''' <summary>
     ''' 判断当前是否以管理员权限运行
     ''' </summary>
@@ -479,9 +497,18 @@ Module BasicFcn
     ''' 判断当前系统主题是否为深色主题
     ''' </summary>
     Public Function IsDarkMode() As Boolean
-        Using regKey = Microsoft.Win32.Registry.CurrentUser.OpenSubKey("SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize", True)
-            Return regKey.GetValue("AppsUseLightTheme", "1") = 0
-        End Using
+        Select Case AppTheme
+            Case Appearance.Light
+                Return False
+            Case Appearance.Dark
+                Return True
+            Case Appearance.System
+                Using regKey = Microsoft.Win32.Registry.CurrentUser.OpenSubKey("SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize", True)
+                    Return regKey.GetValue("AppsUseLightTheme", "1") = 0
+                End Using
+            Case Else
+                Return False
+        End Select
     End Function
 #End Region
 
