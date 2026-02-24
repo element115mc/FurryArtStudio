@@ -32,7 +32,7 @@ jobs:
       shell: pwsh
       run: |
         # 定义路径
-        $releasePath = ".\FurryArtStudio\bin\Release"
+        $releasePath = ".\bin\Release"
         $packagePath = ".\package"
         # 创建打包目录
         New-Item -ItemType Directory -Force -Path $packagePath
