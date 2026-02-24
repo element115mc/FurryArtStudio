@@ -517,6 +517,7 @@ Public Class ImageGallery
     ''' </summary>
     Protected Overrides Sub OnKeyDown(e As KeyEventArgs)
         MyBase.OnKeyDown(e)
+        If _currentPageImages.Count = 0 Then Return '避免在没有任何数据的情况下接受键盘输入
         Select Case e.KeyCode
             Case Keys.Up
 
