@@ -15,6 +15,7 @@
 Imports System.Drawing.Drawing2D
 Imports System.Drawing.Imaging
 Imports System.IO
+Imports System.Reflection
 Imports System.Runtime.InteropServices
 Imports System.Security.Principal
 
@@ -509,6 +510,33 @@ Module BasicFcn
             Case Else
                 Return False
         End Select
+    End Function
+    ''' <summary>
+    ''' 获得版本号
+    ''' </summary>
+    ''' <returns></returns>
+    Public Function GetCurrentVersion() As String
+        Dim version = Assembly.GetExecutingAssembly().GetName().Version
+        Return $"v{version.Major}.{version.Minor}.{version.Build}"
+    End Function
+    ''' <summary>
+    ''' 从嵌入资源读取更新日志
+    ''' </summary>
+    Public Function ReadChangelogFromResource() As String
+        Try
+            Dim assembly = Reflection.Assembly.GetExecutingAssembly()
+            Dim resourceName = "FurryArtStudio.CHANGELOG.txt"
+            Using stream = assembly.GetManifestResourceStream(resourceName)
+                If stream IsNot Nothing Then
+                    Using reader = New StreamReader(stream)
+                        Return reader.ReadToEnd()
+                    End Using
+                End If
+            End Using
+        Catch ex As Exception
+            Return $"无法读取更新日志: {ex.Message}"
+        End Try
+        Return "未找到更新日志"
     End Function
 #End Region
 

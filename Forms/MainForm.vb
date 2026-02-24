@@ -1111,7 +1111,8 @@ Public Class MainForm
 
     End Sub
     Private Sub MnuHelpWhatsNew_Click(sender As Object, e As EventArgs) Handles MnuHelpWhatsNew.Click
-
+        Dim txt As New TextBoxForm(ReadChangelogFromResource, "更新日志")
+        txt.Show()
     End Sub
     Private Sub MnuTerms_Click(sender As Object, e As EventArgs) Handles MnuTerms.Click
         Dim txt As New TextBoxForm(My.Resources.Licenses.TermsText, "用户协议")

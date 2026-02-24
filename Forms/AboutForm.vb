@@ -25,7 +25,7 @@ Public Class AboutForm
         RemoveMenu(MnuHandle, SC_MINIMIZE, MF_BYCOMMAND) '去除最小化菜单
         SystemThemeChange()
         TxtBox.Text = My.Resources.Licenses.AboutText
-        LblVersion.Text = $"Version: {Application.ProductVersion}"
+        LblVersion.Text = GetCurrentVersion()
     End Sub
     Public Sub SystemThemeChange() Implements IThemeChangeable.SystemThemeChange
         '颜色常量

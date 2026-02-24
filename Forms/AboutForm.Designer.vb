@@ -45,7 +45,7 @@ Partial Class AboutForm
         '
         'LblVersion
         '
-        Me.LblVersion.Location = New System.Drawing.Point(123, 32)
+        Me.LblVersion.Location = New System.Drawing.Point(65, 32)
         Me.LblVersion.Name = "LblVersion"
         Me.LblVersion.Size = New System.Drawing.Size(150, 23)
         Me.LblVersion.TabIndex = 1
@@ -53,7 +53,7 @@ Partial Class AboutForm
         '
         'Label1
         '
-        Me.Label1.Location = New System.Drawing.Point(123, 9)
+        Me.Label1.Location = New System.Drawing.Point(65, 9)
         Me.Label1.Name = "Label1"
         Me.Label1.Size = New System.Drawing.Size(150, 23)
         Me.Label1.TabIndex = 2
