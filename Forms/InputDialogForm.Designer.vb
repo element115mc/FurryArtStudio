@@ -30,6 +30,7 @@ Partial Class InputDialogForm
         '
         'InputTxtbox
         '
+        Me.InputTxtbox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
         Me.InputTxtbox.Location = New System.Drawing.Point(12, 12)
         Me.InputTxtbox.Name = "InputTxtbox"
         Me.InputTxtbox.Size = New System.Drawing.Size(458, 25)

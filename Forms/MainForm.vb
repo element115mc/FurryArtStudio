@@ -67,8 +67,7 @@ Public Class MainForm
 #End If
         StatusLabel.Text = "就绪"
         SystemThemeChange() '设置主题
-        SetTitleBarColor(Handle, IconColorLight) '修改标题栏颜色
-        'GC.Collect()
+        SetTitleBarColor(Handle, IconColorLight) '修改标题栏颜色(win11生效)
     End Sub
 
     ''' <summary>

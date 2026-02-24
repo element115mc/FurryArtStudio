@@ -34,7 +34,7 @@ Public Class TextBoxForm
         Else
             TxtBox.BackColor = BgColorLight
             TxtBox.ForeColor = FrColorLight
-            Icon = CreateRoundedRectangleIcon(True, My.Resources.Icons.FormFileLight)
+            Icon = CreateRoundedRectangleIcon(False, My.Resources.Icons.FormFileLight)
         End If
         'WinAPI
         DwmSetWindowAttribute(Handle, DwmWindowAttribute.UseImmersiveDarkMode, IsDarkMode(), Marshal.SizeOf(Of Integer))

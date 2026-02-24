@@ -51,6 +51,7 @@ Partial Class EditDialogForm
         '
         'TxtboxTitle
         '
+        Me.TxtboxTitle.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
         Me.TxtboxTitle.Location = New System.Drawing.Point(276, 12)
         Me.TxtboxTitle.Name = "TxtboxTitle"
         Me.TxtboxTitle.Size = New System.Drawing.Size(258, 25)
@@ -67,6 +68,7 @@ Partial Class EditDialogForm
         '
         'TxtboxAuthor
         '
+        Me.TxtboxAuthor.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
         Me.TxtboxAuthor.Location = New System.Drawing.Point(276, 45)
         Me.TxtboxAuthor.Name = "TxtboxAuthor"
         Me.TxtboxAuthor.Size = New System.Drawing.Size(258, 25)
@@ -120,6 +122,7 @@ Partial Class EditDialogForm
         '
         'TxtboxCharacters
         '
+        Me.TxtboxCharacters.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
         Me.TxtboxCharacters.Location = New System.Drawing.Point(276, 78)
         Me.TxtboxCharacters.Name = "TxtboxCharacters"
         Me.TxtboxCharacters.Size = New System.Drawing.Size(258, 25)
@@ -136,6 +139,7 @@ Partial Class EditDialogForm
         '
         'TxtboxTags
         '
+        Me.TxtboxTags.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
         Me.TxtboxTags.Location = New System.Drawing.Point(276, 111)
         Me.TxtboxTags.Name = "TxtboxTags"
         Me.TxtboxTags.Size = New System.Drawing.Size(258, 25)
@@ -179,6 +183,7 @@ Partial Class EditDialogForm
         '
         'TxtboxCreateTime
         '
+        Me.TxtboxCreateTime.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
         Me.TxtboxCreateTime.Location = New System.Drawing.Point(88, 218)
         Me.TxtboxCreateTime.Name = "TxtboxCreateTime"
         Me.TxtboxCreateTime.Size = New System.Drawing.Size(189, 25)
@@ -186,6 +191,7 @@ Partial Class EditDialogForm
         '
         'TxtboxNotes
         '
+        Me.TxtboxNotes.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
         Me.TxtboxNotes.Location = New System.Drawing.Point(276, 144)
         Me.TxtboxNotes.Multiline = True
         Me.TxtboxNotes.Name = "TxtboxNotes"
@@ -213,11 +219,12 @@ Partial Class EditDialogForm
         '
         'LstBox
         '
+        Me.LstBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
         Me.LstBox.FormattingEnabled = True
         Me.LstBox.ItemHeight = 15
         Me.LstBox.Location = New System.Drawing.Point(141, 270)
         Me.LstBox.Name = "LstBox"
-        Me.LstBox.Size = New System.Drawing.Size(278, 109)
+        Me.LstBox.Size = New System.Drawing.Size(278, 107)
         Me.LstBox.TabIndex = 10
         '
         'BtnDel

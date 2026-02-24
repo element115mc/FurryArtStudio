@@ -259,6 +259,9 @@
     <EmbeddedResource Include="Forms\PrintForm.resx">
       <DependentUpon>PrintForm.vb</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\PropertiesForm.resx">
+      <DependentUpon>PropertiesForm.vb</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\TextBoxForm.resx">
       <DependentUpon>TextBoxForm.vb</DependentUpon>
     </EmbeddedResource>

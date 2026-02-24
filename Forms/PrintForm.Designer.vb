@@ -83,6 +83,7 @@ Partial Class PrintForm
         '
         'txtPrintCount
         '
+        Me.txtPrintCount.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
         Me.txtPrintCount.Location = New System.Drawing.Point(70, 39)
         Me.txtPrintCount.MaxLength = 2
         Me.txtPrintCount.Name = "txtPrintCount"
@@ -137,6 +138,7 @@ Partial Class PrintForm
         '
         'txtTop
         '
+        Me.txtTop.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
         Me.txtTop.Location = New System.Drawing.Point(70, 73)
         Me.txtTop.MaxLength = 5
         Me.txtTop.Name = "txtTop"
@@ -146,6 +148,7 @@ Partial Class PrintForm
         '
         'txtBottom
         '
+        Me.txtBottom.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
         Me.txtBottom.Location = New System.Drawing.Point(226, 73)
         Me.txtBottom.MaxLength = 5
         Me.txtBottom.Name = "txtBottom"
@@ -155,6 +158,7 @@ Partial Class PrintForm
         '
         'txtLeft
         '
+        Me.txtLeft.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
         Me.txtLeft.Location = New System.Drawing.Point(70, 106)
         Me.txtLeft.MaxLength = 5
         Me.txtLeft.Name = "txtLeft"
@@ -164,6 +168,7 @@ Partial Class PrintForm
         '
         'txtRight
         '
+        Me.txtRight.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
         Me.txtRight.Location = New System.Drawing.Point(226, 106)
         Me.txtRight.MaxLength = 5
         Me.txtRight.Name = "txtRight"

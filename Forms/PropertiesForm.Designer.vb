@@ -22,9 +22,19 @@ Partial Class PropertiesForm
     '不要使用代码编辑器修改它。
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
-        components = New System.ComponentModel.Container
+        Me.SuspendLayout()
+        '
+        'PropertiesForm
+        '
+        Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 15.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(800, 450)
-        Me.Text = "Properties"
+        Me.ClientSize = New System.Drawing.Size(582, 353)
+        Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle
+        Me.MaximizeBox = False
+        Me.MinimizeBox = False
+        Me.Name = "PropertiesForm"
+        Me.Text = "选项"
+        Me.ResumeLayout(False)
+
     End Sub
 End Class
