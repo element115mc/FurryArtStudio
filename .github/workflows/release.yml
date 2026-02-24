@@ -5,13 +5,16 @@ on:
     tags:
       - 'v*'  # 推送带v的标签时触发，如 v1.0.0
 
+permissions:
+  contents: write  # 确保有写入权限
+
 jobs:
   build:
     runs-on: windows-latest
     
     steps:
     - name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       
     - name: Setup MSBuild
       uses: microsoft/setup-msbuild@v1.1
@@ -25,32 +28,39 @@ jobs:
     - name: Build solution
       run: msbuild FurryArtStudio.sln /p:Configuration=Release /p:Platform="Any CPU"
       
-    - name: Upload build artifacts
-      uses: actions/upload-artifact@v4
-      with:
-        name: Release-Build
-        path: |
-          **/bin/Release/
-          !**/obj/
-          
-    - name: Create Release
-      id: create_release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        tag_name: ${{ github.ref }}
-        release_name: Release ${{ github.ref }}
-        body_path: CHANGELOG.txt
-        draft: false
-        prerelease: false
+    - name: Prepare files for packaging
+      shell: pwsh
+      run: |
+        # 定义路径
+        $releasePath = ".\FurryArtStudio\bin\Release"
+        $packagePath = ".\package"
+        # 创建打包目录
+        New-Item -ItemType Directory -Force -Path $packagePath
+        # 复制所有需要的文件
+        Copy-Item "$releasePath\*.exe" $packagePath
+        Copy-Item "$releasePath\*.dll" $packagePath
+        Copy-Item "$releasePath\*.config" $packagePath
+        # 复制子文件夹
+        Copy-Item -Recurse "$releasePath\x64" $packagePath
+        Copy-Item -Recurse "$releasePath\x86" $packagePath
+
+        Write-Host "Files prepared for packaging:"
+        Get-ChildItem -Recurse $packagePath
         
-    - name: Upload Release Asset
-      uses: actions/upload-release-asset@v1
+    - name: Create ZIP package
+      shell: pwsh
+      run: |
+        # 创建压缩包
+        Compress-Archive -Path .\package\* -DestinationPath ".\FurryArtStudio-${{ github.ref_name }}.zip" -Force
+        Write-Host "ZIP package created: FurryArtStudio-${{ github.ref_name }}.zip"
+      
+    - name: Create Release and Upload Assets
+      uses: softprops/action-gh-release@v2
+      with:
+        tag_name: ${{ github.ref_name }}
+        name: Release ${{ github.ref_name }}
+        body_path: CHANGELOG.txt
+        files: |
+          ./FurryArtStudio-${{ github.ref_name }}.zip
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./FurryArtStudio/bin/Release/FurryArtStudio.exe
-        asset_name: YourApp-${{ github.ref_name }}.exe
-        asset_content_type: application/octet-stream
